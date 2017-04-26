@@ -1,4 +1,4 @@
-package org.wonday.pdf.pdfexample;
+package org.wonday.pdfexample;
 
 import com.facebook.react.ReactActivity;
 
