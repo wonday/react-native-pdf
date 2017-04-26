@@ -9,7 +9,7 @@ A react native PDF view component (cross-platform support)
 * first tap for reset zoom and contious tap for zoom in
 
 ### Notice
-* react-native-pdf do not support for react native(iOS) <0.40, becourse header inluding method changed, but you can modify header inluding method yourself to support it.
+* react-native-pdf does not support for react-native(iOS) ver<0.40, becouse of header file inluding changed, but you can modify it yourself to support react-native(iOS) ver<0.40.
 
 ### Installation
 ```bash
@@ -156,6 +156,6 @@ const styles = StyleSheet.create({
 | page          | number        | 1             | page index | ✔   | ✔ |
 | zoom      | number        | 1.0   | zoom scale | ✔   | ✔ |
 | horizontal      | bool        | false   | draw page direction | ✔   | ✔ |
-| activityIndicator       | Component       | <ActivityIndicator>   | when loading a file show it as a indicator  | ✔   | ✔ |
+| activityIndicator       | Component       | `<ActivityIndicator>`   | when loading a file show it as a indicator  | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when page load complete, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed, ,return current page and total page count | ✔   | ✔ |
