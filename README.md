@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
 
 | Property      | Type            | Default             | Description | iOS | Android |
 | ------------- |:-------------:|:------------:       | ----------- | --- | ------- |
-| source        | object      | null              | PDF sourse like <Image>, can be:{uri:"http://xxx/xxx.pdf"} or {require("./test.pdf")} or {uri:"base64 data"}. You also can  cache it by add "cache" property to source like {url:"http://xxx/xxx.pdf",cache:true}, default not cache network file.| ✔   | ✔ |
+| source        | object      | `{}`             | PDF source like `<Image>`, can be:`{uri:"http://xxx/xxx.pdf"}` or `{require("./test.pdf")}` or `{uri:"base64data"}`. You also can  cache it by add "cache" property to source like `{url:"http://xxx/xxx.pdf",cache:true}`, default not cache network file.| ✔   | ✔ |
 | page          | number        | 1             | page index | ✔   | ✔ |
 | zoom      | number        | 1.0   | zoom scale | ✔   | ✔ |
 | horizontal      | bool        | false   | draw page direction | ✔   | ✔ |
