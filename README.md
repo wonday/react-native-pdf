@@ -154,10 +154,10 @@ const styles = StyleSheet.create({
 
 | Property      | Type            | Default             | Description | iOS | Android |
 | ------------- |:-------------:|:------------:       | ----------- | --- | ------- |
-| source        | object      | `{}`             | PDF source like `<Image>`, can be:`{uri:"http://xxx/xxx.pdf"}` or `{require("./test.pdf")}` or `{uri:"base64data"}`. You also can  cache it by add "cache" property to source like `{url:"http://xxx/xxx.pdf",cache:true}`, default not cache network file.| ✔   | ✔ |
-| page          | number        | 1             | page index | ✔   | ✔ |
-| zoom      | number        | 1.0   | zoom scale | ✔   | ✔ |
-| horizontal      | bool        | false   | draw page direction | ✔   | ✔ |
-| activityIndicator       | Component       | `<ActivityIndicator>`   | when loading a file show it as a indicator  | ✔   | ✔ |
+| source        | object        | `{}`             | PDF source like `<Image>`, can be:`{uri:"http://xxx/xxx.pdf"}` or `{require("./test.pdf")}` or `{uri:"base64data"}`. You also can  cache it by add "cache" property to source like `{url:"http://xxx/xxx.pdf",cache:true}`, default not cache network file.| ✔   | ✔ |
+| page          | number        | 1                | page index | ✔   | ✔ |
+| scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
+| horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
+| activityIndicator   | Component       | `<ActivityIndicator>`   | when loading a file show it as a indicator  | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when page load complete, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed, ,return current page and total page count | ✔   | ✔ |
