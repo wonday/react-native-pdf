@@ -33,7 +33,7 @@
 - (instancetype)init
 {
     _page = 1;
-    _horizontal = TRUE;
+    _horizontal = FALSE;
 
     _numberOfPages = 0;
     _oldPage = 0;
@@ -150,7 +150,7 @@
         NSLog(@"setHorizontal %d -> %d", _horizontal, horizontal);
         
         _horizontal = horizontal;
-        _horizontal = TRUE;
+
         [self setNeedsDisplay];
         
     }
@@ -374,7 +374,7 @@
 
         if (_horizontal==TRUE) {
             
-            if (abs((int)velocity.x) < 20) {
+            if (abs((int)velocity.x) < 200) {
                 break;
             }
             
