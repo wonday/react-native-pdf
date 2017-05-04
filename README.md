@@ -21,9 +21,11 @@ react-native link react-native-pdf
 ```
 We use [`react-native-fetch-blob`](https://github.com/wkh237/react-native-fetch-blob#installation) to handle file system access in this package and it requires an extra step during the installation. 
 _You should only have to do this once._
+```bash
+npm install react-native-fetch-blob --save
 
-    react-native link react-native-fetch-blob
-    
+react-native link react-native-fetch-blob
+```
 Or, if you want to add Android permissions to AndroidManifest.xml automatically, use this one:
 
     RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
