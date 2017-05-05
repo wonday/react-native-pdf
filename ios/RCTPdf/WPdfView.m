@@ -301,12 +301,14 @@
             
             // caculate offset
             curPageBounds.origin.x += _offsetX;
-            curPageBounds.origin.y += (-1 * _offsetY) - pageHeight;
+            curPageBounds.origin.y += (-1 * _offsetY) - pageHeight -10;
             
             CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, curPageBounds, 0, true);
             CGContextConcatCTM(context, pdfTransform);
             
             CGContextDrawPDFPage(context, pdfPage);
+
+            
             CGContextRestoreGState(context);
             
             // draw previous page
@@ -321,13 +323,26 @@
                     if (_horizontal){
                         prePageBounds.origin.x -= pageWidth;
                     } else {
-                        prePageBounds.origin.y += pageHeight;
+                        prePageBounds.origin.y += pageHeight + 10;
+                    }
+                    
+                    if (!_horizontal) {
+                        
+                        // dray a page break.
+                        CGRect pageBreakPreBounds = CGRectMake(prePageBounds.origin.x, prePageBounds.origin.y + 10, prePageBounds.size.width, 10);
+                        
+                        CGContextSetRGBFillColor(context, 0.8,0.8,0.8,1.0);
+                        CGContextFillRect(context, pageBreakPreBounds);
+                        
                     }
                     
                     CGAffineTransform prePageTransform = CGPDFPageGetDrawingTransform(pdfPrePage, kCGPDFCropBox, prePageBounds, 0, true);
                     CGContextConcatCTM(context, prePageTransform);
                     
                     CGContextDrawPDFPage(context, pdfPrePage);
+                    
+
+                    
                     CGContextRestoreGState(context);
                 }
             }
@@ -347,7 +362,17 @@
                         
                     } else {
                         
-                        nextPageBounds.origin.y -=  pageHeight;
+                        nextPageBounds.origin.y -=  pageHeight -10;
+                        
+                    }
+                    
+                    if (!_horizontal) {
+                        
+                        // dray a page break.
+                        CGRect pageBreakNextBounds = CGRectMake(nextPageBounds.origin.x, nextPageBounds.origin.y - 10 + pageHeight, nextPageBounds.size.width, 10);
+                        
+                        CGContextSetRGBFillColor(context, 0.8,0.8,0.8,1.0);
+                        CGContextFillRect(context, pageBreakNextBounds);
                         
                     }
                     
