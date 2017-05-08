@@ -35,13 +35,9 @@ export default class Pdf extends Component {
         if (source.uri) {
 
             let uri = source.uri || '';
-            if (uri && uri.match(/^\//)) {
-                uri = `file://${uri}`;
-            }
 
             const isNetwork = !!(uri && uri.match(/^https?:/));
             const isAsset = !!(uri && uri.match(/^(assets-library|content|ms-appx|ms-appdata):/));
-            const isPath = !!(uri && uri.match(/^(file):/));
             const isBase64 = !!(uri && uri.match(/^data:application\/pdf;base64/));
 
             if (isNetwork) {
@@ -67,9 +63,6 @@ export default class Pdf extends Component {
                             this._downloadFile(uri, this.path);
                         });
                 }
-            } else if (isPath) {
-                this.path = uri.replace(/file:\/\//i,"");
-                this.setState({isDownloaded: true});
             } else if (isAsset) {
                 this.asset = source.asset;
                 this.setState({isDownloaded: true});
@@ -87,7 +80,9 @@ export default class Pdf extends Component {
                         RNFetchBlob.fs.unlink(this.path);
                     });
             } else {
-                console.log("pdf source type error!");
+                console.log("default source type as file");
+                this.path = uri.replace(/file:\/\//i,"");
+                this.setState({isDownloaded: true});
             }
         } else {
             console.log("no pdf source!");
