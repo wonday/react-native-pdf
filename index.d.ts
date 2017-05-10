@@ -18,6 +18,7 @@ interface Props {
   activityIndicator?: any,
   onLoadComplete?: () => void,
   onPageChanged?: () => void,
+  onError?: ()=> void,
 }
 
 declare class Pdf extends React.Component<Props, any> {}

@@ -94,7 +94,8 @@ export default class PDFExample extends React.Component {
 
     render() {
         let source = {uri:'https://www.irs.gov/pub/irs-pdf/fw2.pdf',cache:true};
-        //let source = require('./test.pdf');
+        //let source = {uri:'bundle-assets://test.pdf'};
+        //let source = require('./test.pdf'); //ios only
         //let source = {uri:"data:application/pdf;base64, ..."}; // this is a dummy
 
         return (
@@ -117,7 +118,11 @@ export default class PDFExample extends React.Component {
                     }}
                     onPageChanged={(page,pageCount)=>{
                         this.setState({page:page});
-                        console.log(`current page: ${page}`);}}
+                        console.log(`current page: ${page}`);
+                    }}
+                    onError={(error)=>{
+                        console.log(error);
+                    }}
                     style={styles.pdf}/>
             </View>
         )
@@ -156,10 +161,22 @@ const styles = StyleSheet.create({
 
 | Property      | Type            | Default             | Description | iOS | Android |
 | ------------- |:-------------:|:------------:       | ----------- | --- | ------- |
-| source        | object        | `{}`             | PDF source like `<Image>`, can be:`{uri:"http://xxx/xxx.pdf"}` or `{require("./test.pdf")}` or `{uri:"base64data"}`. You also can  cache it by add "cache" property to source like `{url:"http://xxx/xxx.pdf",cache:true}`, default not cache network file.| ✔   | ✔ |
+| source        | object        | not null             | PDF source like {uri:xxx, cache:false}, default not cache network file. see the following  configuration of source for detail.| ✔   | ✔ |
 | page          | number        | 1                | page index | ✔   | ✔ |
 | scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
 | horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
 | activityIndicator   | Component       | `<ActivityIndicator>`   | when loading a file show it as a indicator  | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when page load complete, return total page count | ✔   | ✔ |
-| onPageChanged       | function        | null        | callback when page changed, ,return current page and total page count | ✔   | ✔ |
+| onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
+| onError       | function        | null        | callback when error happened | ✔   | ✔ |
+
+#### configuration of source
+
+| Usage    | Description | iOS | Android |
+| ------------ | ----------- | --- | ------- |
+| `{uri:"http://xxx/xxx.pdf"}` | load pdf from remote server, You also can  cache it by add "cache" property like `{uri:"http://xxx/xxx.pdf",cache:true}`, default not cache network file. | ✔   | ✔ |
+| `{require("./test.pdf")}` | load pdf relate to js file (do not need add by xcode) | ✔ | ✖ |
+| `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ |
+| `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ |
+| `{uri:"base64data"}` | load pdf from base64 string | ✔   | ✔ |
+| `{uri:"file://absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ |

@@ -57,39 +57,6 @@
     
 }
 
-- (void)setAsset:(NSString *)asset
-{
-    
-    if (![asset isEqual:_asset]) {
-        
-        _asset = [asset copy];
-        
-        if (_asset == (id)[NSNull null] || _asset.length == 0) {
-            
-            NSLog(@"null asset");
-            
-        } else {
-            
-            NSLog(@"not null: %@", _asset);
-            
-            if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
-            
-            CFURLRef pdfURL = CFBundleCopyResourceURL(CFBundleGetMainBundle(), (__bridge CFStringRef)_asset, NULL, NULL);
-            _pdfDoc = CGPDFDocumentCreateWithURL(pdfURL);
-            CFRelease(pdfURL);
-            
-            _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
-            
-            _isLoadCompleteNoticed = FALSE;
-            
-            [self setNeedsDisplay];
-            
-        }
-    }
-
-    
-}
-
 - (void)setPath:(NSString *)path
 {
     
@@ -108,6 +75,17 @@
             if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
             NSURL *pdfURL = [NSURL fileURLWithPath:_path];
             _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
+
+            if (_pdfDoc == NULL) {
+                if(_onChange){
+                    NSLog(@"error|load pdf failed.");
+                            
+                    _onChange(@{ @"message": @"error|load pdf failed."});
+                    _isLoadCompleteNoticed = TRUE;
+        
+                }
+                return;
+            }
             
             _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
             _isLoadCompleteNoticed = FALSE;
@@ -171,7 +149,7 @@
         
         NSLog(@"pageChanged,%d,%d", _page, _numberOfPages);
         
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged,%d,%d", _page, _numberOfPages]]});
+        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", _page, _numberOfPages]]});
         _isLoadCompleteNoticed = TRUE;
         
     }
@@ -186,7 +164,7 @@
         
         NSLog(@"loadComplete,%d", _numberOfPages);
         
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete,%d",_numberOfPages]]});
+        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
         _isLoadCompleteNoticed = TRUE;
         
     }
