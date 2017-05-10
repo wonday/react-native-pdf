@@ -44,5 +44,4 @@ yarn-error.log
 .buckconfig
 .flowconfig
 .gitattributes
-.gitignore
 .watchmanconfig
