@@ -14,7 +14,6 @@
 
 @interface RCTPdfView : UIView
 
-@property(nonatomic, strong) NSString *asset;
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic) int page;
 @property(nonatomic) float scale;

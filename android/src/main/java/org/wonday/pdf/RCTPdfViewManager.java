@@ -19,6 +19,7 @@ import android.net.Uri;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -36,7 +37,7 @@ import static java.lang.String.format;
 import java.lang.ClassCastException;
 
 
-public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnPageChangeListener,OnLoadCompleteListener {
+public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener {
     private static final String REACT_CLASS = "RCTPdf";
     private Context context;
     private PDFView pdfView;
@@ -69,7 +70,7 @@ public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnP
         showLog(format("%s %s / %s", path, page, pageCount));
 
         WritableMap event = Arguments.createMap();
-        event.putString("message", "pageChanged,"+page+","+pageCount);
+        event.putString("message", "pageChanged|"+page+"|"+pageCount);
         ReactContext reactContext = (ReactContext)pdfView.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             pdfView.getId(),
@@ -81,7 +82,19 @@ public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnP
     @Override
     public void loadComplete(int pageCount) {
         WritableMap event = Arguments.createMap();
-        event.putString("message", "loadComplete,"+pageCount);
+        event.putString("message", "loadComplete|"+pageCount);
+        ReactContext reactContext = (ReactContext)pdfView.getContext();
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+            pdfView.getId(),
+            "topChange",
+            event
+         );
+    }
+
+    @Override
+    public void onError(Throwable t){
+        WritableMap event = Arguments.createMap();
+        event.putString("message", "error|load pdf failed.");
         ReactContext reactContext = (ReactContext)pdfView.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             pdfView.getId(),
@@ -93,17 +106,7 @@ public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnP
     private void drawPdf() {
         PointF pivot = new PointF(this.scale, this.scale);
 
-        if (this.asset != null) {
-            pdfView.fromAsset(this.asset)
-                .defaultPage(this.page-1)
-                .swipeHorizontal(this.horizontal)
-                .onPageChange(this)
-                .onLoad(this)
-                .load();
-
-            pdfView.zoomCenteredTo(this.scale, pivot);
-            showLog(format("drawPdf asset:%s %s", this.asset, this.page));
-        } else if (this.path != null){
+        if (this.path != null){
             File pdfFile = new File(this.path);
             pdfView.fromFile(pdfFile)
                 .defaultPage(this.page-1)
@@ -112,17 +115,12 @@ public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnP
                 .swipeHorizontal(this.horizontal)
                 .onPageChange(this)
                 .onLoad(this)
+                .onError(this)
                 .load();
 
             pdfView.zoomCenteredTo(this.scale, pivot);
             showLog(format("drawPdf path:%s %s", this.path, this.page));
         }
-    }
-
-    @ReactProp(name = "asset")
-    public void setAsset(PDFView view, String asset) {
-        this.asset = asset;
-        drawPdf();
     }
 
     @ReactProp(name = "path")

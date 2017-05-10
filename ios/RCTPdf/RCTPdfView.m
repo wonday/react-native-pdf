@@ -35,13 +35,6 @@
     return self;
 }
 
-- (void)setAsset:(NSString *)asset
-{
-    
-    [wPdfView setAsset:asset];
-    
-}
-
 - (void)setPath:(NSString *)path
 {
     
