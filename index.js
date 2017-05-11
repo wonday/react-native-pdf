@@ -80,6 +80,7 @@ export default class Pdf extends Component {
                     this.setState({path:cacheFile, isDownloaded:true});
                 })
                 .catch((error) => {
+                    RNFetchBlob.fs.unlink(cacheFile);
                     console.warn("load from asset error");
                     console.log(error);
                     this.props.onError && this.props.onError("load pdf failed.");
@@ -93,8 +94,8 @@ export default class Pdf extends Component {
                         this.setState({path:cacheFile, isDownloaded:true});
                     })
                     .catch(() => {
-                        console.warn("write base64 file error!");
                         RNFetchBlob.fs.unlink(this.path);
+                        console.warn("write base64 file error!");
                         this.props.onError && this.props.onError("load pdf failed.");
                     });
             } else {
@@ -107,11 +108,11 @@ export default class Pdf extends Component {
 
     }
 
-    _downloadFile = (url, path) => {
+    _downloadFile = (url, cacheFile) => {
         RNFetchBlob
             .config({
                 // response data will be saved to this path if it has access right.
-                path: path
+                path: cacheFile
             })
             .fetch('GET', url, {
                 //some headers ..
@@ -120,9 +121,10 @@ export default class Pdf extends Component {
                 console.log('Load pdf from url and saved to ', res.path())
                 this.setState({path:cacheFile, isDownloaded:true});
             })
-            .catch(()=>{
+            .catch((error)=>{
                 console.warn(`download ${url} error.`);
-                RNFetchBlob.fs.unlink(this.path);
+                console.log(error);
+                RNFetchBlob.fs.unlink(cacheFile);
                 this.props.onError && this.props.onError("load pdf failed.");
             });
     };
