@@ -5,12 +5,18 @@
 //  Created by Wonday on 17/4/21.
 //  Copyright (c) wonday.org All rights reserved.
 //
-
 #import <Foundation/Foundation.h>
-#import <React/RCTBridge.h>
+
 #import "RCTPdfViewManager.h"
 #import "RCTPdfView.h"
+
+#if __has_include(<React/RCTAssert.h>)
 #import <React/RCTEventDispatcher.h>
+#import <React/RCTBridge.h>
+#else
+#import "RCTBridge.h"
+#import "RCTEventDispatcher.h"
+#endif
 
 @implementation RCTPdfViewManager
 
