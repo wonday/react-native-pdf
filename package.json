@@ -1,6 +1,6 @@
 {
     "name": "react-native-pdf",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "A react native PDF view component",
     "main": "index.js",
     "typings": "./index.d.ts",
