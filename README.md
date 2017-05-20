@@ -10,9 +10,6 @@ A react native PDF view component (cross-platform support)
 * drag and zoom
 * first tap for reset zoom and contious tap for zoom in
 
-### Notice
-* react-native-pdf does not support for react-native(iOS) ver<0.40, becouse of header file inluding changed, but you can modify it yourself to support react-native(iOS) ver<0.40.
-
 ### Installation
 ```bash
 npm install react-native-pdf --save
