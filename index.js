@@ -24,15 +24,37 @@ export default class Pdf extends Component {
             path: "",
             isDownloaded: false,
         };
+
+        this.uri = "";
+        this.lastRNBFTask = null;
+
     }
 
-    
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.source != this.props.source) {
+            console.log("componentWillReceiveProps: source changed");
+            this._loadFromSource();
+        }
+    }
+
     componentDidMount() {
+        this._loadFromSource();
+    }
+
+    _loadFromSource = () => {
+
         const source = resolveAssetSource(this.props.source) || {};
         console.log("PDF source:");
         console.log(source);
 
         let uri = source.uri || '';
+
+        // no chanage then return
+        if (this.uri == uri) return;
+        this.uri = uri;
+
+        // first set to initial state
+        this.setState({isDownloaded:false,path:""});
 
         const cacheFile = RNFetchBlob.fs.dirs.CacheDir + "/" + SHA1(uri) + ".pdf";
 
@@ -53,7 +75,6 @@ export default class Pdf extends Component {
             this._prepareFile(source);
         }
     }
-
 
     _prepareFile = (source) => {
 
@@ -109,21 +130,31 @@ export default class Pdf extends Component {
     }
 
     _downloadFile = (url, cacheFile) => {
-        RNFetchBlob
+
+        if (this.lastRNBFTask!=null) {
+            this.lastRNBFTask.cancel((err) => {
+                console.log("Load pdf from url was cancelled.");
+            });
+        }
+
+        this.lastRNBFTask = RNFetchBlob
             .config({
                 // response data will be saved to this path if it has access right.
                 path: cacheFile
             })
             .fetch('GET', url, {
                 //some headers ..
-            })
-            .then((res) => {
+            });
+
+        this.lastRNBFTask.then((res) => {
                 console.log('Load pdf from url and saved to ', res.path())
+                this.lastRNBFTask = null;
                 this.setState({path:cacheFile, isDownloaded:true});
             })
             .catch((error)=>{
                 console.warn(`download ${url} error.`);
                 console.log(error);
+                this.lastRNBFTask = null;
                 RNFetchBlob.fs.unlink(cacheFile);
                 this.props.onError && this.props.onError("load pdf failed.");
             });
