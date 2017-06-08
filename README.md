@@ -176,4 +176,4 @@ const styles = StyleSheet.create({
 | `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ |
 | `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ |
 | `{uri:"base64data"}` | load pdf from base64 string | ✔   | ✔ |
-| `{uri:"file://absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ |
+| `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ |
