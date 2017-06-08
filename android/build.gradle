@@ -29,5 +29,5 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:0.20.+'
-    compile 'com.github.barteksc:android-pdf-viewer:2.5.1'
+    compile 'com.github.barteksc:android-pdf-viewer:2.6.0'
 }
