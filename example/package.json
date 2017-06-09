@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "react": "15.4.2",
-    "react-native": "0.42.0",
-    "react-native-fetch-blob": "0.10.4",
-    "react-native-pdf": "*"
+    "react-native": "0.43.0",
+    "react-native-fetch-blob": "0.10.5",
+    "react-native-pdf": "github:wonday/react-native-pdf#master"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",
