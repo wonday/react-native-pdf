@@ -107,8 +107,7 @@ export default class Pdf extends Component {
                     this.props.onError && this.props.onError("load pdf failed.");
                 });
             } else if (isBase64) {
-                let data = uri.replace(/data:application\/pdf;base64/i,"");
-                RNFetchBlob.fs.unlink(cacheFile);
+                let data = uri.replace(/data:application\/pdf;base64\,/i,"");
                 RNFetchBlob.fs.writeFile(cacheFile, data, 'base64')
                     .then(()=>{
                         console.log("write base64 to file:" + cacheFile);
