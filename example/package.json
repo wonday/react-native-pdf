@@ -14,7 +14,7 @@
       "url": "https://github.com/wonday/react-native-pdf/issues"
   },
   "dependencies": {
-    "react": "15.4.2",
+    "react": "16.0.0-alpha.6",
     "react-native": "0.43.0",
     "react-native-fetch-blob": "0.10.5",
     "react-native-pdf": "github:wonday/react-native-pdf#master"
