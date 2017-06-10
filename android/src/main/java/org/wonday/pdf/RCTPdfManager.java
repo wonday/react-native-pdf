@@ -1,10 +1,10 @@
-//
-//  RCTPdfViewManager
-//  
-//
-//  Created by Wonday on 17/4/21.
-//  Copyright (c) wonday.org All rights reserved.
-//
+/**
+ * Copyright (c) 2017-present, Wonday (@wonday.org)
+ * All rights reserved.
+ *
+ * This source code is licensed under the MIT-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 package org.wonday.pdf;
 
@@ -37,7 +37,7 @@ import static java.lang.String.format;
 import java.lang.ClassCastException;
 
 
-public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener {
+public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener {
     private static final String REACT_CLASS = "RCTPdf";
     private Context context;
     private PDFView pdfView;
@@ -48,7 +48,7 @@ public class RCTPdfViewManager extends SimpleViewManager<PDFView> implements OnP
     String path;
 
 
-    public RCTPdfViewManager(ReactApplicationContext reactContext){
+    public RCTPdfManager(ReactApplicationContext reactContext){
         this.context = reactContext;
     }
 

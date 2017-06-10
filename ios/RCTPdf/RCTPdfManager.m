@@ -1,13 +1,14 @@
-//
-//  RCTPdfViewManager.m
-//
-//
-//  Created by Wonday on 17/4/21.
-//  Copyright (c) wonday.org All rights reserved.
-//
+/**
+ * Copyright (c) 2017-present, Wonday (@wonday.org)
+ * All rights reserved.
+ *
+ * This source code is licensed under the MIT-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 #import <Foundation/Foundation.h>
 
-#import "RCTPdfViewManager.h"
+#import "RCTPdfManager.h"
 #import "RCTPdfView.h"
 
 #if __has_include(<React/RCTAssert.h>)
@@ -18,9 +19,9 @@
 #import "RCTEventDispatcher.h"
 #endif
 
-@implementation RCTPdfViewManager
+@implementation RCTPdfManager
 
-RCT_EXPORT_MODULE(RCTPdf)
+RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {

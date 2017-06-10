@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		526B80401EABD92200259970 /* RCTPdfViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 526B803F1EABD92200259970 /* RCTPdfViewManager.m */; };
+		526B80401EABD92200259970 /* RCTPdfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 526B803F1EABD92200259970 /* RCTPdfManager.m */; };
 		52F79DB71EB2DA4F00CAD00C /* RCTPdfView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F79DB41EB2DA4F00CAD00C /* RCTPdfView.m */; };
 		52F79DB81EB2DA4F00CAD00C /* WPdfView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F79DB61EB2DA4F00CAD00C /* WPdfView.m */; };
 /* End PBXBuildFile section */
@@ -26,8 +26,8 @@
 
 /* Begin PBXFileReference section */
 		20D8E03F1C8E946C00039823 /* libRCTPdf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTPdf.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		526B803E1EABD92200259970 /* RCTPdfViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfViewManager.h; sourceTree = "<group>"; };
-		526B803F1EABD92200259970 /* RCTPdfViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfViewManager.m; sourceTree = "<group>"; };
+		526B803E1EABD92200259970 /* RCTPdfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfManager.h; sourceTree = "<group>"; };
+		526B803F1EABD92200259970 /* RCTPdfManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfManager.m; sourceTree = "<group>"; };
 		52F79DB31EB2DA4F00CAD00C /* RCTPdfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfView.h; sourceTree = "<group>"; };
 		52F79DB41EB2DA4F00CAD00C /* RCTPdfView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfView.m; sourceTree = "<group>"; };
 		52F79DB51EB2DA4F00CAD00C /* WPdfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPdfView.h; sourceTree = "<group>"; };
@@ -68,8 +68,8 @@
 				52F79DB41EB2DA4F00CAD00C /* RCTPdfView.m */,
 				52F79DB51EB2DA4F00CAD00C /* WPdfView.h */,
 				52F79DB61EB2DA4F00CAD00C /* WPdfView.m */,
-				526B803E1EABD92200259970 /* RCTPdfViewManager.h */,
-				526B803F1EABD92200259970 /* RCTPdfViewManager.m */,
+				526B803E1EABD92200259970 /* RCTPdfManager.h */,
+				526B803F1EABD92200259970 /* RCTPdfManager.m */,
 			);
 			path = RCTPdf;
 			sourceTree = "<group>";
@@ -131,7 +131,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				526B80401EABD92200259970 /* RCTPdfViewManager.m in Sources */,
+				526B80401EABD92200259970 /* RCTPdfManager.m in Sources */,
 				52F79DB71EB2DA4F00CAD00C /* RCTPdfView.m in Sources */,
 				52F79DB81EB2DA4F00CAD00C /* WPdfView.m in Sources */,
 			);
