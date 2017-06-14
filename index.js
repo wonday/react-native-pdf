@@ -33,17 +33,17 @@ export default class Pdf extends Component {
     componentWillReceiveProps(nextProps) {
         if (nextProps.source != this.props.source) {
             __DEV__ && console.log("componentWillReceiveProps: source changed");
-            this._loadFromSource();
+            this._loadFromSource(nextProps.source);
         }
     }
 
     componentDidMount() {
-        this._loadFromSource();
+//        this._loadFromSource();
     }
 
-    _loadFromSource = () => {
+    _loadFromSource = (newSource) => {
 
-        const source = resolveAssetSource(this.props.source) || {};
+        const source = resolveAssetSource(newSource) || {};
         __DEV__ && console.log("PDF source:");
         __DEV__ && console.log(source);
 
