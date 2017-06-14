@@ -38,7 +38,7 @@ export default class Pdf extends Component {
     }
 
     componentDidMount() {
-//        this._loadFromSource();
+        this._loadFromSource(this.props.source);
     }
 
     _loadFromSource = (newSource) => {
