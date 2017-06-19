@@ -14,6 +14,7 @@ interface Props {
   source: object,
   page?: number,
   scale?: number,
+  spacing?: number,
   horizontal?: boolean,
   activityIndicator?: any,
   onLoadComplete?: () => void,

@@ -188,9 +188,7 @@ export default class Pdf extends Component {
             );
         } else {
             return (
-                <View style={{flex:1,backgroundColor:"#EEE"}}>
-                    <PdfCustom ref={component => this._root = component} {...this.props} path={this.state.path} onChange={this._onChange}/>
-                </View>
+                    <PdfCustom ref={component => this._root = component} {...this.props} style={[{backgroundColor:"#EEE"},this.props.style]}  path={this.state.path} onChange={this._onChange}/>
             )
         }
 
