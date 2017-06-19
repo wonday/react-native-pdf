@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
 | page          | number        | 1                | page index | ✔   | ✔ |
 | scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
 | horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
+| spacing       | number        | 10               | draw page breaker   | ✔   | ✔ |
 | activityIndicator   | Component       | `<ActivityIndicator/>`   | when loading a file show it as a indicator  | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when page load complete, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |

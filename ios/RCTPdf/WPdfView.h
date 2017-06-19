@@ -23,6 +23,7 @@
 @property(nonatomic) int page;
 @property(nonatomic) float scale;
 @property(nonatomic) BOOL horizontal;
+@property(nonatomic) int spacing;
 
 
 @property(nonatomic, copy) RCTBubblingEventBlock onChange;

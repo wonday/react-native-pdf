@@ -64,8 +64,15 @@
 
 - (void)setHorizontal:(BOOL)horizontal
 {
-
+    
     [wPdfView setHorizontal:horizontal];
+    
+}
+
+- (void)setSpacing:(int)spacing
+{
+    
+    [wPdfView setSpacing:spacing];
     
 }
 

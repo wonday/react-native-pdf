@@ -41,11 +41,12 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     private static final String REACT_CLASS = "RCTPdf";
     private Context context;
     private PDFView pdfView;
-    int page = 1;               // start from 1
-    boolean horizontal = false;
-    float scale = 1;
-    String asset;
-    String path;
+    private int page = 1;               // start from 1
+    private boolean horizontal = false;
+    private float scale = 1;
+    private String asset;
+    private String path;
+    private int spacing = 10;
 
 
     public RCTPdfManager(ReactApplicationContext reactContext){
@@ -116,6 +117,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
                 .onPageChange(this)
                 .onLoad(this)
                 .onError(this)
+                .spacing(this.spacing)
                 .load();
 
             pdfView.zoomCenteredTo(this.scale, pivot);
@@ -145,6 +147,12 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     @ReactProp(name = "horizontal")
     public void setHorizontal(PDFView view, boolean horizontal) {
         this.horizontal = horizontal;
+        drawPdf();
+    }
+
+    @ReactProp(name = "spacing")
+    public void setSpacing(PDFView view, int spacing) {
+        this.spacing = spacing;
         drawPdf();
     }
 

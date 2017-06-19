@@ -187,7 +187,11 @@ export default class Pdf extends Component {
                 </View>
             );
         } else {
-            return (<PdfCustom ref={component => this._root = component} {...this.props} path={this.state.path} onChange={this._onChange}/>)
+            return (
+                <View style={{flex:1,backgroundColor:"#EEE"}}>
+                    <PdfCustom ref={component => this._root = component} {...this.props} path={this.state.path} onChange={this._onChange}/>
+                </View>
+            )
         }
 
     }
@@ -208,6 +212,7 @@ Pdf.propTypes = {
     page: PropTypes.number,
     scale: PropTypes.number,
     horizontal: PropTypes.bool,
+    spacing: PropTypes.number,
     activityIndicator: PropTypes.any,
     onChange: PropTypes.func,
     onLoadComplete: PropTypes.func,
