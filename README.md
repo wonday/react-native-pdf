@@ -28,6 +28,15 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
     RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
 
+### ChangeLog 
+
+v1.2.0
+
+1. add page breaker support (ios/android)
+2. add password support (ios/android)
+3. improve font rendering (android)
+
+[[more]](https://github.com/wonday/react-native-pdf/releases)
 
 ### Example
 
