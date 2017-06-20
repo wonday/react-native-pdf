@@ -35,6 +35,7 @@ v1.2.0
 1. add page breaker support (ios/android)
 2. add password support (ios/android)
 3. improve font rendering (android)
+4. change default activityIndicator to progress bar
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
@@ -168,8 +169,9 @@ const styles = StyleSheet.create({
 | spacing       | number        | 10               | draw page breaker   | ✔   | ✔ |
 | password      | string        | ""               | pdf password        | ✔   | ✔ |
 | style         | object        | {backgroundColor:"#eee"} | support view style, you can use this to set border/spacing color | ✔   | ✔ |
-| activityIndicator   | Component       | `<ActivityIndicator/>`   | when loading a file show it as a indicator  | ✔   | ✔ |
-| onLoadComplete      | function        | null        | callback when page load complete, return total page count | ✔   | ✔ |
+| activityIndicator   | Component       | ProgressBar | when loading show it as an indicator  | ✔   | ✔ |
+| onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |
+| onLoadComplete      | function        | null        | callback when pdf load completed, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
 | onError       | function        | null        | callback when error happened | ✔   | ✔ |
 
