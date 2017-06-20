@@ -11,7 +11,10 @@ import React,{ Component, PropTypes } from 'react';
 import {
     ActivityIndicator,
     requireNativeComponent,
-    View
+    View,
+    Platform,
+    ProgressBarAndroid,
+    ProgressViewIOS
 } from 'react-native';
 import RNFetchBlob from 'react-native-fetch-blob'
 const SHA1 = require("crypto-js/sha1");
@@ -23,6 +26,7 @@ export default class Pdf extends Component {
         this.state = {
             path: "",
             isDownloaded: false,
+            progress: 0,
         };
 
         this.uri = "";
@@ -54,7 +58,7 @@ export default class Pdf extends Component {
         this.uri = uri;
 
         // first set to initial state
-        this.setState({isDownloaded:false,path:""});
+        this.setState({isDownloaded:false,path:"",progress:0});
 
         const cacheFile = RNFetchBlob.fs.dirs.CacheDir + "/" + SHA1(uri) + ".pdf";
 
@@ -96,19 +100,31 @@ export default class Pdf extends Component {
                 this._downloadFile(uri, cacheFile);
             } else if (isAsset) {
                 RNFetchBlob.fs.cp(uri, cacheFile)
-                .then(() => {
-                    __DEV__ && console.log("load from asset:"+uri);
-                    this.setState({path:cacheFile, isDownloaded:true});
-                })
-                .catch((error) => {
-                    RNFetchBlob.fs.unlink(cacheFile);
-                    console.warn("load from asset error");
-                    console.log(error);
-                    this.props.onError && this.props.onError("load pdf failed.");
-                });
+                    // listen to download progress event
+                    .progress((received, total) => {
+                        __DEV__ && console.log('progress', received / total);
+                        this.props.onLoadProgress && this.props.onLoadProgress(received/total);
+                        this.setState({progress:received/total});
+                    })
+                    .then(() => {
+                        __DEV__ && console.log("load from asset:"+uri);
+                        this.setState({path:cacheFile, isDownloaded:true});
+                    })
+                    .catch((error) => {
+                        RNFetchBlob.fs.unlink(cacheFile);
+                        console.warn("load from asset error");
+                        console.log(error);
+                        this.props.onError && this.props.onError("load pdf failed.");
+                    });
             } else if (isBase64) {
                 let data = uri.replace(/data:application\/pdf;base64\,/i,"");
                 RNFetchBlob.fs.writeFile(cacheFile, data, 'base64')
+                    // listen to download progress event
+                    .progress((received, total) => {
+                        __DEV__ && console.log('progress', received / total);
+                        this.props.onLoadProgress && this.props.onLoadProgress(received/total);
+                        this.setState({progress:received/total});
+                    })
                     .then(()=>{
                         __DEV__ && console.log("write base64 to file:" + cacheFile);
                         this.setState({path:cacheFile, isDownloaded:true});
@@ -143,12 +159,18 @@ export default class Pdf extends Component {
             })
             .fetch('GET', url, {
                 //some headers ..
+            })
+            // listen to download progress event
+            .progress((received, total) => {
+                __DEV__ && console.log('progress', received / total);
+                this.props.onLoadProgress && this.props.onLoadProgress(received/total);
+                this.setState({progress:received/total});
             });
 
         this.lastRNBFTask.then((res) => {
                 __DEV__ && console.log('Load pdf from url and saved to ', res.path())
                 this.lastRNBFTask = null;
-                this.setState({path:cacheFile, isDownloaded:true});
+                this.setState({path:cacheFile, isDownloaded:true, progress:1});
             })
             .catch((error)=>{
                 console.warn(`download ${url} error.`);
@@ -179,16 +201,20 @@ export default class Pdf extends Component {
     };
 
     render() {
-        const {activityIndicator} = this.props;
         if (!this.state.isDownloaded) {
             return (
                 <View style={{flex:1,justifyContent: 'center',alignItems: 'center'}}>
-                    {activityIndicator?activityIndicator:<ActivityIndicator/>}
+                    {this.props.activityIndicator
+                        ?this.props.activityIndicator
+                        :(Platform.OS == 'android'
+                            ?<ProgressBarAndroid progress={this.state.progress} indeterminate={false} styleAttr="Horizontal" style={{width:200, height:2}} />
+                            :<ProgressViewIOS progress={this.state.progress} style={{width:200, height:2}} />)
+                    }
                 </View>
             );
         } else {
             return (
-                    <PdfCustom ref={component => this._root = component} {...this.props} style={[{backgroundColor:"#EEE"},this.props.style]}  path={this.state.path} onChange={this._onChange}/>
+                <PdfCustom ref={component => this._root = component} {...this.props} style={[{backgroundColor:"#EEE"},this.props.style]}  path={this.state.path} onChange={this._onChange}/>
             )
         }
 
