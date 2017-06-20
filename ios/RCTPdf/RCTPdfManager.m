@@ -33,6 +33,7 @@ RCT_EXPORT_VIEW_PROPERTY(page, int);
 RCT_EXPORT_VIEW_PROPERTY(scale, float);
 RCT_EXPORT_VIEW_PROPERTY(horizontal, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(spacing, int);
+RCT_EXPORT_VIEW_PROPERTY(password, NSString);
 RCT_EXPORT_VIEW_PROPERTY(onChange, RCTBubblingEventBlock);
 
 @end

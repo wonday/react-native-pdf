@@ -22,6 +22,16 @@
 #import "RCTLog.h"
 #endif
 
+#ifndef __OPTIMIZE__
+// only output log when debug
+#define DLog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+#else
+#define DLog( s, ... )
+#endif
+
+// output log both debug and release
+#define ALog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
+
 @implementation WPdfView
 {
 
@@ -46,6 +56,7 @@
         _horizontal = FALSE;
         _scale = 1;
         _spacing = 10;
+        _password = @"";
         
         _numberOfPages = 0;
         _offsetX = 0;
@@ -55,12 +66,60 @@
         _isLoadCompleteNoticed = TRUE;
         _isContiniousTap = FALSE;
         
+        self.backgroundColor = UIColor.clearColor;
+
         [self bindPan];
         [self bindPinch];
         [self bindTap];
     }
     
     return self;
+    
+}
+
+- (void)loadPdf:(NSString *)path withPassword:(NSString *)password
+{
+    
+    if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
+    
+    if (_path != nil && _path.length > 0 && _password != nil) {
+        
+        NSURL *pdfURL = [NSURL fileURLWithPath:_path];
+        _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
+        
+        if (_pdfDoc != NULL && ![_password isEqualToString:@""]) {
+            bool isUnlocked = CGPDFDocumentUnlockWithPassword(_pdfDoc, [_password UTF8String]);
+            if (!isUnlocked) {
+                if(_onChange){
+                    ALog(@"error|load pdf failed.");
+                    
+                    _onChange(@{ @"message": @"error|unlock pdf failed."});
+                    _isLoadCompleteNoticed = TRUE;
+                    
+                }
+                return;
+            }
+        }
+        
+        if (_pdfDoc == NULL) {
+            if(_onChange){
+                ALog(@"error|load pdf failed.");
+                
+                _onChange(@{ @"message": @"error|load pdf failed."});
+                _isLoadCompleteNoticed = TRUE;
+                
+            }
+            return;
+        }
+        
+        _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
+        _isLoadCompleteNoticed = FALSE;
+        
+        [self setNeedsDisplay];
+    }
+
+    
+
     
 }
 
@@ -71,33 +130,33 @@
         
         _path = [path copy];
         
-        if (_path == (id)[NSNull null] || _path.length == 0) {
+        if (_path == nil || _path.length == 0) {
             
-            NSLog(@"null path");
+            DLog(@"null path");
             
         } else {
             
-            NSLog(@"not null: %@", _path);
+            [self loadPdf:_path withPassword:_password];
             
-            if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
-            NSURL *pdfURL = [NSURL fileURLWithPath:_path];
-            _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
+        }
+    }
+    
+}
 
-            if (_pdfDoc == NULL) {
-                if(_onChange){
-                    NSLog(@"error|load pdf failed.");
-                            
-                    _onChange(@{ @"message": @"error|load pdf failed."});
-                    _isLoadCompleteNoticed = TRUE;
+- (void)setPassword:(NSString *)password
+{
+    
+    if (![password isEqual:_password]) {
         
-                }
-                return;
-            }
+        _password = [password copy];
+        
+        if (_password == nil || _password.length == 0) {
             
-            _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
-            _isLoadCompleteNoticed = FALSE;
-
-            [self setNeedsDisplay];
+            DLog(@"null password");
+            
+        } else {
+            
+            [self loadPdf:_path withPassword:_password];
             
         }
     }
@@ -169,7 +228,7 @@
     
     if(_onChange){
         
-        NSLog(@"pageChanged,%d,%d", _page, _numberOfPages);
+        DLog(@"pageChanged,%d,%d", _page, _numberOfPages);
         
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", _page, _numberOfPages]]});
         _isLoadCompleteNoticed = TRUE;
@@ -184,7 +243,7 @@
     
     if(_oldPage!=_page && _onChange){
         
-        NSLog(@"loadComplete,%d", _numberOfPages);
+        DLog(@"loadComplete,%d", _numberOfPages);
         
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
         _isLoadCompleteNoticed = TRUE;
@@ -278,14 +337,10 @@
             
         }
         
-        NSLog(@"bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
-        NSLog(@"page:%d scale:%f offset:%d,%d", _page, _scale, _offsetX, _offsetY);
+        DLog(@"bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
+        DLog(@"page:%d scale:%f offset:%d,%d", _page, _scale, _offsetX, _offsetY);
 
         CGContextRef context = UIGraphicsGetCurrentContext();
-        
-        // Fill the background with white.
-        CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
-        CGContextFillRect(context, self.bounds);
         
         // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system
         // before we start drawing.
@@ -301,7 +356,11 @@
             
             // caculate offset
             curPageBounds.origin.x += _offsetX;
-            curPageBounds.origin.y += (-1 * _offsetY) - pageHeight - _spacing;
+            curPageBounds.origin.y += (-1 * _offsetY) - pageHeight;
+
+            // Fill the background with white.
+            CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
+            CGContextFillRect(context, curPageBounds);
             
             CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, curPageBounds, 0, true);
             CGContextConcatCTM(context, pdfTransform);
@@ -326,23 +385,9 @@
                         prePageBounds.origin.y += pageHeight + _spacing;
                     }
                     
-
-                    if (_horizontal) {
-                        
-                        // dray a page break.
-                        CGRect pageBreakPreBounds = CGRectMake(prePageBounds.origin.x + pageWidth, prePageBounds.origin.y, _spacing, prePageBounds.size.height);
-                        
-                        CGContextSetRGBFillColor(context, 0.875,0.875,0.875,1.0);
-                        CGContextFillRect(context, pageBreakPreBounds);
-                        
-                    } else {
-                        // draw a page break.
-                        CGRect pageBreakPreBounds = CGRectMake(prePageBounds.origin.x, prePageBounds.origin.y, prePageBounds.size.width, _spacing);
-                        
-                        CGContextSetRGBFillColor(context, 0.875,0.875,0.875,1.0);
-                        CGContextFillRect(context, pageBreakPreBounds);
-                        
-                    }
+                    // Fill the background with white.
+                    CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
+                    CGContextFillRect(context, prePageBounds);
                     
                     CGAffineTransform prePageTransform = CGPDFPageGetDrawingTransform(pdfPrePage, kCGPDFCropBox, prePageBounds, 0, true);
                     CGContextConcatCTM(context, prePageTransform);
@@ -370,26 +415,13 @@
                         
                     } else {
                         
-                        nextPageBounds.origin.y -= pageHeight - _spacing;
+                        nextPageBounds.origin.y -= pageHeight + _spacing;
                         
                     }
-                    
-                    if (_horizontal) {
-                        
-                        // draw a page break.
-                        CGRect pageBreakNextBounds = CGRectMake(nextPageBounds.origin.x - _spacing, nextPageBounds.origin.y, _spacing, nextPageBounds.size.height);
-                        
-                        CGContextSetRGBFillColor(context, 0.875,0.875,0.875,1.0);
-                        CGContextFillRect(context, pageBreakNextBounds);
-                        
-                    } else {
-                        // dray a page break.
-                        CGRect pageBreakNextBounds = CGRectMake(nextPageBounds.origin.x, nextPageBounds.origin.y + pageHeight - _spacing, nextPageBounds.size.width, _spacing);
-                        
-                        CGContextSetRGBFillColor(context, 0.875,0.875,0.875,1.0);
-                        CGContextFillRect(context, pageBreakNextBounds);
-                        
-                    }
+
+                    // Fill the background with white.
+                    CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
+                    CGContextFillRect(context, nextPageBounds);
                     
                     CGAffineTransform nextTransform = CGPDFPageGetDrawingTransform(pdfNextPage, kCGPDFCropBox, nextPageBounds, 0, true);
                     CGContextConcatCTM(context, nextTransform);

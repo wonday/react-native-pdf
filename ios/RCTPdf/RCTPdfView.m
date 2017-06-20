@@ -34,6 +34,8 @@
     if (self) {
         
         self.clipsToBounds = TRUE;
+        self.backgroundColor = UIColor.clearColor;
+        
         wPdfView = [[WPdfView alloc] initWithFrame:self.bounds];
         [self addSubview:wPdfView];
         
@@ -73,6 +75,13 @@
 {
     
     [wPdfView setSpacing:spacing];
+    
+}
+
+- (void)setPassword:(NSString *)password
+{
+    
+    [wPdfView setPassword:password];
     
 }
 
