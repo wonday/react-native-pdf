@@ -9,6 +9,7 @@ A react native PDF view component (cross-platform support)
 * display horizontally or vertically
 * drag and zoom
 * first tap for reset zoom and contious tap for zoom in
+* support password protected pdf
 
 ### Installation
 ```bash
@@ -26,13 +27,6 @@ react-native link react-native-fetch-blob
 Or, if you want to add Android permissions to AndroidManifest.xml automatically, use this one:
 
     RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
-
-### Usage
-
-First, require it from your app's JavaScript files with:
-```bash
-import Pdf from 'react-native-pdf';
-```
 
 
 ### Example
