@@ -156,13 +156,15 @@ const styles = StyleSheet.create({
 
 ### Configuration
 
-| Property      | Type            | Default             | Description | iOS | Android |
-| ------------- |:-------------:|:------------:       | ----------- | --- | ------- |
-| source        | object        | not null             | PDF source like {uri:xxx, cache:false}, default not cache network file. see the following  configuration of source for detail.| ✔   | ✔ |
-| page          | number        | 1                | page index | ✔   | ✔ |
+| Property      | Type          | Default          | Description         | iOS   | Android |
+| ------------- |:-------------:|:----------------:| ------------------- | ------| ------- |
+| source        | object        | not null         | PDF source like {uri:xxx, cache:false}, default not cache network file. see the following  configuration of source for detail.| ✔   | ✔ |
+| page          | number        | 1                | page index          | ✔   | ✔ |
 | scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
 | horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
 | spacing       | number        | 10               | draw page breaker   | ✔   | ✔ |
+| password      | string        | ""               | pdf password        | ✔   | ✔ |
+| style         | object        | {backgroundColor:"#eee"} | support view style, you can use this to set border/spacing color | ✔   | ✔ |
 | activityIndicator   | Component       | `<ActivityIndicator/>`   | when loading a file show it as a indicator  | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when page load complete, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
