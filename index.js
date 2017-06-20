@@ -211,6 +211,7 @@ Pdf.propTypes = {
     scale: PropTypes.number,
     horizontal: PropTypes.bool,
     spacing: PropTypes.number,
+    password: PropTypes.string,
     activityIndicator: PropTypes.any,
     onChange: PropTypes.func,
     onLoadComplete: PropTypes.func,

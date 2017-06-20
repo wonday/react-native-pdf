@@ -47,6 +47,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     private String asset;
     private String path;
     private int spacing = 10;
+    private String password = "";
 
 
     public RCTPdfManager(ReactApplicationContext reactContext){
@@ -118,6 +119,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
                 .onLoad(this)
                 .onError(this)
                 .spacing(this.spacing)
+                .password(this.password)
                 .load();
 
             pdfView.zoomCenteredTo(this.scale, pivot);
@@ -153,6 +155,12 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     @ReactProp(name = "spacing")
     public void setSpacing(PDFView view, int spacing) {
         this.spacing = spacing;
+        drawPdf();
+    }
+
+    @ReactProp(name = "password")
+    public void setSpacing(PDFView view, String password) {
+        this.password = password;
         drawPdf();
     }
 
