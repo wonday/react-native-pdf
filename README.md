@@ -30,6 +30,10 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog 
 
+v1.2.1
+
+1. add METHOD and HEADERS support for network pdf
+
 v1.2.0
 
 1. add page breaker support (ios/android)
@@ -162,24 +166,33 @@ const styles = StyleSheet.create({
 
 | Property      | Type          | Default          | Description         | iOS   | Android |
 | ------------- |:-------------:|:----------------:| ------------------- | ------| ------- |
-| source        | object        | not null         | PDF source like {uri:xxx, cache:false}, default not cache network file. see the following  configuration of source for detail.| ✔   | ✔ |
+| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔   | ✔ |
 | page          | number        | 1                | page index          | ✔   | ✔ |
 | scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
 | horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
 | spacing       | number        | 10               | draw page breaker   | ✔   | ✔ |
 | password      | string        | ""               | pdf password        | ✔   | ✔ |
-| style         | object        | {backgroundColor:"#eee"} | support view style, you can use this to set border/spacing color | ✔   | ✔ |
+| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ |
 | activityIndicator   | Component       | ProgressBar | when loading show it as an indicator  | ✔   | ✔ |
 | onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when pdf load completed, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
 | onError       | function        | null        | callback when error happened | ✔   | ✔ |
 
-#### configuration of source
+#### parameters of source
+
+| parameter    | Description | default | iOS | Android |
+| ------------ | ----------- | ------- | --- | ------- |
+| uri          | pdf source, see the forllowing for detail.| required | ✔   | ✔ |
+| cached       | use cache or not | false | ✔ | ✔ |
+| method       | the fetch method when uri is a url | "GET" | ✔ | ✔ |
+| headers      | request headers when uri is a url | {} | ✔ | ✔ |
+
+#### types of source.url
 
 | Usage    | Description | iOS | Android |
 | ------------ | ----------- | --- | ------- |
-| `{uri:"http://xxx/xxx.pdf"}` | load pdf from remote server, You also can  cache it by add "cache" property like `{uri:"http://xxx/xxx.pdf",cache:true}`, default not cache network file. | ✔   | ✔ |
+| `{uri:"http://xxx/xxx.pdf"}` | load pdf from a url | ✔   | ✔ |
 | `{require("./test.pdf")}` | load pdf relate to js file (do not need add by xcode) | ✔ | ✖ |
 | `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ |
 | `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ |

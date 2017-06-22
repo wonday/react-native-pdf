@@ -97,7 +97,7 @@ export default class Pdf extends Component {
 
 
             if (isNetwork) {
-                this._downloadFile(uri, cacheFile);
+                this._downloadFile(source, cacheFile);
             } else if (isAsset) {
                 RNFetchBlob.fs.cp(uri, cacheFile)
                     // listen to download progress event
@@ -144,7 +144,7 @@ export default class Pdf extends Component {
 
     }
 
-    _downloadFile = (url, cacheFile) => {
+    _downloadFile = (source, cacheFile) => {
 
         if (this.lastRNBFTask!=null) {
             this.lastRNBFTask.cancel((err) => {
@@ -157,9 +157,7 @@ export default class Pdf extends Component {
                 // response data will be saved to this path if it has access right.
                 path: cacheFile
             })
-            .fetch('GET', url, {
-                //some headers ..
-            })
+            .fetch(source.method?source.method:'GET', source.uri, source.headers?source.headers:{})
             // listen to download progress event
             .progress((received, total) => {
                 __DEV__ && console.log('progress', received / total);
@@ -173,7 +171,7 @@ export default class Pdf extends Component {
                 this.setState({path:cacheFile, isDownloaded:true, progress:1});
             })
             .catch((error)=>{
-                console.warn(`download ${url} error.`);
+                console.warn(`download ${source.uri} error.`);
                 console.log(error);
                 this.lastRNBFTask = null;
                 RNFetchBlob.fs.unlink(cacheFile);
