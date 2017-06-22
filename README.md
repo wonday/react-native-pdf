@@ -8,7 +8,7 @@ A react native PDF view component (cross-platform support)
 * read a PDF from url/local file/asset and can cache it.
 * display horizontally or vertically
 * drag and zoom
-* first tap for reset zoom and contious tap for zoom in
+* first tap for reset zoom and continuous tap for zoom in
 * support password protected pdf
 
 ### Installation
