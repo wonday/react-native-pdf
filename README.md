@@ -185,10 +185,10 @@ const styles = StyleSheet.create({
 | ------------ | ----------- | ------- | --- | ------- |
 | uri          | pdf source, see the forllowing for detail.| required | ✔   | ✔ |
 | cached       | use cache or not | false | ✔ | ✔ |
-| method       | the fetch method when uri is a url | "GET" | ✔ | ✔ |
+| method       | request method when uri is a url | "GET" | ✔ | ✔ |
 | headers      | request headers when uri is a url | {} | ✔ | ✔ |
 
-#### types of source.url
+#### types of source.uri
 
 | Usage    | Description | iOS | Android |
 | ------------ | ----------- | --- | ------- |
