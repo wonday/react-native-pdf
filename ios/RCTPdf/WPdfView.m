@@ -32,6 +32,9 @@
 // output log both debug and release
 #define ALog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 
+#define MAX_SCALE 2    //max scale
+#define MIN_SCALE 1    //min scale
+
 @implementation WPdfView
 {
 
@@ -64,7 +67,7 @@
 
         
         _isLoadCompleteNoticed = TRUE;
-        _isContiniousTap = FALSE;
+        _isContiniousTap = TRUE;
         
         self.backgroundColor = UIColor.clearColor;
 
@@ -178,6 +181,10 @@
 
 - (void)setScale:(float)scale
 {
+
+    scale = scale > MAX_SCALE ? MAX_SCALE : scale;
+    scale = scale < MIN_SCALE ? MIN_SCALE : scale;
+    
     if (scale != _scale) {
         
         NSLog(@"setScale %f -> %f", _scale, scale);
@@ -271,13 +278,13 @@
         // calculate page size
         if (_horizontal==TRUE) {
             
-            pageWidth = (self.bounds.size.width - _spacing * 2)/3;
-            pageHeight = self.bounds.size.height;
+            pageWidth = self.superview.bounds.size.width * _scale;
+            pageHeight = self.superview.bounds.size.height * _scale;
             
         } else {
             
-            pageWidth = self.bounds.size.width;
-            pageHeight = (self.bounds.size.height - _spacing * 2)/3;
+            pageWidth = self.superview.bounds.size.width * _scale;
+            pageHeight = self.superview.bounds.size.height * _scale;
             
         }
 
@@ -291,9 +298,23 @@
             _page = _page < 1 ? 1 : _page;
             _page = _page > _numberOfPages ? _numberOfPages : _page;
             
-            if (_page == 1 && _offsetX > 0) _offsetX = 0;
-            if (_page == _numberOfPages && _offsetX < 0) _offsetX = 0;
 
+            // control X for not moving out
+            if (_page == 1) {
+                
+                if (_offsetX > 0) _offsetX = 0;
+                
+            }
+            
+            if (_page == _numberOfPages) {
+                
+                if (_offsetX < (self.superview.bounds.size.width - pageWidth)){
+                    
+                    _offsetX = self.superview.bounds.size.width - pageWidth;
+                    
+                }
+                
+            }
             
             // control Y for not moving out
             if (_offsetY < (self.superview.bounds.size.height - pageHeight)){
@@ -318,8 +339,20 @@
             _page = _page < 1 ? 1 : _page;
             _page = _page > _numberOfPages ? _numberOfPages : _page;
             
-            if (_page == 1 && _offsetY > 0) _offsetY = 0;
-            if (_page == _numberOfPages && _offsetY < 0) _offsetY = 0;
+            // control Y for not moving out
+            if (_page == 1) {
+                
+                if (_offsetY > 0) _offsetY = 0;
+                
+            }
+            
+            if (_page == _numberOfPages) {
+                if (_offsetY < (self.superview.bounds.size.height - pageHeight)){
+                    
+                    _offsetY = self.superview.bounds.size.height - pageHeight;
+                    
+                }
+            }
             
             
             // control X for not moving out
@@ -337,8 +370,9 @@
             
         }
         
+        
         DLog(@"bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
-        DLog(@"page:%d scale:%f offset:%d,%d", _page, _scale, _offsetX, _offsetY);
+        DLog(@"page:%d scale:%f offset:%d,%d, pageWidth/pageHeight:%f,%f", _page, _scale, _offsetX, _offsetY, pageWidth, pageHeight);
 
         CGContextRef context = UIGraphicsGetCurrentContext();
         
@@ -357,6 +391,7 @@
             // caculate offset
             curPageBounds.origin.x += _offsetX;
             curPageBounds.origin.y += (-1 * _offsetY) - pageHeight;
+
 
             // Fill the background with white.
             CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
@@ -450,18 +485,18 @@
     
     if (_horizontal == TRUE) {
         
-        bounds.origin.x = -1 * self.superview.bounds.size.width *_scale;
-        bounds.size.width = self.superview.bounds.size.width * 3 * _scale + _spacing * 2;
-        bounds.size.height = self.superview.bounds.size.height * _scale;
+        bounds.origin.x = - self.superview.bounds.size.width - _spacing;
+        bounds.size.width = self.superview.bounds.size.width*3 + _spacing*2;
+        bounds.size.height = self.superview.bounds.size.height;
         
     } else {
         
-        bounds.origin.y = -1 * self.superview.bounds.size.height * _scale;
-        bounds.size.width = self.superview.bounds.size.width * _scale;
-        bounds.size.height = self.superview.bounds.size.height * 3 * _scale + _spacing * 2;
+        bounds.origin.y = - self.superview.bounds.size.height - _spacing;
+        bounds.size.width = self.superview.bounds.size.width;
+        bounds.size.height = self.superview.bounds.size.height*3 + _spacing*2;
         
     }
-    
+
     // we will set a 3-pages rect to frame and bounds
     [self setFrame:bounds];
     [self setBounds:bounds];
@@ -484,7 +519,7 @@
  */
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer
 {
-    
+   
     _isContiniousTap = FALSE;
     
     [recognizer.view.superview bringSubviewToFront:recognizer.view];
@@ -497,7 +532,8 @@
     
     
     // end animation
-    while (recognizer.state == UIGestureRecognizerStateEnded) {
+    while (_numberOfPages > 1
+           && recognizer.state == UIGestureRecognizerStateEnded) {
         
         CGPoint velocity = [recognizer velocityInView:self];
 
@@ -617,26 +653,28 @@
     
     CGFloat scale = recognizer.scale;
     
-    if ((scale * _scale) > 1) {
-        
-        int touchCount = (int)recognizer.numberOfTouches;
-        
-        if (touchCount == 2) {
-            
-            CGPoint p1 = [recognizer locationOfTouch: 0 inView:self ];
-            CGPoint p2 = [recognizer locationOfTouch: 1 inView:self ];
-            float centerX = (p1.x+p2.x)/2;
-            float centerY = (p1.y+p2.y)/2;
-            
-            _offsetX = centerX - (centerX - _offsetX) * scale;
-            _offsetY = centerY - (centerY - _offsetY) * scale;
-        
-            _scale = scale * _scale;
-        
-            [self updateBounds];
-            
-        }
+    if (scale * _scale < MIN_SCALE) scale = MIN_SCALE / _scale;
 
+    int touchCount = (int)recognizer.numberOfTouches;
+    
+    if (touchCount == 2) {
+        
+        CGPoint p1 = [recognizer locationOfTouch: 0 inView:self ];
+        CGPoint p2 = [recognizer locationOfTouch: 1 inView:self ];
+        float centerX = (p1.x+p2.x)/2;
+        float centerY = (p1.y+p2.y)/2;
+        
+        _offsetX = centerX - (centerX - _offsetX) * scale;
+        _offsetY = centerY - (centerY - _offsetY) * scale;
+
+        _scale = scale * _scale;
+        
+        self.transform = CGAffineTransformMakeScale(_scale, _scale);
+    
+        
+    
+        [self updateBounds];
+        
     }
     
     recognizer.scale = 1.0;
@@ -654,7 +692,17 @@
 
     if (_isContiniousTap) {
         
-        _scale = _scale * 1.2;
+        // one tap add scale 1.2 times
+        CGFloat scale = 1.2;
+        
+        CGPoint center = self.center;
+        
+        _offsetX = center.x - (center.x - _offsetX) * scale;
+        _offsetY = center.y - (center.y - _offsetY) * scale;
+        
+        _scale = _scale * scale;
+        
+        self.transform = CGAffineTransformMakeScale(_scale, _scale);
         
     } else {
         
@@ -663,6 +711,7 @@
         _offsetY = 0;
         _isContiniousTap = TRUE;
         
+        self.transform = CGAffineTransformMakeScale(_scale, _scale);
         
     }
     
