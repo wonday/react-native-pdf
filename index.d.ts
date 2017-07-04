@@ -18,8 +18,8 @@ interface Props {
   spacing?: number,
   password?: string,
   activityIndicator?: any,
-  onLoadComplete?: () => void,
-  onPageChanged?: () => void,
+  onLoadComplete?: (pageCount: number) => void,
+  onPageChanged?: (page: number, pageCount: number) => void,
   onError?: ()=> void,
 }
 
