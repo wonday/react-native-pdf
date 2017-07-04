@@ -29,6 +29,11 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
     RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
 
 ### ChangeLog 
+v1.2.2
+
+1. fix crash when scale is bigger (#4)
+2. improve pan operation when page=1 (#15)
+3. Fix TypeScript definitions (onLoadComplete and onPageChanged) (#16)
 
 v1.2.1
 
