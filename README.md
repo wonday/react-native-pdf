@@ -31,16 +31,9 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 ### ChangeLog 
 v1.2.2
 
-<<<<<<< HEAD
 1. fix crash when scale is bigger (#4)
 2. improve pan operation when page=1 (#15)
 3. Fix TypeScript definitions (onLoadComplete and onPageChanged) (#16)
-=======
-fix crash when scale is bigger (#4)
-improve pan operation when page=1 (#15)
-Fix TypeScript definitions (onLoadComplete and onPageChanged) (#16)
-add headers and method support to source
->>>>>>> a80fd92f25445af897800347422d1be73d96fa17
 
 v1.2.1
 
