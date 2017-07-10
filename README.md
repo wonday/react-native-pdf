@@ -29,22 +29,23 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
     RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
 
 ### ChangeLog 
+
+v1.2.3
+
+1. comment out debug log
+2. fix onLoadComplete not triggered on iOS #19
+3. Fix initial props scale not work problem on iOS
+
 v1.2.2
 
-1. fix crash when scale is bigger (#4)
-2. improve pan operation when page=1 (#15)
-3. Fix TypeScript definitions (onLoadComplete and onPageChanged) (#16)
+1. fix crash when scale is bigger #4
+2. improve pan operation when page=1 #15
+3. Fix TypeScript definitions (onLoadComplete and onPageChanged) #16
 
 v1.2.1
 
 1. add METHOD and HEADERS support for network pdf
 
-v1.2.0
-
-1. add page breaker support (ios/android)
-2. add password support (ios/android)
-3. improve font rendering (android)
-4. change default activityIndicator to progress bar
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
