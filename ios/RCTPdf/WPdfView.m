@@ -32,7 +32,6 @@
 // output log both debug and release
 #define ALog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 
-#define MAX_SCALE 2    //max scale
 #define MIN_SCALE 1    //min scale
 
 @implementation WPdfView
@@ -182,7 +181,6 @@
 - (void)setScale:(float)scale
 {
 
-    scale = scale > MAX_SCALE ? MAX_SCALE : scale;
     scale = scale < MIN_SCALE ? MIN_SCALE : scale;
     
     if (scale != _scale) {
@@ -193,6 +191,8 @@
         _offsetY = _offsetY / _scale * scale;
 
         _scale = scale;
+        
+        self.transform = CGAffineTransformMakeScale(_scale, _scale);
         
         [self updateBounds];
         
@@ -246,19 +246,13 @@
 
 - (void)noticeLoadComplete
 {
-    static int _oldPage = 0;
     
-    if(_oldPage!=_page && _onChange){
-        
-        DLog(@"loadComplete,%d", _numberOfPages);
-        
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
-        _isLoadCompleteNoticed = TRUE;
-        
-    }
+    DLog(@"loadComplete,%d", _numberOfPages);
     
-    _oldPage = _page;
-    
+    _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
+    _isLoadCompleteNoticed = TRUE;
+        
+
 }
 
 - (void)drawRect:(CGRect)rect
