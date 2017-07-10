@@ -95,7 +95,7 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    NSLog(@"super bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
+//    NSLog(@"super bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
     
     [wPdfView updateBounds];
 

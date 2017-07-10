@@ -234,12 +234,16 @@
 {
     
     if(_onChange){
+        static lastPage = -1;
         
-        DLog(@"pageChanged,%d,%d", _page, _numberOfPages);
+        if (lastPage!=_page) {
         
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", _page, _numberOfPages]]});
-        _isLoadCompleteNoticed = TRUE;
+            DLog(@"pageChanged,%d,%d", _page, _numberOfPages);
         
+            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", _page, _numberOfPages]]});
+            _isLoadCompleteNoticed = TRUE;
+            lastPage = _page;
+        }
     }
     
 }
@@ -365,8 +369,8 @@
         }
         
         
-        DLog(@"bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
-        DLog(@"page:%d scale:%f offset:%d,%d, pageWidth/pageHeight:%f,%f", _page, _scale, _offsetX, _offsetY, pageWidth, pageHeight);
+//        DLog(@"bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
+//        DLog(@"page:%d scale:%f offset:%d,%d, pageWidth/pageHeight:%f,%f", _page, _scale, _offsetX, _offsetY, pageWidth, pageHeight);
 
         CGContextRef context = UIGraphicsGetCurrentContext();
         
@@ -519,7 +523,7 @@
     [recognizer.view.superview bringSubviewToFront:recognizer.view];
     
     CGPoint translation = [recognizer translationInView:self];
-    NSLog(@"translation %f,%f", translation.x, translation.y);
+//    NSLog(@"translation %f,%f", translation.x, translation.y);
     
     _offsetX += translation.x;
     _offsetY += translation.y;
