@@ -36,7 +36,7 @@ export default class Pdf extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.source != this.props.source) {
-            __DEV__ && console.log("componentWillReceiveProps: source changed");
+            //__DEV__ && console.log("componentWillReceiveProps: source changed");
             this._loadFromSource(nextProps.source);
         }
     }
@@ -48,8 +48,8 @@ export default class Pdf extends Component {
     _loadFromSource = (newSource) => {
 
         const source = resolveAssetSource(newSource) || {};
-        __DEV__ && console.log("PDF source:");
-        __DEV__ && console.log(source);
+        //__DEV__ && console.log("PDF source:");
+        //__DEV__ && console.log(source);
 
         let uri = source.uri || '';
 
@@ -101,7 +101,7 @@ export default class Pdf extends Component {
             } else if (isAsset) {
                 RNFetchBlob.fs.cp(uri, cacheFile)
                     .then(() => {
-                        __DEV__ && console.log("load from asset:"+uri);
+                        //__DEV__ && console.log("load from asset:"+uri);
                         this.setState({path:cacheFile, isDownloaded:true});
                     })
                     .catch((error) => {
@@ -115,12 +115,12 @@ export default class Pdf extends Component {
                 RNFetchBlob.fs.writeFile(cacheFile, data, 'base64')
                     // listen to download progress event
                     .progress((received, total) => {
-                        __DEV__ && console.log('progress', received / total);
+                        //__DEV__ && console.log('progress', received / total);
                         this.props.onLoadProgress && this.props.onLoadProgress(received/total);
                         this.setState({progress:received/total});
                     })
                     .then(()=>{
-                        __DEV__ && console.log("write base64 to file:" + cacheFile);
+                        //__DEV__ && console.log("write base64 to file:" + cacheFile);
                         this.setState({path:cacheFile, isDownloaded:true});
                     })
                     .catch(() => {
@@ -129,7 +129,7 @@ export default class Pdf extends Component {
                         this.props.onError && this.props.onError("load pdf failed.");
                     });
             } else {
-                __DEV__ && console.log("default source type as file");
+                //__DEV__ && console.log("default source type as file");
                 this.setState({path:uri.replace(/file:\/\//i,""),isDownloaded: true});
             }
         } else {
@@ -142,7 +142,7 @@ export default class Pdf extends Component {
 
         if (this.lastRNBFTask!=null) {
             this.lastRNBFTask.cancel((err) => {
-                __DEV__ && console.log("Load pdf from url was cancelled.");
+                //__DEV__ && console.log("Load pdf from url was cancelled.");
             });
         }
 
@@ -154,13 +154,13 @@ export default class Pdf extends Component {
             .fetch(source.method?source.method:'GET', source.uri, source.headers?source.headers:{})
             // listen to download progress event
             .progress((received, total) => {
-                __DEV__ && console.log('progress', received / total);
+                //__DEV__ && console.log('progress', received / total);
                 this.props.onLoadProgress && this.props.onLoadProgress(received/total);
                 this.setState({progress:received/total});
             });
 
         this.lastRNBFTask.then((res) => {
-                __DEV__ && console.log('Load pdf from url and saved to ', res.path())
+                //__DEV__ && console.log('Load pdf from url and saved to ', res.path())
                 this.lastRNBFTask = null;
                 this.setState({path:cacheFile, isDownloaded:true, progress:1});
             })
@@ -179,7 +179,7 @@ export default class Pdf extends Component {
 
     _onChange = (event:Event) => {
         let message = event.nativeEvent.message.split("|");
-        __DEV__ && console.log("onChange: " + message);
+        //__DEV__ && console.log("onChange: " + message);
         if (message.length>0){
             if (message[0]=="loadComplete") {
                 this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]));
