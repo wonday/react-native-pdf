@@ -39,9 +39,7 @@
 
     CGPDFDocumentRef _pdfDoc;
     int _numberOfPages;
-    
-    int _offsetX;
-    int _offsetY;
+
     int _isContiniousTap;
     
     BOOL _isLoadCompleteNoticed;
@@ -56,14 +54,11 @@
     if (self) {
         _page = 1;
         _horizontal = FALSE;
-        _scale = 1;
+        _scale = 1.0f;
         _spacing = 10;
         _password = @"";
         
         _numberOfPages = 0;
-        _offsetX = 0;
-        _offsetY = 0;
-
         
         _isLoadCompleteNoticed = TRUE;
         _isContiniousTap = TRUE;
@@ -186,9 +181,6 @@
     if (scale != _scale) {
         
         NSLog(@"setScale %f -> %f", _scale, scale);
-        
-        _offsetX = _offsetX / _scale * scale;
-        _offsetY = _offsetY / _scale * scale;
 
         _scale = scale;
         
@@ -234,7 +226,7 @@
 {
     
     if(_onChange){
-        static lastPage = -1;
+        static int lastPage = -1;
         
         if (lastPage!=_page) {
         
@@ -262,9 +254,6 @@
 - (void)drawRect:(CGRect)rect
 {
     
-    float pageWidth = 0;
-    float pageHeight = 0;
-       
     if (_pdfDoc != NULL) {
         
         if (!_isLoadCompleteNoticed) {
@@ -272,105 +261,6 @@
             [self noticeLoadComplete];
             
         }
-        
-        // calculate page size
-        if (_horizontal==TRUE) {
-            
-            pageWidth = self.superview.bounds.size.width * _scale;
-            pageHeight = self.superview.bounds.size.height * _scale;
-            
-        } else {
-            
-            pageWidth = self.superview.bounds.size.width * _scale;
-            pageHeight = self.superview.bounds.size.height * _scale;
-            
-        }
-
-        if (_horizontal) {
-            
-            // recaculate offset and page
-            int pageOffset = (_offsetX>=0?1:-1) * floor(abs(_offsetX) / pageWidth);
-            _offsetX = _offsetX - pageWidth * pageOffset;
-            _page -= pageOffset;
-            
-            _page = _page < 1 ? 1 : _page;
-            _page = _page > _numberOfPages ? _numberOfPages : _page;
-            
-
-            // control X for not moving out
-            if (_page == 1) {
-                
-                if (_offsetX > 0) _offsetX = 0;
-                
-            }
-            
-            if (_page == _numberOfPages) {
-                
-                if (_offsetX < (self.superview.bounds.size.width - pageWidth)){
-                    
-                    _offsetX = self.superview.bounds.size.width - pageWidth;
-                    
-                }
-                
-            }
-            
-            // control Y for not moving out
-            if (_offsetY < (self.superview.bounds.size.height - pageHeight)){
-                
-                _offsetY = self.superview.bounds.size.height - pageHeight;
-                
-            }
-            
-            if (_offsetY > 0){
-                
-                _offsetY = 0;
-                
-            }
-            
-        } else {
-            
-            // recaculate offset and page
-            int pageOffset = (_offsetY>=0?1:-1) * floor(abs(_offsetY) / pageHeight);
-            _offsetY = _offsetY - pageHeight * pageOffset;
-            _page -= pageOffset;
-            
-            _page = _page < 1 ? 1 : _page;
-            _page = _page > _numberOfPages ? _numberOfPages : _page;
-            
-            // control Y for not moving out
-            if (_page == 1) {
-                
-                if (_offsetY > 0) _offsetY = 0;
-                
-            }
-            
-            if (_page == _numberOfPages) {
-                if (_offsetY < (self.superview.bounds.size.height - pageHeight)){
-                    
-                    _offsetY = self.superview.bounds.size.height - pageHeight;
-                    
-                }
-            }
-            
-            
-            // control X for not moving out
-            if (_offsetX < (self.superview.bounds.size.width - pageWidth)){
-                
-                _offsetX = self.superview.bounds.size.width - pageWidth;
-                
-            }
-            
-            if (_offsetX > 0){
-                
-                _offsetX = 0;
-                
-            }
-            
-        }
-        
-        
-//        DLog(@"bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
-//        DLog(@"page:%d scale:%f offset:%d,%d, pageWidth/pageHeight:%f,%f", _page, _scale, _offsetX, _offsetY, pageWidth, pageHeight);
 
         CGContextRef context = UIGraphicsGetCurrentContext();
         
@@ -384,11 +274,11 @@
         if (pdfPage != NULL) {
             CGContextSaveGState(context);
             
-            CGRect curPageBounds= CGRectMake(0, 0, pageWidth, pageHeight);
+            CGRect curPageBounds= CGRectMake(0, 0, self.superview.bounds.size.width, self.superview.bounds.size.height);
             
             // caculate offset
-            curPageBounds.origin.x += _offsetX;
-            curPageBounds.origin.y += (-1 * _offsetY) - pageHeight;
+            curPageBounds.origin.x += 0;
+            curPageBounds.origin.y -= self.superview.bounds.size.height;
 
 
             // Fill the background with white.
@@ -413,9 +303,9 @@
                     CGContextSaveGState(context);
                     CGRect prePageBounds= curPageBounds;
                     if (_horizontal){
-                        prePageBounds.origin.x -= pageWidth + _spacing;
+                        prePageBounds.origin.x -= self.superview.bounds.size.width + _spacing;
                     } else {
-                        prePageBounds.origin.y += pageHeight + _spacing;
+                        prePageBounds.origin.y += self.superview.bounds.size.height + _spacing;
                     }
                     
                     // Fill the background with white.
@@ -444,11 +334,11 @@
                     CGRect nextPageBounds= curPageBounds;
                     if (_horizontal){
                         
-                        nextPageBounds.origin.x += pageWidth + _spacing;
+                        nextPageBounds.origin.x += self.superview.bounds.size.width + _spacing;
                         
                     } else {
                         
-                        nextPageBounds.origin.y -= pageHeight + _spacing;
+                        nextPageBounds.origin.y -= self.superview.bounds.size.height + _spacing;
                         
                     }
 
@@ -525,8 +415,15 @@
     CGPoint translation = [recognizer translationInView:self];
 //    NSLog(@"translation %f,%f", translation.x, translation.y);
     
-    _offsetX += translation.x;
-    _offsetY += translation.y;
+    
+    CGPoint center = recognizer.view.center;
+    CGPoint finalCenter = center;
+    
+    finalCenter.x += translation.x;
+    finalCenter.y += translation.y;
+    
+    int pageHeight = self.superview.bounds.size.height*_scale;
+    int pageWidth = self.superview.bounds.size.width*_scale;
     
     
     // end animation
@@ -537,12 +434,16 @@
 
         // if low velocity not start end animation, only do a drag/move
         if (_horizontal==TRUE) {
+            if (_page==1 && velocity.x>0) break;
+            if (_page==_numberOfPages && velocity.x<0) break;
             
             if (abs((int)velocity.x) < 200) {
                 break;
             }
             
         } else {
+            if (_page==1 && velocity.y>0) break;
+            if (_page==_numberOfPages && velocity.y<0) break;
             
             if (abs((int)velocity.y) < 200) {
                 break;
@@ -551,33 +452,21 @@
         }
         
         
-        CGPoint center = recognizer.view.center;
-        CGPoint finalCenter = center;
-        
+      
         // set finalCenter to do an animation
         if (_horizontal==TRUE) {
             
-            if (velocity.x > 0) {
-                
-                finalCenter.x += self.bounds.size.width/3;
-                
-            } else {
-                
-                finalCenter.x -= self.bounds.size.width/3;
-                
-            }
+            if (velocity.x>0 && velocity.x>3*pageWidth) velocity.x = 3*pageWidth;
+            if (velocity.x<0 && velocity.x<-3*pageWidth) velocity.x = -3*pageWidth;
+            
+            finalCenter.x += velocity.x;
             
         } else {
             
-            if (velocity.y > 0) {
-                
-                finalCenter.y += self.bounds.size.height/3;
-                
-            } else {
-                
-                finalCenter.y -= self.bounds.size.height/3;
-                
-            }
+            if (velocity.y>0 && velocity.y>3*pageHeight) velocity.y = 3*pageHeight;
+            if (velocity.y<0 && velocity.y<-3*pageHeight) velocity.y = -3*pageHeight;
+            
+            finalCenter.y += velocity.y;
             
         }
         
@@ -591,46 +480,104 @@
                              recognizer.view.center = finalCenter;
                          }
                          completion:^(BOOL finished){
-                             
-                             if (_horizontal == TRUE) {
-                                 
-                                 if (velocity.x > 0) {
-                                     
-                                     _offsetX = 0;
-                                     _page--;
-                                     
-                                 } else {
-                                     
-                                     _offsetX = 0;
-                                     _page++;
-                                     
-                                 }
-                                 
-                             } else {
-                                 
-                                 if (velocity.y > 0) {
-                                     
-                                     _offsetY = 0;
-                                     _page--;
-                                     
-                                 } else {
-                                     
-                                     _offsetY = 0;
-                                     _page++;
-                                     
-                                 }
-                                 
-                             }
-
-                             // reset center;
-                             recognizer.view.center = center;
-                             
                              [self setNeedsDisplay];
                          }];
         // break while
         break;
     }
 
+    if (_horizontal) {
+        
+        while (finalCenter.x > self.bounds.size.width/2) {
+            finalCenter.x -= pageWidth;
+            _page --;
+        }
+        
+        while (finalCenter.x< pageWidth - self.bounds.size.width/2) {
+            finalCenter.x += pageWidth;
+            _page ++;
+        }
+        
+        _page = _page < 1 ? 1 : _page;
+        _page = _page > _numberOfPages ? _numberOfPages : _page;
+        
+        // control X for not moving out
+        if (_page == 1) {
+            
+            if (finalCenter.x > pageWidth/2) finalCenter.x = pageWidth/2;
+            
+        }
+        
+        
+        if (_page == _numberOfPages) {
+            
+            if (finalCenter.x < self.superview.bounds.size.width - pageWidth/2) finalCenter.x = self.superview.bounds.size.width - pageWidth/2;
+            
+        }
+        
+        // control Y for not moving out
+        if (finalCenter.y < (self.superview.bounds.size.height - pageHeight/2)){
+            
+            finalCenter.y = self.superview.bounds.size.height - pageHeight/2;
+            
+        }
+        
+        
+        if (finalCenter.y > pageHeight/2){
+            
+            finalCenter.y = pageHeight/2;
+            
+        }
+
+        
+    } else {
+        
+        while (finalCenter.y > self.bounds.size.height/2) {
+            finalCenter.y -= pageHeight;
+            _page --;
+        }
+        
+        while (finalCenter.y< pageHeight - self.bounds.size.height/2) {
+            finalCenter.y += pageHeight;
+            _page ++;
+        }
+        
+        _page = _page < 1 ? 1 : _page;
+        _page = _page > _numberOfPages ? _numberOfPages : _page;
+        
+        // control Y for not moving out
+        if (_page == 1) {
+            
+            if (finalCenter.y > pageHeight/2) finalCenter.y = pageHeight/2;
+            
+        }
+
+        
+        if (_page == _numberOfPages) {
+            
+            if (finalCenter.y < self.superview.bounds.size.height - pageHeight/2) finalCenter.y = self.superview.bounds.size.height - pageHeight/2;
+            
+        }
+        
+        // control X for not moving out
+        if (finalCenter.x < (self.superview.bounds.size.width - pageWidth/2)){
+            
+            finalCenter.x = self.superview.bounds.size.width - pageWidth/2;
+            
+        }
+        
+        
+        if (finalCenter.x > pageWidth/2){
+            
+            finalCenter.x = pageWidth/2;
+            
+        }
+        
+    }
+    
+    
+    // set center;
+    recognizer.view.center = finalCenter;
     
     
     [recognizer setTranslation:CGPointZero inView:self];
@@ -659,19 +606,17 @@
         
         CGPoint p1 = [recognizer locationOfTouch: 0 inView:self ];
         CGPoint p2 = [recognizer locationOfTouch: 1 inView:self ];
-        float centerX = (p1.x+p2.x)/2;
-        float centerY = (p1.y+p2.y)/2;
         
-        _offsetX = centerX - (centerX - _offsetX) * scale;
-        _offsetY = centerY - (centerY - _offsetY) * scale;
-
+        CGPoint finalCenter = recognizer.view.center;
+        finalCenter.x = (p1.x+p2.x)/2;
+        finalCenter.y = (p1.y+p2.y)/2;
+        
         _scale = scale * _scale;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
+        recognizer.view.center = finalCenter;
     
-        
-    
-        [self updateBounds];
+        [self setNeedsDisplay];
         
     }
     
@@ -692,12 +637,7 @@
         
         // one tap add scale 1.2 times
         CGFloat scale = 1.2;
-        
-        CGPoint center = self.center;
-        
-        _offsetX = center.x - (center.x - _offsetX) * scale;
-        _offsetY = center.y - (center.y - _offsetY) * scale;
-        
+
         _scale = _scale * scale;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
@@ -705,15 +645,13 @@
     } else {
         
         _scale = 1.0;
-        _offsetX = 0;
-        _offsetY = 0;
         _isContiniousTap = TRUE;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
         
     }
     
-    [self updateBounds];
+    [self setNeedsDisplay];
     
 }
 

@@ -59,7 +59,7 @@
 
 - (void)setScale:(float)scale
 {
-    if (scale ==0) return;
+
     [wPdfView setScale:scale];
 
 }
@@ -95,10 +95,7 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-//    NSLog(@"super bunds.size:%f,%f", self.bounds.size.width, self.bounds.size.height);
-    
     [wPdfView updateBounds];
-
 }
 
 
