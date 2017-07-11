@@ -32,7 +32,7 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 v1.2.4
 
-1. Refactor pan gesture and fix pdf not show complete when scale #20
+1. Refactor pan gesture and fix pdf not show complete when scale on iOS #20
 2. Replace PropTypes with prop-types package #22
 
 v1.2.3
