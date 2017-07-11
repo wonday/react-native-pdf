@@ -28,18 +28,23 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
     RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
 
-### ChangeLog 
+### ChangeLog
+
+v1.2.4
+
+1. Refactor pan gesture and fix pdf not show complete when scale #20
+2. Replace PropTypes with prop-types package #22
 
 v1.2.3
 
-1. comment out debug log
-2. fix onLoadComplete not triggered on iOS #19
+1. Comment out debug log
+2. Fix onLoadComplete not triggered on iOS #19
 3. Fix initial props scale not work problem on iOS
 
 v1.2.2
 
-1. fix crash when scale is bigger #4
-2. improve pan operation when page=1 #15
+1. Fix crash when scale is bigger #4
+2. Improve pan operation when page=1 #15
 3. Fix TypeScript definitions (onLoadComplete and onPageChanged) #16
 
 v1.2.1
