@@ -434,19 +434,37 @@
 
         // if low velocity not start end animation, only do a drag/move
         if (_horizontal==TRUE) {
-            if (_page==1 && velocity.x>0) break;
-            if (_page==_numberOfPages && velocity.x<0) break;
             
             if (abs((int)velocity.x) < 200) {
                 break;
             }
             
+            if (_page==1 && velocity.x>0) break;
+            if (_page==_numberOfPages && velocity.x<0) break;
+            
+            if (_page<3 && velocity.x>0) {
+                velocity.x = pageWidth;
+            }
+            
+            if (_numberOfPages-_page<3 && velocity.x<0) {
+                velocity.x = pageWidth;
+            }
+            
         } else {
-            if (_page==1 && velocity.y>0) break;
-            if (_page==_numberOfPages && velocity.y<0) break;
             
             if (abs((int)velocity.y) < 200) {
                 break;
+            }
+            
+            if (_page==1 && velocity.y>0) break;
+            if (_page==_numberOfPages && velocity.y<0) break;
+            
+            if (_page<3 && velocity.y>0){
+                velocity.y = pageHeight;
+            }
+
+            if (_numberOfPages-_page<3 && velocity.y<0) {
+                velocity.y = pageHeight;
             }
             
         }
