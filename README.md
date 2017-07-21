@@ -30,7 +30,7 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
-v1.2.5
+v1.2.5/v1.2.6
 
 1. improve animation when at pdf head/end iOS #23
 
