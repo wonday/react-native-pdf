@@ -30,6 +30,10 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
+v1.2.5
+
+1. improve animation when at pdf head/end iOS #23
+
 v1.2.4
 
 1. Refactor pan gesture and fix pdf not show complete when scale on iOS #20
