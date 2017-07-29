@@ -25,9 +25,9 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-# Android/IJ
+# Android/IntelliJ
 #
-/build/
+build/
 .idea
 .gradle
 local.properties
