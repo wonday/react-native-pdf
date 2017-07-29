@@ -456,15 +456,15 @@
         // set finalCenter to do an animation
         if (_horizontal==TRUE) {
             
-            if (velocity.x>0 && velocity.x>3*pageWidth) velocity.x = 3*pageWidth;
-            if (velocity.x<0 && velocity.x<-3*pageWidth) velocity.x = -3*pageWidth;
+            if (velocity.x>0 && velocity.x>2*pageWidth) velocity.x = 2*pageWidth;
+            if (velocity.x<0 && velocity.x<-2*pageWidth) velocity.x = -2*pageWidth;
             
             finalCenter.x += velocity.x;
             
         } else {
             
-            if (velocity.y>0 && velocity.y>3*pageHeight) velocity.y = 3*pageHeight;
-            if (velocity.y<0 && velocity.y<-3*pageHeight) velocity.y = -3*pageHeight;
+            if (velocity.y>0 && velocity.y>2*pageHeight) velocity.y = 2*pageHeight;
+            if (velocity.y<0 && velocity.y<-2*pageHeight) velocity.y = -2*pageHeight;
             
             finalCenter.y += velocity.y;
             
@@ -473,7 +473,7 @@
         
         
         //use animation to slip to end
-        [UIView animateWithDuration:0.6
+        [UIView animateWithDuration:1.5
                               delay:0
                             options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
