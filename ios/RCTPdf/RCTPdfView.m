@@ -98,5 +98,10 @@
     [wPdfView updateBounds];
 }
 
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
+{
+    [wPdfView loadPdf];
+}
+
 
 @end

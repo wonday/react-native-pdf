@@ -29,6 +29,7 @@
 
 @property(nonatomic, copy) RCTBubblingEventBlock onChange;
 
+- (void)loadPdf;
 - (void)updateBounds;
 
 @end

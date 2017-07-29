@@ -60,7 +60,6 @@
         
         _numberOfPages = 0;
         
-        _isLoadCompleteNoticed = TRUE;
         _isContiniousTap = TRUE;
         
         self.backgroundColor = UIColor.clearColor;
@@ -74,52 +73,6 @@
     
 }
 
-- (void)loadPdf:(NSString *)path withPassword:(NSString *)password
-{
-    
-    if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
-    
-    if (_path != nil && _path.length > 0 && _password != nil) {
-        
-        NSURL *pdfURL = [NSURL fileURLWithPath:_path];
-        _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
-        
-        if (_pdfDoc != NULL && ![_password isEqualToString:@""]) {
-            bool isUnlocked = CGPDFDocumentUnlockWithPassword(_pdfDoc, [_password UTF8String]);
-            if (!isUnlocked) {
-                if(_onChange){
-                    ALog(@"error|load pdf failed.");
-                    
-                    _onChange(@{ @"message": @"error|Password required or incorrect password."});
-                    _isLoadCompleteNoticed = TRUE;
-                    
-                }
-                return;
-            }
-        }
-        
-        if (_pdfDoc == NULL) {
-            if(_onChange){
-                ALog(@"error|load pdf failed.");
-                
-                _onChange(@{ @"message": @"error|Load pdf failed."});
-                _isLoadCompleteNoticed = TRUE;
-                
-            }
-            return;
-        }
-        
-        _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
-        _isLoadCompleteNoticed = FALSE;
-        
-        [self setNeedsDisplay];
-    }
-
-    
-
-    
-}
-
 - (void)setPath:(NSString *)path
 {
     
@@ -130,10 +83,6 @@
         if (_path == nil || _path.length == 0) {
             
             DLog(@"null path");
-            
-        } else {
-            
-            [self loadPdf:_path withPassword:_password];
             
         }
     }
@@ -150,10 +99,6 @@
         if (_password == nil || _password.length == 0) {
             
             DLog(@"null password");
-            
-        } else {
-            
-            [self loadPdf:_path withPassword:_password];
             
         }
     }
@@ -222,6 +167,50 @@
     
 }
 
+- (void) loadPdf {
+    if (_path != nil && _path.length != 0) {
+        if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
+            
+        NSURL *pdfURL = [NSURL fileURLWithPath:_path];
+        _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
+        
+        if (_pdfDoc != NULL && CGPDFDocumentIsEncrypted(_pdfDoc)) {
+            bool isUnlocked = CGPDFDocumentUnlockWithPassword(_pdfDoc, [_password UTF8String]);
+            if (!isUnlocked) {
+                if(_onChange){
+                    ALog(@"error|Password required or incorrect password.");
+                    
+                    _onChange(@{ @"message": @"error|Password required or incorrect password."});
+                    _isLoadCompleteNoticed = TRUE;
+                    
+                }
+                return;
+            }
+
+        }
+        
+        if (_pdfDoc == NULL) {
+            if(_onChange){
+                ALog(@"error|load pdf failed.");
+                
+                _onChange(@{ @"message": @"error|Load pdf failed."});
+                _isLoadCompleteNoticed = TRUE;
+                
+            }
+            return;
+        }
+        
+        _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
+
+        [self noticeLoadComplete];
+        [self setNeedsDisplay];
+
+    } else {
+        DLog(@"null path");
+    }
+}
+
+
 - (void)noticePageChanged
 {
     
@@ -246,8 +235,6 @@
     DLog(@"loadComplete,%d", _numberOfPages);
     
     _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
-    _isLoadCompleteNoticed = TRUE;
-        
 
 }
 
@@ -256,12 +243,6 @@
     
     if (_pdfDoc != NULL) {
         
-        if (!_isLoadCompleteNoticed) {
-            
-            [self noticeLoadComplete];
-            
-        }
-
         CGContextRef context = UIGraphicsGetCurrentContext();
         
         // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system
@@ -355,9 +336,10 @@
             }
 
         }
+
+        [self noticePageChanged];
     }
     
-     [self noticePageChanged];
 }
 
 /**
