@@ -90,7 +90,7 @@
                 if(_onChange){
                     ALog(@"error|load pdf failed.");
                     
-                    _onChange(@{ @"message": @"error|unlock pdf failed."});
+                    _onChange(@{ @"message": @"error|Password required or incorrect password."});
                     _isLoadCompleteNoticed = TRUE;
                     
                 }
@@ -102,7 +102,7 @@
             if(_onChange){
                 ALog(@"error|load pdf failed.");
                 
-                _onChange(@{ @"message": @"error|load pdf failed."});
+                _onChange(@{ @"message": @"error|Load pdf failed."});
                 _isLoadCompleteNoticed = TRUE;
                 
             }

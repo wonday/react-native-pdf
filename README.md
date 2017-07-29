@@ -30,9 +30,14 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
+v1.2.7
+
+1. Improve scrolling animation iOS #25
+2. When password error, call onError iOS/Android #26
+
 v1.2.5/v1.2.6
 
-1. improve animation when at pdf head/end iOS #23
+1. Improve scrolling animation when at pdf head/end iOS #23
 
 v1.2.4
 
@@ -44,17 +49,6 @@ v1.2.3
 1. Comment out debug log
 2. Fix onLoadComplete not triggered on iOS #19
 3. Fix initial props scale not work problem on iOS
-
-v1.2.2
-
-1. Fix crash when scale is bigger #4
-2. Improve pan operation when page=1 #15
-3. Fix TypeScript definitions (onLoadComplete and onPageChanged) #16
-
-v1.2.1
-
-1. add METHOD and HEADERS support for network pdf
-
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
@@ -186,7 +180,7 @@ const styles = StyleSheet.create({
 | scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
 | horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
 | spacing       | number        | 10               | draw page breaker   | ✔   | ✔ |
-| password      | string        | ""               | pdf password        | ✔   | ✔ |
+| password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ |
 | activityIndicator   | Component       | ProgressBar | when loading show it as an indicator  | ✔   | ✔ |
 | onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |

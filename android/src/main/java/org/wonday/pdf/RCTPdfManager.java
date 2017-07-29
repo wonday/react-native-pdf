@@ -96,7 +96,12 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     @Override
     public void onError(Throwable t){
         WritableMap event = Arguments.createMap();
-        event.putString("message", "error|load pdf failed.");
+        if (t.getMessage().contains("Password required or incorrect password")) {
+            event.putString("message", "error|Password required or incorrect password.");
+        } else {
+            event.putString("message", "error|Load pdf failed.");
+        }
+
         ReactContext reactContext = (ReactContext)pdfView.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             pdfView.getId(),
