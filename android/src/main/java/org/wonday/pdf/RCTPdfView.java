@@ -26,7 +26,7 @@ public class RCTPdfView implements ReactPackage {
         return Collections.emptyList();
     }
 
-    @Override
+    // Deprecated as of RN 0.47.0
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
