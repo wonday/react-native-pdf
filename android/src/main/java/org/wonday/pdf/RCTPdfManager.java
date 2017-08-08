@@ -8,39 +8,31 @@
 
 package org.wonday.pdf;
 
-import java.io.File;
-
 import android.content.Context;
-import android.view.ViewGroup;
-import android.util.Log;
 import android.graphics.PointF;
-import android.net.Uri;
+import android.util.Log;
 
-import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
-import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
-import com.github.barteksc.pdfviewer.listener.OnErrorListener;
-
-import com.facebook.react.bridge.NativeModule;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.facebook.react.common.MapBuilder;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
+import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
+import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
+
+import java.io.File;
 
 import static java.lang.String.format;
-import java.lang.ClassCastException;
 
 
-public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener {
+public class RCTPdfManager extends SimpleViewManager<PdfView> implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener {
     private static final String REACT_CLASS = "RCTPdf";
     private Context context;
-    private PDFView pdfView;
+    private PdfView pdfView;
     private int page = 1;               // start from 1
     private boolean horizontal = false;
     private float scale = 1;
@@ -60,8 +52,8 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     }
 
     @Override
-    public PDFView createViewInstance(ThemedReactContext context) {
-        pdfView = new PDFView(context, null);
+    public PdfView createViewInstance(ThemedReactContext context) {
+        pdfView = new PdfView(context, null);
         return pdfView;
     }
 
@@ -133,38 +125,38 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     }
 
     @ReactProp(name = "path")
-    public void setPath(PDFView view, String path) {
+    public void setPath(PdfView view, String path) {
         this.path = path;
         drawPdf();
     }
 
     // page start from 1
     @ReactProp(name = "page")
-    public void setPage(PDFView view, int page) {
+    public void setPage(PdfView view, int page) {
         this.page = page>1?page:1;
         drawPdf();
     }
 
     @ReactProp(name = "scale")
-    public void setScale(PDFView view, float scale) {
+    public void setScale(PdfView view, float scale) {
         this.scale = scale;
         drawPdf();
     }
 
     @ReactProp(name = "horizontal")
-    public void setHorizontal(PDFView view, boolean horizontal) {
+    public void setHorizontal(PdfView view, boolean horizontal) {
         this.horizontal = horizontal;
         drawPdf();
     }
 
     @ReactProp(name = "spacing")
-    public void setSpacing(PDFView view, int spacing) {
+    public void setSpacing(PdfView view, int spacing) {
         this.spacing = spacing;
         drawPdf();
     }
 
     @ReactProp(name = "password")
-    public void setSpacing(PDFView view, String password) {
+    public void setSpacing(PdfView view, String password) {
         this.password = password;
         drawPdf();
     }
