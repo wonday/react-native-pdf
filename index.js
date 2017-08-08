@@ -16,6 +16,7 @@ import {
   Platform,
   ProgressBarAndroid,
   ProgressViewIOS,
+  ViewPropTypes
 } from 'react-native'
 import RNFetchBlob from 'react-native-fetch-blob'
 const SHA1 = require('crypto-js/sha1')
@@ -234,7 +235,7 @@ export default class Pdf extends Component {
 }
 
 Pdf.propTypes = {
-  ...View.propTypes,
+  ...ViewPropTypes,
   path: PropTypes.string,
   source: PropTypes.oneOfType([
     PropTypes.shape({
