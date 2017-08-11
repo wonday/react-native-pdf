@@ -30,6 +30,10 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
+v1.2.9
+
+1. fix drawing problem on Android 4.4 #31
+
 v1.2.8
 
 1. Remove deprecated android override for RN 0.47.0 compatibility #31
@@ -42,11 +46,6 @@ v1.2.7
 v1.2.5/v1.2.6
 
 1. Improve scrolling animation when at pdf head/end iOS #23
-
-v1.2.4
-
-1. Refactor pan gesture and fix pdf not show complete when scale on iOS #20
-2. Replace PropTypes with prop-types package #22
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
@@ -181,7 +180,7 @@ const styles = StyleSheet.create({
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ |
 | activityIndicator   | Component       | ProgressBar | when loading show it as an indicator  | ✔   | ✔ |
-| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem, so add a switch  | ✖   | ✔ |
+| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ |
 | onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when pdf load completed, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
