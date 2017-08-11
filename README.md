@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ |
 | activityIndicator   | Component       | ProgressBar | when loading show it as an indicator  | ✔   | ✔ |
+| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem, so add a switch  | ✖   | ✔ |
 | onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |
 | onLoadComplete      | function        | null        | callback when pdf load completed, return total page count | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |

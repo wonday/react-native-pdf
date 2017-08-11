@@ -48,6 +48,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     private String path;
     private int spacing = 10;
     private String password = "";
+    private boolean enableAntialiasing = true;
 
 
     public RCTPdfManager(ReactApplicationContext reactContext){
@@ -99,7 +100,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
         if (t.getMessage().contains("Password required or incorrect password")) {
             event.putString("message", "error|Password required or incorrect password.");
         } else {
-            event.putString("message", "error|Load pdf failed.");
+            event.putString("message", "error|"+t.getMessage());
         }
 
         ReactContext reactContext = (ReactContext)pdfView.getContext();
@@ -125,6 +126,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
                 .onError(this)
                 .spacing(this.spacing)
                 .password(this.password)
+                .enableAntialiasing(this.enableAntialiasing)
                 .load();
 
             pdfView.zoomCenteredTo(this.scale, pivot);
@@ -169,6 +171,12 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
         drawPdf();
     }
 
+    @ReactProp(name = "enableAntialiasing")
+    public void setEnableAntialiasing(PDFView view, boolean enableAntialiasing) {
+        this.enableAntialiasing = enableAntialiasing;
+        drawPdf();
+    }
+    
     private void showLog(final String str) {
         Log.d(REACT_CLASS, str);
     }
