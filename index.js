@@ -251,6 +251,7 @@ Pdf.propTypes = {
   spacing: PropTypes.number,
   password: PropTypes.string,
   activityIndicator: PropTypes.any,
+  enableAntialiasing: PropTypes.bool,
   onChange: PropTypes.func,
   onLoadComplete: PropTypes.func,
   onPageChanged: PropTypes.func,
