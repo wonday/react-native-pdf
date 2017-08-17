@@ -18,6 +18,8 @@ interface Props {
   spacing?: number,
   password?: string,
   activityIndicator?: any,
+  enableAntialiasing?: boolean,
+  fitWidth?: boolean,
   onLoadComplete?: (pageCount: number) => void,
   onPageChanged?: (page: number, pageCount: number) => void,
   onError?: ()=> void,

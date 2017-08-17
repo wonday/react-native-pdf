@@ -20,6 +20,7 @@ import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
+import com.github.barteksc.pdfviewer.listener.OnRenderListener;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -49,6 +50,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
+    private boolean fitWidth = false;
 
 
     public RCTPdfManager(ReactApplicationContext reactContext){
@@ -70,6 +72,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
     public void onPageChanged(int page, int pageCount) {
         // pdf lib page start from 0, convert it to our page (start from 1)
         page = page+1;
+        this.page = page;
         showLog(format("%s %s / %s", path, page, pageCount));
 
         WritableMap event = Arguments.createMap();
@@ -127,6 +130,14 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
                 .spacing(this.spacing)
                 .password(this.password)
                 .enableAntialiasing(this.enableAntialiasing)
+                .onRender(new OnRenderListener() {
+                                @Override
+                                public void onInitiallyRendered(int nbPages, float pageWidth, float pageHeight) {
+                                    if (fitWidth) {
+                                        pdfView.fitToWidth(page);
+                                    }
+                                }
+                            })
                 .load();
 
             pdfView.zoomCenteredTo(this.scale, pivot);
