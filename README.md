@@ -33,6 +33,7 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 v1.2.9
 
 1. fix drawing problem on Android 4.4 #31
+2. add fitWidth support #36, #38
 
 v1.2.8
 
@@ -175,7 +176,8 @@ const styles = StyleSheet.create({
 | source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔   | ✔ |
 | page          | number        | 1                | page index          | ✔   | ✔ |
 | scale         | number        | 1.0              | zoom scale, scale>=1| ✔   | ✔ |
-| horizontal    | bool          | false            | draw page direction | ✔   | ✔ |
+| horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ |
+| fitWidth      | bool          | false            | if true fit the width of view | ✔   | ✔ |
 | spacing       | number        | 10               | draw page breaker   | ✔   | ✔ |
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ |

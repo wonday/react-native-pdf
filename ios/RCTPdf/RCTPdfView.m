@@ -71,6 +71,13 @@
     
 }
 
+- (void)setFitWidth:(BOOL)fitWidth
+{
+    
+    [wPdfView setFitWidth:fitWidth];
+    
+}
+
 - (void)setSpacing:(int)spacing
 {
     

@@ -36,13 +36,15 @@
 
 @implementation WPdfView
 {
-
+    
     CGPDFDocumentRef _pdfDoc;
     int _numberOfPages;
-
     int _isContiniousTap;
-    
     BOOL _isLoadCompleteNoticed;
+    
+    CGRect _pdfPageRect;
+    double _basePageWidth;
+    double _basePageHeight;
     
 }
 
@@ -54,16 +56,20 @@
     if (self) {
         _page = 1;
         _horizontal = FALSE;
+        _fitWidth = FALSE;
         _scale = 1.0f;
         _spacing = 10;
         _password = @"";
         
         _numberOfPages = 0;
-        
         _isContiniousTap = TRUE;
         
+        _pdfPageRect = CGRectMake(0, 0, 0, 0);
+        _basePageWidth = 0;
+        _basePageHeight = 0;
+        
         self.backgroundColor = UIColor.clearColor;
-
+        
         [self bindPan];
         [self bindPinch];
         [self bindTap];
@@ -112,26 +118,22 @@
         
         NSLog(@"setPage %d -> %d", _page, page);
         _page = page;
-        [self setNeedsDisplay];
-        
     }
     
 }
 
 - (void)setScale:(float)scale
 {
-
+    
     scale = scale < MIN_SCALE ? MIN_SCALE : scale;
     
     if (scale != _scale) {
         
         NSLog(@"setScale %f -> %f", _scale, scale);
-
+        
         _scale = scale;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
-        
-        [self updateBounds];
         
     }
     
@@ -146,8 +148,18 @@
         
         _horizontal = horizontal;
         
-        [self setNeedsDisplay];
+    }
+    
+}
+
+- (void)setFitWidth:(BOOL)fitWidth
+{
+    
+    if (fitWidth != _fitWidth) {
         
+        NSLog(@"setFitWidth %d -> %d", _fitWidth, fitWidth);
+        
+        _fitWidth = fitWidth;
     }
     
 }
@@ -161,8 +173,6 @@
         
         _spacing = spacing;
         
-        [self setNeedsDisplay];
-        
     }
     
 }
@@ -170,7 +180,7 @@
 - (void) loadPdf {
     if (_path != nil && _path.length != 0) {
         if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
-            
+        
         NSURL *pdfURL = [NSURL fileURLWithPath:_path];
         _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
         
@@ -186,7 +196,7 @@
                 }
                 return;
             }
-
+            
         }
         
         if (_pdfDoc == NULL) {
@@ -201,10 +211,14 @@
         }
         
         _numberOfPages = (int)CGPDFDocumentGetNumberOfPages(_pdfDoc);
-
+        
+        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(_pdfDoc, 1);
+        _pdfPageRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFTrimBox);
+        
         [self noticeLoadComplete];
+        [self setNeedsLayout];
         [self setNeedsDisplay];
-
+        
     } else {
         DLog(@"null path");
     }
@@ -218,9 +232,9 @@
         static int lastPage = -1;
         
         if (lastPage!=_page) {
-        
+            
             DLog(@"pageChanged,%d,%d", _page, _numberOfPages);
-        
+            
             _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", _page, _numberOfPages]]});
             _isLoadCompleteNoticed = TRUE;
             lastPage = _page;
@@ -235,7 +249,7 @@
     DLog(@"loadComplete,%d", _numberOfPages);
     
     _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
-
+    
 }
 
 - (void)drawRect:(CGRect)rect
@@ -249,28 +263,31 @@
         // before we start drawing.
         CGContextScaleCTM(context, 1.0, -1.0);
         
+        CGRect basePageRect = CGRectMake(0, 0, _basePageWidth, _basePageHeight);
+        
         CGPDFPageRef pdfPage = CGPDFDocumentGetPage(_pdfDoc, _page);
+        
         
         // draw current page
         if (pdfPage != NULL) {
             CGContextSaveGState(context);
             
-            CGRect curPageBounds= CGRectMake(0, 0, self.superview.bounds.size.width, self.superview.bounds.size.height);
+            CGRect curPageBounds= CGRectMake(0, 0, basePageRect.size.width, basePageRect.size.height);
             
             // caculate offset
             curPageBounds.origin.x += 0;
-            curPageBounds.origin.y -= self.superview.bounds.size.height;
-
-
+            curPageBounds.origin.y -= basePageRect.size.height;
+            
+            
             // Fill the background with white.
             CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
             CGContextFillRect(context, curPageBounds);
             
-            CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, curPageBounds, 0, true);
+            CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFTrimBox, curPageBounds, 0, true);
             CGContextConcatCTM(context, pdfTransform);
             
             CGContextDrawPDFPage(context, pdfPage);
-
+            
             
             CGContextRestoreGState(context);
             
@@ -284,26 +301,26 @@
                     CGContextSaveGState(context);
                     CGRect prePageBounds= curPageBounds;
                     if (_horizontal){
-                        prePageBounds.origin.x -= self.superview.bounds.size.width + _spacing;
+                        prePageBounds.origin.x -= basePageRect.size.width + _spacing;
                     } else {
-                        prePageBounds.origin.y += self.superview.bounds.size.height + _spacing;
+                        prePageBounds.origin.y += basePageRect.size.height + _spacing;
                     }
                     
                     // Fill the background with white.
                     CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
                     CGContextFillRect(context, prePageBounds);
                     
-                    CGAffineTransform prePageTransform = CGPDFPageGetDrawingTransform(pdfPrePage, kCGPDFCropBox, prePageBounds, 0, true);
+                    CGAffineTransform prePageTransform = CGPDFPageGetDrawingTransform(pdfPrePage, kCGPDFTrimBox, prePageBounds, 0, true);
                     CGContextConcatCTM(context, prePageTransform);
                     
                     CGContextDrawPDFPage(context, pdfPrePage);
                     
-
+                    
                     
                     CGContextRestoreGState(context);
                 }
             }
-
+            
             // draw next page
             if (_page < _numberOfPages) {
                 
@@ -315,28 +332,28 @@
                     CGRect nextPageBounds= curPageBounds;
                     if (_horizontal){
                         
-                        nextPageBounds.origin.x += self.superview.bounds.size.width + _spacing;
+                        nextPageBounds.origin.x += basePageRect.size.width + _spacing;
                         
                     } else {
                         
-                        nextPageBounds.origin.y -= self.superview.bounds.size.height + _spacing;
+                        nextPageBounds.origin.y -= basePageRect.size.height + _spacing;
                         
                     }
-
+                    
                     // Fill the background with white.
                     CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
                     CGContextFillRect(context, nextPageBounds);
                     
-                    CGAffineTransform nextTransform = CGPDFPageGetDrawingTransform(pdfNextPage, kCGPDFCropBox, nextPageBounds, 0, true);
+                    CGAffineTransform nextTransform = CGPDFPageGetDrawingTransform(pdfNextPage, kCGPDFTrimBox, nextPageBounds, 0, true);
                     CGContextConcatCTM(context, nextTransform);
                     
                     CGContextDrawPDFPage(context, pdfNextPage);
                     CGContextRestoreGState(context);
                 }
             }
-
+            
         }
-
+        
         [self noticePageChanged];
     }
     
@@ -345,28 +362,35 @@
 /**
  *  reset bounds with scale
  *
- *  
+ *
  */
 - (void)updateBounds
 {
-   
+    
     CGRect bounds = self.superview.bounds;
     if (bounds.size.width == 0 || bounds.size.height == 0) return;
     
+    _basePageWidth = self.superview.bounds.size.width;
+    _basePageHeight = self.superview.bounds.size.height;
+    
+    if (_fitWidth && _basePageHeight<_pdfPageRect.size.height*_basePageWidth/_pdfPageRect.size.width) {
+        _basePageHeight = _pdfPageRect.size.height*_basePageWidth/_pdfPageRect.size.width;
+    }
+    
     if (_horizontal == TRUE) {
         
-        bounds.origin.x = - self.superview.bounds.size.width - _spacing;
-        bounds.size.width = self.superview.bounds.size.width*3 + _spacing*2;
-        bounds.size.height = self.superview.bounds.size.height;
+        bounds.origin.x = - _basePageWidth - _spacing;
+        bounds.size.width = _basePageWidth*3 + _spacing*2;
+        bounds.size.height = _basePageHeight;
         
     } else {
         
-        bounds.origin.y = - self.superview.bounds.size.height - _spacing;
-        bounds.size.width = self.superview.bounds.size.width;
-        bounds.size.height = self.superview.bounds.size.height*3 + _spacing*2;
+        bounds.origin.y = - _basePageHeight - _spacing;
+        bounds.size.width = _basePageWidth;
+        bounds.size.height = _basePageHeight*3 + _spacing*2;
         
     }
-
+    
     // we will set a 3-pages rect to frame and bounds
     [self setFrame:bounds];
     [self setBounds:bounds];
@@ -389,13 +413,13 @@
  */
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer
 {
-   
+    
     _isContiniousTap = FALSE;
     
     [recognizer.view.superview bringSubviewToFront:recognizer.view];
     
     CGPoint translation = [recognizer translationInView:self];
-//    NSLog(@"translation %f,%f", translation.x, translation.y);
+    //    NSLog(@"translation %f,%f", translation.x, translation.y);
     
     
     CGPoint center = recognizer.view.center;
@@ -404,8 +428,8 @@
     finalCenter.x += translation.x;
     finalCenter.y += translation.y;
     
-    int pageHeight = self.superview.bounds.size.height*_scale;
-    int pageWidth = self.superview.bounds.size.width*_scale;
+    int pageHeight = _basePageHeight*_scale;
+    int pageWidth = _basePageWidth*_scale;
     
     
     // end animation
@@ -413,7 +437,7 @@
            && recognizer.state == UIGestureRecognizerStateEnded) {
         
         CGPoint velocity = [recognizer velocityInView:self];
-
+        
         // if low velocity not start end animation, only do a drag/move
         if (_horizontal==TRUE) {
             
@@ -444,7 +468,7 @@
             if (_page<=3 && velocity.y>0){
                 velocity.y = pageHeight;
             }
-
+            
             if (_numberOfPages-_page<=3 && velocity.y<0) {
                 velocity.y = -pageHeight;
             }
@@ -452,7 +476,7 @@
         }
         
         
-      
+        
         // set finalCenter to do an animation
         if (_horizontal==TRUE) {
             
@@ -485,7 +509,7 @@
         // break while
         break;
     }
-
+    
     if (_horizontal) {
         
         while (finalCenter.x > self.bounds.size.width/2) {
@@ -528,7 +552,7 @@
             finalCenter.y = pageHeight/2;
             
         }
-
+        
         
     } else {
         
@@ -551,7 +575,7 @@
             if (finalCenter.y > pageHeight/2) finalCenter.y = pageHeight/2;
             
         }
-
+        
         
         if (_page == _numberOfPages) {
             
@@ -599,7 +623,7 @@
     CGFloat scale = recognizer.scale;
     
     if (scale * _scale < MIN_SCALE) scale = MIN_SCALE / _scale;
-
+    
     int touchCount = (int)recognizer.numberOfTouches;
     
     if (touchCount == 2) {
@@ -615,7 +639,7 @@
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
         recognizer.view.center = finalCenter;
-    
+        
         [self setNeedsDisplay];
         
     }
@@ -632,12 +656,11 @@
  */
 - (void)handleTap:(UITapGestureRecognizer *)recognizer
 {
-
     if (_isContiniousTap) {
         
         // one tap add scale 1.2 times
         CGFloat scale = 1.2;
-
+        
         _scale = _scale * scale;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
@@ -674,7 +697,7 @@
 /**
  *  Bind pinch
  *
- *  
+ *
  */
 - (void)bindPinch {
     UIPinchGestureRecognizer *recognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self

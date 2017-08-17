@@ -23,7 +23,9 @@
 @property(nonatomic) int page;
 @property(nonatomic) float scale;
 @property(nonatomic) BOOL horizontal;
+@property(nonatomic) BOOL fitWidth;
 @property(nonatomic) int spacing;
+@property(nonatomic, strong) NSString *password;
 
 
 @property(nonatomic, copy) RCTBubblingEventBlock onChange;
