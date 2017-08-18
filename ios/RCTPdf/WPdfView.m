@@ -669,8 +669,11 @@
         
         _scale = 1.0;
         _isContiniousTap = TRUE;
+        _fitWidth = FALSE;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
+        
+        [self setNeedsLayout];
         
     }
     

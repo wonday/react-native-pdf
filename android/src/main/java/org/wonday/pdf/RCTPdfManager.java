@@ -134,7 +134,7 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
                                 @Override
                                 public void onInitiallyRendered(int nbPages, float pageWidth, float pageHeight) {
                                     if (fitWidth) {
-                                        pdfView.fitToWidth(page);
+                                        pdfView.fitToWidth(page-1);
                                     }
                                 }
                             })
@@ -187,7 +187,13 @@ public class RCTPdfManager extends SimpleViewManager<PDFView> implements OnPageC
         this.enableAntialiasing = enableAntialiasing;
         drawPdf();
     }
-    
+
+    @ReactProp(name = "fitWidth")
+    public void setFitWidth(PDFView view, boolean fitWidth) {
+        this.fitWidth = fitWidth;
+        drawPdf();
+    }
+
     private void showLog(final String str) {
         Log.d(REACT_CLASS, str);
     }
