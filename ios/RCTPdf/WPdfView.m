@@ -681,6 +681,16 @@
     
 }
 
+/**
+ *  Single Tap
+ *  stop zoom
+ *
+ *  @param recognizer
+ */
+- (void)handleSingleTap:(UITapGestureRecognizer *)recognizer
+{
+    _isContiniousTap = FALSE;
+}
 
 #pragma mark - bind recognizer
 /**
@@ -716,13 +726,22 @@
  */
 - (void)bindTap
 {
-    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+    UITapGestureRecognizer *doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                  action:@selector(handleTap:)];
     //trigger by one finger and double touch
-    recognizer.numberOfTapsRequired = 2;
-    recognizer.numberOfTouchesRequired = 1;
+    doubleTapRecognizer.numberOfTapsRequired = 2;
+    doubleTapRecognizer.numberOfTouchesRequired = 1;
     
-    [self addGestureRecognizer:recognizer];
+    [self addGestureRecognizer:doubleTapRecognizer];
+    
+    UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                 action:@selector(handleSingleTap:)];
+    //trigger by one finger and one touch
+    singleTapRecognizer.numberOfTapsRequired = 1;
+    singleTapRecognizer.numberOfTouchesRequired = 1;
+    
+    [self addGestureRecognizer:singleTapRecognizer];
+    [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
     
 }
 
