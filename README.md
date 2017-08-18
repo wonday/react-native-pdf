@@ -30,7 +30,7 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
-v1.2.9
+v1.3.0
 
 1. fix drawing problem on Android 4.4 #31
 2. add fitWidth support #36, #38
