@@ -30,6 +30,11 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
+v1.3.1
+
+1. refactor android source
+2. stop page scrolling when tap screen #41
+
 v1.3.0
 
 1. fix drawing problem on Android 4.4 #31
@@ -43,10 +48,6 @@ v1.2.7
 
 1. Improve scrolling animation iOS #25
 2. When password error, call onError iOS/Android #26
-
-v1.2.5/v1.2.6
-
-1. Improve scrolling animation when at pdf head/end iOS #23
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
