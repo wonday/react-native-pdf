@@ -413,6 +413,8 @@
  */
 - (void)handlePan:(UIPanGestureRecognizer *)recognizer
 {
+    //stop animation
+    [recognizer.view.layer removeAllAnimations];
     
     _isContiniousTap = FALSE;
     
@@ -499,7 +501,7 @@
         //use animation to slip to end
         [UIView animateWithDuration:1.5
                               delay:0
-                            options:UIViewAnimationOptionCurveEaseOut
+                            options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction
                          animations:^{
                              recognizer.view.center = finalCenter;
                          }
@@ -617,6 +619,8 @@
  */
 - (void)handlePinch:(UIPinchGestureRecognizer *)recognizer
 {
+    //stop animation
+    [recognizer.view.layer removeAllAnimations];
     
     _isContiniousTap = FALSE;
     
@@ -656,6 +660,9 @@
  */
 - (void)handleTap:(UITapGestureRecognizer *)recognizer
 {
+    //stop animation
+    [recognizer.view.layer removeAllAnimations];
+    
     if (_isContiniousTap) {
         
         // one tap add scale 1.2 times
@@ -689,6 +696,10 @@
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)recognizer
 {
+    
+    //stop animation
+    [recognizer.view.layer removeAllAnimations];
+
     _isContiniousTap = FALSE;
 }
 
