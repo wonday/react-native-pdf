@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
 | parameter    | Description | default | iOS | Android |
 | ------------ | ----------- | ------- | --- | ------- |
 | uri          | pdf source, see the forllowing for detail.| required | ✔   | ✔ |
-| cached       | use cache or not | false | ✔ | ✔ |
+| cache        | use cache or not | false | ✔ | ✔ |
 | method       | request method when uri is a url | "GET" | ✔ | ✔ |
 | headers      | request headers when uri is a url | {} | ✔ | ✔ |
 
