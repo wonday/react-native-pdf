@@ -30,6 +30,10 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
+v1.3.2
+
+1. move react-native and react-native-fetch-blob to peerDependencies
+
 v1.3.1
 
 1. refactor android source
