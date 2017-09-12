@@ -430,8 +430,8 @@
     finalCenter.x += translation.x;
     finalCenter.y += translation.y;
     
-    int pageHeight = _basePageHeight*_scale;
-    int pageWidth = _basePageWidth*_scale;
+    float pageHeight = _basePageHeight*_scale;
+    float pageWidth = _basePageWidth*_scale;
     
     
     // end animation
@@ -447,8 +447,8 @@
                 break;
             }
             
-            if (_page==1 && velocity.x>0) break;
-            if (_page==_numberOfPages && velocity.x<0) break;
+            if (_page<=2 && velocity.x>0) break;
+            if (_page>=_numberOfPages-1 && velocity.x<0) break;
             
             if (_page<=3 && velocity.x>0) {
                 velocity.x = pageWidth;
@@ -464,8 +464,8 @@
                 break;
             }
             
-            if (_page==1 && velocity.y>0) break;
-            if (_page==_numberOfPages && velocity.y<0) break;
+            if (_page<=2 && velocity.y>0) break;
+            if (_page>=_numberOfPages-1 && velocity.y<0) break;
             
             if (_page<=3 && velocity.y>0){
                 velocity.y = pageHeight;
@@ -482,22 +482,21 @@
         // set finalCenter to do an animation
         if (_horizontal==TRUE) {
             
-            if (velocity.x>0 && velocity.x>2*pageWidth) velocity.x = 2*pageWidth;
-            if (velocity.x<0 && velocity.x<-2*pageWidth) velocity.x = -2*pageWidth;
+            if (velocity.x>2*pageWidth) velocity.x = 2*pageWidth;
+            if (velocity.x<-2*pageWidth) velocity.x = -2*pageWidth;
             
             finalCenter.x += velocity.x;
             
         } else {
             
-            if (velocity.y>0 && velocity.y>2*pageHeight) velocity.y = 2*pageHeight;
-            if (velocity.y<0 && velocity.y<-2*pageHeight) velocity.y = -2*pageHeight;
-            
+            if (velocity.y>2*pageHeight) velocity.y = 2*pageHeight;
+            if (velocity.y<-2*pageHeight) velocity.y = -2*pageHeight;
+
             finalCenter.y += velocity.y;
             
         }
-        
-        
-        
+
+
         //use animation to slip to end
         [UIView animateWithDuration:1.5
                               delay:0
@@ -513,19 +512,6 @@
     }
     
     if (_horizontal) {
-        
-        while (finalCenter.x > self.bounds.size.width/2) {
-            finalCenter.x -= pageWidth;
-            _page --;
-        }
-        
-        while (finalCenter.x< pageWidth - self.bounds.size.width/2) {
-            finalCenter.x += pageWidth;
-            _page ++;
-        }
-        
-        _page = _page < 1 ? 1 : _page;
-        _page = _page > _numberOfPages ? _numberOfPages : _page;
         
         // control X for not moving out
         if (_page == 1) {
@@ -554,28 +540,23 @@
             finalCenter.y = pageHeight/2;
             
         }
-        
-        
-    } else {
-        
-        while (finalCenter.y > self.bounds.size.height/2) {
-            finalCenter.y -= pageHeight;
+
+        while (_page>1 && finalCenter.x>self.bounds.size.width/2) {
+            finalCenter.x -= pageWidth;
             _page --;
         }
         
-        while (finalCenter.y< pageHeight - self.bounds.size.height/2) {
-            finalCenter.y += pageHeight;
+        while (_page<_numberOfPages && finalCenter.x<(pageWidth-self.bounds.size.width/2)) {
+            finalCenter.x += pageWidth;
             _page ++;
         }
         
-        _page = _page < 1 ? 1 : _page;
-        _page = _page > _numberOfPages ? _numberOfPages : _page;
+    } else {
         
         // control Y for not moving out
         if (_page == 1) {
             
             if (finalCenter.y > pageHeight/2) finalCenter.y = pageHeight/2;
-            
         }
         
         
@@ -584,7 +565,7 @@
             if (finalCenter.y < self.superview.bounds.size.height - pageHeight/2) finalCenter.y = self.superview.bounds.size.height - pageHeight/2;
             
         }
-        
+
         // control X for not moving out
         if (finalCenter.x < (self.superview.bounds.size.width - pageWidth/2)){
             
@@ -597,6 +578,16 @@
             
             finalCenter.x = pageWidth/2;
             
+        }
+
+        while (_page>1 && finalCenter.y>self.bounds.size.height/2) {
+            finalCenter.y -= pageHeight;
+            _page --;
+        }
+        
+        while (_page<_numberOfPages && finalCenter.y<(pageHeight-self.bounds.size.height/2)) {
+            finalCenter.y += pageHeight;
+            _page ++;
         }
         
     }
