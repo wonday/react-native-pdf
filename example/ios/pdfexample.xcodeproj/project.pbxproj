@@ -906,7 +906,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.wonday.pdfexaple;
+				PRODUCT_BUNDLE_IDENTIFIER = org.wonday.pdfexample;
 				PRODUCT_NAME = pdfexample;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -932,7 +932,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.wonday.pdfexaple;
+				PRODUCT_BUNDLE_IDENTIFIER = org.wonday.pdfexample;
 				PRODUCT_NAME = pdfexample;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
