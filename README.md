@@ -30,9 +30,16 @@ Or, if you want to add Android permissions to AndroidManifest.xml automatically,
 
 ### ChangeLog
 
+v1.3.4
+
+1. update ios project to xcode9 format.
+2. fix crash problem when load from base64 #58 
+3. fix TypeScript definition for onError #53 
+4. update sample code in readme
+
 v1.3.3
 
-1. improve ios scrolling, fix #47
+1. improve ios scrolling, fix #47 
 
 v1.3.2
 
@@ -41,34 +48,25 @@ v1.3.2
 v1.3.1
 
 1. refactor android source
-2. stop page scrolling when tap screen #41
+2. stop page scrolling when tap screen #41 
 
 v1.3.0
 
-1. fix drawing problem on Android 4.4 #31
-2. add fitWidth support #36, #38
-
-v1.2.8
-
-1. Remove deprecated android override for RN 0.47.0 compatibility #31
-
-v1.2.7
-
-1. Improve scrolling animation iOS #25
-2. When password error, call onError iOS/Android #26
+1. fix drawing problem on Android 4.4 #31 
+2. add fitWidth support #36 , #38 
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
 ### Example
 
 ```js
-//
-//  PDFExample.js
-// 
-//
-//  Created by Wonday on 17/4/21.
-//  Copyright (c) wonday.org All rights reserved.
-//
+/**
+ * Copyright (c) 2017-present, Wonday (@wonday.org)
+ * All rights reserved.
+ *
+ * This source code is licensed under the MIT-style license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
 
 import React from 'react';
 import {
@@ -114,10 +112,12 @@ export default class PDFExample extends React.Component {
     }
 
     render() {
-        let source = {uri:'https://www.irs.gov/pub/irs-pdf/fw2.pdf',cache:true};
-        //let source = {uri:'bundle-assets://test.pdf'};
-        //let source = require('./test.pdf'); //ios only
-        //let source = {uri:"data:application/pdf;base64, ..."}; // this is a dummy
+        //let source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
+        //let source = require('./test.pdf');  // ios only
+        let source = {uri:'bundle-assets://test.pdf'};
+
+        //let source = {uri:'file:///sdcard/test.pdf'};
+        //let source = {uri:"data:application/pdf;base64,......"};
 
         return (
             <View style={styles.container}>
@@ -132,6 +132,7 @@ export default class PDFExample extends React.Component {
                 <Pdf ref={(pdf)=>{this.pdf = pdf;}}
                     source={source}
                     page={1}
+                    scale={1}
                     horizontal={false}
                     onLoadComplete={(pageCount)=>{
                         this.setState({pageCount: pageCount});
