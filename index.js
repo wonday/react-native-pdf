@@ -182,7 +182,7 @@ export default class Pdf extends Component {
     if (message.length > 0) {
       if (message[0] == 'loadComplete') {
         this.props.onLoadComplete &&
-          this.props.onLoadComplete(Number(message[1]))
+          this.props.onLoadComplete(Number(message[1]), this.state.path)
       } else if (message[0] == 'pageChanged') {
         this.props.onPageChanged &&
           this.props.onPageChanged(Number(message[1]), Number(message[2]))
