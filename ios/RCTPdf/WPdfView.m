@@ -251,109 +251,75 @@
     _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
     
 }
+- (void)drawPage:(int) pageOffset
+                :(CGContextRef) context
+{
+    if (_page+pageOffset<1 || _page+pageOffset>_numberOfPages) return;
+    
+    CGPDFPageRef pdfPage = CGPDFDocumentGetPage(_pdfDoc, _page+pageOffset);
+    
+    if (pdfPage != NULL) {
+        
+        CGContextSaveGState(context);
+        CGRect pageBounds;
+        
+        if (_horizontal){
+            if (_numberOfPages*_basePageWidth+(_numberOfPages-1)*_spacing<self.superview.bounds.size.width) {
+                pageBounds = CGRectMake(_basePageWidth/2 - self.superview.bounds.size.width/2 + pageOffset*(_basePageWidth + _spacing),
+                                        self.superview.bounds.size.height/2 - _basePageHeight/2  - _basePageHeight,
+                                        _basePageWidth,
+                                        _basePageHeight);
+            } else {
+                pageBounds = CGRectMake(pageOffset*(_basePageWidth + _spacing),
+                                        self.superview.bounds.size.height/2 - _basePageHeight/2  - _basePageHeight,
+                                        _basePageWidth,
+                                        _basePageHeight);
+            }
+
+        } else {
+            if (_numberOfPages*_basePageHeight+(_numberOfPages-1)*_spacing<self.superview.bounds.size.height) {
+                pageBounds = CGRectMake(self.superview.bounds.size.width/2 - _basePageWidth/2,
+                                        _basePageHeight/2 - self.superview.bounds.size.height/2 - pageOffset*(_basePageHeight + _spacing) - _basePageHeight,
+                                        _basePageWidth,
+                                        _basePageHeight);
+            } else {
+                pageBounds = CGRectMake(self.superview.bounds.size.width/2 - _basePageWidth/2,
+                                        -pageOffset*(_basePageHeight + _spacing) - _basePageHeight,
+                                        _basePageWidth,
+                                        _basePageHeight);
+            }
+        }
+        
+        // Fill the background with white.
+        CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
+        CGContextFillRect(context, pageBounds);
+        
+        CGAffineTransform pageTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFTrimBox, pageBounds, 0, true);
+        CGContextConcatCTM(context, pageTransform);
+        
+        CGContextDrawPDFPage(context, pdfPage);
+        CGContextRestoreGState(context);
+    }
+}
 
 - (void)drawRect:(CGRect)rect
 {
     
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
     if (_pdfDoc != NULL) {
         
-        CGContextRef context = UIGraphicsGetCurrentContext();
         
         // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system
         // before we start drawing.
         CGContextScaleCTM(context, 1.0, -1.0);
         
-        CGRect basePageRect = CGRectMake(0, 0, _basePageWidth, _basePageHeight);
-        
-        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(_pdfDoc, _page);
-        
-        
-        // draw current page
-        if (pdfPage != NULL) {
-            CGContextSaveGState(context);
-            
-            CGRect curPageBounds= CGRectMake(0, 0, basePageRect.size.width, basePageRect.size.height);
-            
-            // caculate offset
-            curPageBounds.origin.x += 0;
-            curPageBounds.origin.y -= basePageRect.size.height;
-            
-            
-            // Fill the background with white.
-            CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
-            CGContextFillRect(context, curPageBounds);
-            
-            CGAffineTransform pdfTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFTrimBox, curPageBounds, 0, true);
-            CGContextConcatCTM(context, pdfTransform);
-            
-            CGContextDrawPDFPage(context, pdfPage);
-            
-            
-            CGContextRestoreGState(context);
-            
-            // draw previous page
-            if (_page > 1) {
-                
-                CGPDFPageRef pdfPrePage = CGPDFDocumentGetPage(_pdfDoc, _page-1);
-                
-                if (pdfPrePage != NULL) {
-                    
-                    CGContextSaveGState(context);
-                    CGRect prePageBounds= curPageBounds;
-                    if (_horizontal){
-                        prePageBounds.origin.x -= basePageRect.size.width + _spacing;
-                    } else {
-                        prePageBounds.origin.y += basePageRect.size.height + _spacing;
-                    }
-                    
-                    // Fill the background with white.
-                    CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
-                    CGContextFillRect(context, prePageBounds);
-                    
-                    CGAffineTransform prePageTransform = CGPDFPageGetDrawingTransform(pdfPrePage, kCGPDFTrimBox, prePageBounds, 0, true);
-                    CGContextConcatCTM(context, prePageTransform);
-                    
-                    CGContextDrawPDFPage(context, pdfPrePage);
-                    
-                    
-                    
-                    CGContextRestoreGState(context);
-                }
-            }
-            
-            // draw next page
-            if (_page < _numberOfPages) {
-                
-                CGPDFPageRef pdfNextPage = CGPDFDocumentGetPage(_pdfDoc, _page+1);
-                
-                if (pdfNextPage != NULL) {
-                    
-                    CGContextSaveGState(context);
-                    CGRect nextPageBounds= curPageBounds;
-                    if (_horizontal){
-                        
-                        nextPageBounds.origin.x += basePageRect.size.width + _spacing;
-                        
-                    } else {
-                        
-                        nextPageBounds.origin.y -= basePageRect.size.height + _spacing;
-                        
-                    }
-                    
-                    // Fill the background with white.
-                    CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
-                    CGContextFillRect(context, nextPageBounds);
-                    
-                    CGAffineTransform nextTransform = CGPDFPageGetDrawingTransform(pdfNextPage, kCGPDFTrimBox, nextPageBounds, 0, true);
-                    CGContextConcatCTM(context, nextTransform);
-                    
-                    CGContextDrawPDFPage(context, pdfNextPage);
-                    CGContextRestoreGState(context);
-                }
-            }
-            
-        }
-        
+        [self drawPage:-2 :context];
+        [self drawPage:-1 :context];
+        [self drawPage:0 :context];
+        [self drawPage:1 :context];
+        [self drawPage:2 :context];
+
         [self noticePageChanged];
     }
     
@@ -377,25 +343,39 @@
         _basePageHeight = _pdfPageRect.size.height*_basePageWidth/_pdfPageRect.size.width;
     }
     
-    if (_horizontal == TRUE) {
+//    if (_fitWidth ) {
+//        _basePageWidth = self.superview.bounds.size.width;
+//        _basePageHeight = _pdfPageRect.size.height*_basePageWidth/_pdfPageRect.size.width;
+//    } else {
+//        if (_basePageHeight/_basePageWidth>_pdfPageRect.size.height/_pdfPageRect.size.width) {
+//            _basePageWidth = self.superview.bounds.size.width;
+//            _basePageHeight = _pdfPageRect.size.height*self.superview.bounds.size.width/_pdfPageRect.size.width;
+//        } else {
+//            _basePageWidth = _pdfPageRect.size.width*self.superview.bounds.size.height/_pdfPageRect.size.height;
+//            _basePageHeight = self.superview.bounds.size.height;
+//        }
+//    }
+    
+    if (_horizontal) {
         
-        bounds.origin.x = - _basePageWidth - _spacing;
-        bounds.size.width = _basePageWidth*3 + _spacing*2;
+        bounds.origin.x = - (_basePageWidth + _spacing)*2;
+        bounds.origin.y = 0;
+        bounds.size.width = _basePageWidth*5 + _spacing*4;
         bounds.size.height = _basePageHeight;
         
     } else {
         
-        bounds.origin.y = - _basePageHeight - _spacing;
+        bounds.origin.x = 0;
+        bounds.origin.y = - (_basePageHeight + _spacing)*2;
         bounds.size.width = _basePageWidth;
-        bounds.size.height = _basePageHeight*3 + _spacing*2;
+        bounds.size.height = _basePageHeight*5 + _spacing*4;
         
     }
     
-    // we will set a 3-pages rect to frame and bounds
+    // we will set a 5-pages rect to frame and bounds
     [self setFrame:bounds];
     [self setBounds:bounds];
     [self setNeedsDisplay];
-    
 }
 
 // Clean up.
@@ -415,192 +395,249 @@
 {
     //stop animation
     [recognizer.view.layer removeAllAnimations];
-    
     _isContiniousTap = FALSE;
     
     [recognizer.view.superview bringSubviewToFront:recognizer.view];
     
     CGPoint translation = [recognizer translationInView:self];
-    //    NSLog(@"translation %f,%f", translation.x, translation.y);
-    
-    
-    CGPoint center = recognizer.view.center;
-    CGPoint finalCenter = center;
-    
-    finalCenter.x += translation.x;
-    finalCenter.y += translation.y;
-    
-    float pageHeight = _basePageHeight*_scale;
-    float pageWidth = _basePageWidth*_scale;
+    CGPoint finalCenter = recognizer.view.center;
     
     
     // end animation
-    while (_numberOfPages > 1
-           && recognizer.state == UIGestureRecognizerStateEnded) {
+    if(recognizer.state == UIGestureRecognizerStateEnded) {
+        
+        // animation duration seconds
+        const int animationDuration = 1.5;
+        float inertialDistance = 0;
         
         CGPoint velocity = [recognizer velocityInView:self];
         
-        // if low velocity not start end animation, only do a drag/move
-        if (_horizontal==TRUE) {
+        
+        if (_horizontal) {
             
-            if (abs((int)velocity.x) < 200) {
-                break;
+            // if speed less then 100 then not start animation
+            if (abs((int)velocity.x) > 100) {
+                
+                // default inertial distance
+                inertialDistance = velocity.x*animationDuration;
+                
+                if (velocity.x>0){
+                    if (finalCenter.x+inertialDistance>self.bounds.size.width*_scale/2) {
+                        finalCenter.x = self.bounds.size.width*_scale/2;
+                    } else {
+                        finalCenter.x += inertialDistance;
+                    }
+                } else if (velocity.x<0) {
+                    if (finalCenter.x+inertialDistance<self.superview.bounds.size.width - self.bounds.size.width*_scale/2) {
+                        finalCenter.x = self.superview.bounds.size.width - self.bounds.size.width*_scale/2;
+                    } else {
+                        finalCenter.x += inertialDistance;
+                    }
+                }
+                
+                if (_page==1 && finalCenter.x > self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale*2) {
+                    finalCenter.x = self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale*2;
+                }
+                
+                if (_page==2 && finalCenter.x > self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale) {
+                    finalCenter.x = self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale;
+                }
+                
+                if (_numberOfPages==1 && finalCenter.x <  self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale*2 - self.bounds.size.width*_scale/2) {
+                    finalCenter.x = self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale*2 - self.bounds.size.width*_scale/2;
+                }
+                
+                if (_numberOfPages==2 && finalCenter.x < self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale - self.bounds.size.width*_scale/2) {
+                    finalCenter.x = self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale - self.bounds.size.width*_scale/2;
+                }
+                
+                //use animation to slip to end
+                [UIView animateWithDuration:animationDuration
+                                      delay:0
+                                    options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction
+                                 animations:^{
+                                     recognizer.view.center = finalCenter;
+                                 }
+                                 completion:^(BOOL finished){
+                                     [self fixPageOffset];
+                                 }];
+                
+            } else {
+                // set center;
+                finalCenter.x += translation.x;
+                finalCenter.y += translation.y;
+                recognizer.view.center = finalCenter;
+                
+                [self fixPageOffset];
             }
-            
-            if (_page<=2 && velocity.x>0) break;
-            if (_page>=_numberOfPages-1 && velocity.x<0) break;
-            
-            if (_page<=3 && velocity.x>0) {
-                velocity.x = pageWidth;
-            }
-            
-            if (_numberOfPages-_page<=3 && velocity.x<0) {
-                velocity.x = -pageWidth;
-            }
+
             
         } else {
             
-            if (abs((int)velocity.y) < 200) {
-                break;
+            // if speed less then 100 then not start animation
+            if (abs((int)velocity.y) > 100) {
+                
+                // default inertial distance
+                inertialDistance = velocity.y*animationDuration;
+
+                if (velocity.y>0){
+                    if (finalCenter.y+inertialDistance>self.bounds.size.height*_scale/2) {
+                        finalCenter.y = self.bounds.size.height*_scale/2;
+                    } else {
+                        finalCenter.y += inertialDistance;
+                    }
+                } else if (velocity.y<0) {
+                    if (finalCenter.y+inertialDistance<self.superview.bounds.size.height - self.bounds.size.height*_scale/2) {
+                        finalCenter.y = self.superview.bounds.size.height - self.bounds.size.height*_scale/2;
+                    } else {
+                        finalCenter.y += inertialDistance;
+                    }
+                }
+                
+                if (_page==1 && finalCenter.y > self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale*2) {
+                    finalCenter.y = self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale*2;
+                }
+                
+                if (_page==2 && finalCenter.y > self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale) {
+                    finalCenter.y = self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale;
+                }
+                
+                if (_numberOfPages==1 && finalCenter.y <  self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale*2 - self.bounds.size.height*_scale/2) {
+                    finalCenter.y = self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale*2 - self.bounds.size.height*_scale/2;
+                }
+                
+                if (_numberOfPages==2 && finalCenter.y < self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale - self.bounds.size.height*_scale/2) {
+                    finalCenter.y = self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale - self.bounds.size.height*_scale/2;
+                }
+
+                //use animation to slip to end
+                [UIView animateWithDuration:animationDuration
+                                      delay:0
+                                    options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction
+                                 animations:^{
+                                     recognizer.view.center = finalCenter;
+                                 }
+                                 completion:^(BOOL finished){
+                                     [self fixPageOffset];
+                                 }];
+            
+            } else {
+                // set center;
+                finalCenter.x += translation.x;
+                finalCenter.y += translation.y;
+                recognizer.view.center = finalCenter;
+                
+                [self fixPageOffset];
             }
-            
-            if (_page<=2 && velocity.y>0) break;
-            if (_page>=_numberOfPages-1 && velocity.y<0) break;
-            
-            if (_page<=3 && velocity.y>0){
-                velocity.y = pageHeight;
-            }
-            
-            if (_numberOfPages-_page<=3 && velocity.y<0) {
-                velocity.y = -pageHeight;
-            }
-            
-        }
-        
-        
-        
-        // set finalCenter to do an animation
-        if (_horizontal==TRUE) {
-            
-            if (velocity.x>2*pageWidth) velocity.x = 2*pageWidth;
-            if (velocity.x<-2*pageWidth) velocity.x = -2*pageWidth;
-            
-            finalCenter.x += velocity.x;
-            
-        } else {
-            
-            if (velocity.y>2*pageHeight) velocity.y = 2*pageHeight;
-            if (velocity.y<-2*pageHeight) velocity.y = -2*pageHeight;
-
-            finalCenter.y += velocity.y;
-            
         }
 
 
-        //use animation to slip to end
-        [UIView animateWithDuration:1.5
-                              delay:0
-                            options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionAllowUserInteraction
-                         animations:^{
-                             recognizer.view.center = finalCenter;
-                         }
-                         completion:^(BOOL finished){
-                             [self setNeedsDisplay];
-                         }];
-        // break while
-        break;
-    }
-    
-    if (_horizontal) {
-        
-        // control X for not moving out
-        if (_page == 1) {
-            
-            if (finalCenter.x > pageWidth/2) finalCenter.x = pageWidth/2;
-            
-        }
-        
-        
-        if (_page == _numberOfPages) {
-            
-            if (finalCenter.x < self.superview.bounds.size.width - pageWidth/2) finalCenter.x = self.superview.bounds.size.width - pageWidth/2;
-            
-        }
-        
-        // control Y for not moving out
-        if (finalCenter.y < (self.superview.bounds.size.height - pageHeight/2)){
-            
-            finalCenter.y = self.superview.bounds.size.height - pageHeight/2;
-            
-        }
-        
-        
-        if (finalCenter.y > pageHeight/2){
-            
-            finalCenter.y = pageHeight/2;
-            
-        }
-
-        while (_page>1 && finalCenter.x>self.bounds.size.width/2) {
-            finalCenter.x -= pageWidth;
-            _page --;
-        }
-        
-        while (_page<_numberOfPages && finalCenter.x<(pageWidth-self.bounds.size.width/2)) {
-            finalCenter.x += pageWidth;
-            _page ++;
-        }
-        
     } else {
-        
-        // control Y for not moving out
-        if (_page == 1) {
-            
-            if (finalCenter.y > pageHeight/2) finalCenter.y = pageHeight/2;
-        }
-        
-        
-        if (_page == _numberOfPages) {
-            
-            if (finalCenter.y < self.superview.bounds.size.height - pageHeight/2) finalCenter.y = self.superview.bounds.size.height - pageHeight/2;
-            
-        }
-
-        // control X for not moving out
-        if (finalCenter.x < (self.superview.bounds.size.width - pageWidth/2)){
-            
-            finalCenter.x = self.superview.bounds.size.width - pageWidth/2;
-            
-        }
-        
-        
-        if (finalCenter.x > pageWidth/2){
-            
-            finalCenter.x = pageWidth/2;
-            
-        }
-
-        while (_page>1 && finalCenter.y>self.bounds.size.height/2) {
-            finalCenter.y -= pageHeight;
-            _page --;
-        }
-        
-        while (_page<_numberOfPages && finalCenter.y<(pageHeight-self.bounds.size.height/2)) {
-            finalCenter.y += pageHeight;
-            _page ++;
-        }
-        
+        // set center;
+        finalCenter.x += translation.x;
+        finalCenter.y += translation.y;
+        recognizer.view.center = finalCenter;
+    
+        [self fixPageOffset];
     }
-    
-    
-    // set center;
-    recognizer.view.center = finalCenter;
     
     
     [recognizer setTranslation:CGPointZero inView:self];
     
     [self setNeedsDisplay];
     
+}
+
+- (void)fixPageOffset
+{
+
+    CGPoint finalCenter = self.center;
+    
+    if (_horizontal) {
+        if (_page==1 && finalCenter.x > self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale*2) {
+            finalCenter.x = self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale*2;
+        }
+        
+        if (_page==2 && finalCenter.x > self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale) {
+            finalCenter.x = self.bounds.size.width*_scale/2 - (_basePageWidth + _spacing)*_scale;
+        }
+        
+        if (_numberOfPages==1 && finalCenter.x <  self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale*2 - self.bounds.size.width*_scale/2) {
+            finalCenter.x = self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale*2 - self.bounds.size.width*_scale/2;
+        }
+        
+        if (_numberOfPages==2 && finalCenter.x < self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale - self.bounds.size.width*_scale/2) {
+            finalCenter.x = self.superview.bounds.size.width + (_basePageWidth+_spacing)*_scale - self.bounds.size.width*_scale/2;
+        }
+    } else {
+        if (_page==1 && finalCenter.y > self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale*2) {
+            finalCenter.y = self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale*2;
+        }
+        
+        if (_page==2 && finalCenter.y > self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale) {
+            finalCenter.y = self.bounds.size.height*_scale/2 - (_basePageHeight + _spacing)*_scale;
+        }
+        
+        if (_numberOfPages==1 && finalCenter.y <  self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale*2 - self.bounds.size.height*_scale/2) {
+            finalCenter.y = self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale*2 - self.bounds.size.height*_scale/2;
+        }
+        
+        if (_numberOfPages==2 && finalCenter.y < self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale - self.bounds.size.height*_scale/2) {
+            finalCenter.y = self.superview.bounds.size.height + (_basePageHeight+_spacing)*_scale - self.bounds.size.height*_scale/2;
+        }
+    }
+    
+    
+    
+    // control X for not moving out
+    if (finalCenter.x > self.bounds.size.width*_scale/2) {
+        finalCenter.x = self.bounds.size.width*_scale/2;
+    }
+    
+    if (finalCenter.x < self.superview.bounds.size.width - self.bounds.size.width*_scale/2) {
+        finalCenter.x = self.superview.bounds.size.width - self.bounds.size.width*_scale/2;
+    }
+    
+    
+    // control y for not moving out
+    if (finalCenter.y > self.bounds.size.height*_scale/2) {
+        finalCenter.y = self.bounds.size.height*_scale/2;
+    }
+    
+    if (finalCenter.y < self.superview.bounds.size.height - self.bounds.size.height*_scale/2) {
+        finalCenter.y = self.superview.bounds.size.height - self.bounds.size.height*_scale/2;
+    }
+    
+    // fix page offset
+    if (_horizontal) {
+        
+        while (_page>1 && finalCenter.x>=self.bounds.size.width*_scale/2 - ((_basePageWidth+_spacing)*_scale*2-self.superview.bounds.size.width)) {
+            finalCenter.x -= (_basePageWidth+_spacing)*_scale;
+            _page --;
+        }
+        
+        while (_page<_numberOfPages-2 && finalCenter.x<(((_basePageWidth+_spacing)*_scale*2+self.superview.bounds.size.width)-self.bounds.size.width*_scale/2)) {
+            finalCenter.x += (_basePageWidth+_spacing)*_scale;
+            _page ++;
+        }
+        
+    } else {
+        
+        while (_page>1 && finalCenter.y>=self.bounds.size.height*_scale/2 - ((_basePageHeight+_spacing)*_scale*2-self.superview.bounds.size.height)) {
+            finalCenter.y -= (_basePageHeight+_spacing)*_scale;
+            _page --;
+        }
+
+        while (_page<_numberOfPages-2 && finalCenter.y<(((_basePageHeight+_spacing)*_scale*2+self.superview.bounds.size.height)-self.bounds.size.height*_scale/2)) {
+            finalCenter.y += (_basePageHeight+_spacing)*_scale;
+            _page ++;
+        }
+        
+    }
+    
+    
+    self.center = finalCenter;
+    [self setNeedsDisplay];
 }
 
 /**
@@ -618,6 +655,7 @@
     CGFloat scale = recognizer.scale;
     
     if (scale * _scale < MIN_SCALE) scale = MIN_SCALE / _scale;
+    _scale = scale * _scale;
     
     int touchCount = (int)recognizer.numberOfTouches;
     
@@ -627,13 +665,14 @@
         CGPoint p2 = [recognizer locationOfTouch: 1 inView:self ];
         
         CGPoint finalCenter = recognizer.view.center;
-        finalCenter.x = (p1.x+p2.x)/2;
-        finalCenter.y = (p1.y+p2.y)/2;
+        CGPoint pCenter;
+        pCenter.x = (p1.x+p2.x)/2;
+        pCenter.y = (p1.y+p2.y)/2;
         
-        _scale = scale * _scale;
-        
+        finalCenter.x = scale*(finalCenter.x - pCenter.x) + pCenter.x;
+        finalCenter.y = scale*(finalCenter.y - pCenter.y) + pCenter.y;
+        self.center = finalCenter;
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
-        recognizer.view.center = finalCenter;
         
         [self setNeedsDisplay];
         
@@ -661,6 +700,12 @@
         
         _scale = _scale * scale;
         
+        CGPoint pCenter = [recognizer locationInView:self];
+        CGPoint finalCenter = self.center;
+        
+        finalCenter.x = scale*(finalCenter.x - pCenter.x) + pCenter.x;
+        finalCenter.y = scale*(finalCenter.y - pCenter.y) + pCenter.y;
+        self.center = finalCenter;
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
         
     } else {
@@ -670,8 +715,6 @@
         _fitWidth = FALSE;
         
         self.transform = CGAffineTransformMakeScale(_scale, _scale);
-        
-        [self setNeedsLayout];
         
     }
     
