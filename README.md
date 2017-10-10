@@ -12,34 +12,43 @@ A react native PDF view component (cross-platform support)
 * support password protected pdf
 
 ### Installation
+We use [`react-native-fetch-blob`](https://github.com/wkh237/react-native-fetch-blob#installation) to handle file system access in this package,
+So you should install react-native-pdf and react-native-fetch-blob
+
 ```bash
 npm install react-native-pdf --save
-
-react-native link react-native-pdf
-```
-We use [`react-native-fetch-blob`](https://github.com/wkh237/react-native-fetch-blob#installation) to handle file system access in this package and it requires an extra step during the installation. 
-_You should only have to do this once._
-```bash
 npm install react-native-fetch-blob --save
 
+react-native link react-native-pdf
 react-native link react-native-fetch-blob
 ```
-Or, if you want to add Android permissions to AndroidManifest.xml automatically, use this one:
 
-    RNFB_ANDROID_PERMISSIONS=true react-native link react-native-fetch-blob
+### FAQ
+
+Q1. After install and run, I can not see the pdf file.
+A1: maybe you forgot to excute ```react-native link``` or it does not run correctly.
+You can add it manually. For detail you can see the issue [`#24`](https://github.com/wonday/react-native-pdf/issues/24) and [`#2`](https://github.com/wonday/react-native-pdf/issues/2)
+
+Q2. When run, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```
+A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
+
+v1.3.5
+
+1. improving scolling
+2. return pdf local/cache path when callback onLoadComplete [`#57`](https://github.com/wonday/react-native-pdf/issues/57)
 
 v1.3.4
 
 1. update ios project to xcode9 format.
-2. fix crash problem when load from base64 #58 
-3. fix TypeScript definition for onError #53 
+2. fix crash problem when load from base64 [`#58`](https://github.com/wonday/react-native-pdf/issues/58)
+3. fix TypeScript definition for onError [`#53`](https://github.com/wonday/react-native-pdf/issues/53)
 4. update sample code in readme
 
 v1.3.3
 
-1. improve ios scrolling, fix #47 
+1. improve ios scrolling, fix [`#47`](https://github.com/wonday/react-native-pdf/issues/47)
 
 v1.3.2
 
@@ -48,12 +57,12 @@ v1.3.2
 v1.3.1
 
 1. refactor android source
-2. stop page scrolling when tap screen #41 
+2. stop page scrolling when tap screen [`#41`](https://github.com/wonday/react-native-pdf/issues/41)
 
 v1.3.0
 
-1. fix drawing problem on Android 4.4 #31 
-2. add fitWidth support #36 , #38 
+1. fix drawing problem on Android 4.4 [`#31`](https://github.com/wonday/react-native-pdf/issues/31)
+2. add fitWidth support [`#36`](https://github.com/wonday/react-native-pdf/issues/36) , [`#38`](https://github.com/wonday/react-native-pdf/issues/38)
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
@@ -134,9 +143,9 @@ export default class PDFExample extends React.Component {
                     page={1}
                     scale={1}
                     horizontal={false}
-                    onLoadComplete={(pageCount)=>{
+                    onLoadComplete={(pageCount,pdfPath)=>{
                         this.setState({pageCount: pageCount});
-                        console.log(`total page count: ${pageCount}`);
+                        console.log(`total page count: ${pageCount} path:${pdfPath}`);
                     }}
                     onPageChanged={(page,pageCount)=>{
                         this.setState({page:page});
@@ -194,7 +203,7 @@ const styles = StyleSheet.create({
 | activityIndicator   | Component       | ProgressBar | when loading show it as an indicator  | ✔   | ✔ |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ |
 | onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |
-| onLoadComplete      | function        | null        | callback when pdf load completed, return total page count | ✔   | ✔ |
+| onLoadComplete      | function        | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ |
 | onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
 | onError       | function        | null        | callback when error happened | ✔   | ✔ |
 

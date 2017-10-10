@@ -72,9 +72,9 @@ export default class PDFExample extends React.Component {
                     page={1}
                     scale={1}
                     horizontal={false}
-                    onLoadComplete={(pageCount)=>{
+                    onLoadComplete={(pageCount,pdfPath)=>{
                         this.setState({pageCount: pageCount});
-                        console.log(`total page count: ${pageCount}`);
+                        console.log(`total page count: ${pageCount} path:${pdfPath}`);
                     }}
                     onPageChanged={(page,pageCount)=>{
                         this.setState({page:page});
