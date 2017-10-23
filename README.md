@@ -25,14 +25,19 @@ react-native link react-native-fetch-blob
 
 ### FAQ
 
-Q1. After install and run, I can not see the pdf file.
+Q1. After installation and running, I can not see the pdf file.
 A1: maybe you forgot to excute ```react-native link``` or it does not run correctly.
 You can add it manually. For detail you can see the issue [`#24`](https://github.com/wonday/react-native-pdf/issues/24) and [`#2`](https://github.com/wonday/react-native-pdf/issues/2)
 
-Q2. When run, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```
+Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
+
+v2.0.0
+
+1. Reimplement ios version, improving scrolling
+2. fix ios paging [`#63`](https://github.com/wonday/react-native-pdf/issues/63)
 
 v1.3.5
 
@@ -93,7 +98,10 @@ export default class PDFExample extends React.Component {
         super(props);
         this.state = {
             page: 1,
+            scale: 1,
             pageCount: 1,
+            horizontal: false,
+            correntPage: 1,
         };
         this.pdf = null;
     }
@@ -102,53 +110,76 @@ export default class PDFExample extends React.Component {
     }
 
     prePage=()=>{
-        if (this.pdf){
-            let prePage = this.state.page>1?this.state.page-1:1;
-            this.pdf.setNativeProps({page: prePage});
-            this.setState({page:prePage});
-            console.log(`prePage: ${prePage}`);
-        }
+        let prePage = this.state.currentPage>1?this.state.currentPage-1:1;
+        this.setState({page:prePage});
+        console.log(`prePage: ${prePage}`);
     }
 
     nextPage=()=>{
-        if (this.pdf){
-            let nextPage = this.state.page+1>this.state.pageCount?this.state.pageCount:this.state.page+1;
-            this.pdf.setNativeProps({page: nextPage});
-            this.setState({page:nextPage});
-            console.log(`nextPage: ${nextPage}`);
-        }
-
+        let nextPage = this.state.currentPage+1>this.state.pageCount?this.state.pageCount:this.state.currentPage+1;
+        this.setState({page:nextPage});
+        console.log(`nextPage: ${nextPage}`);
+    }
+    
+    zoomOut=()=>{
+        let scale = this.state.scale>1?this.state.scale/1.2:1;
+        this.setState({scale:scale});
+        console.log(`zoomOut scale: ${scale}`);
     }
 
+    zoomIn=()=>{
+        let scale = this.state.scale*1.2;
+        scale = scale>3?3:scale;
+        this.setState({scale:scale});
+        console.log(`zoomIn scale: ${scale}`);
+    }
+    
+    switchHorizontal=()=>{
+        this.setState({horizontal:!this.state.horizontal});
+    }
+    
     render() {
         //let source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
         //let source = require('./test.pdf');  // ios only
-        let source = {uri:'bundle-assets://test.pdf'};
+        //let source = {uri:'bundle-assets://test.pdf'};
 
         //let source = {uri:'file:///sdcard/test.pdf'};
-        //let source = {uri:"data:application/pdf;base64,......"};
+        let source = {uri:"data:application/pdf;base64,..."};
 
         return (
             <View style={styles.container}>
                 <View style={{flexDirection:'row'}}>
                     <TouchableHighlight  disabled={this.state.page==1} style={this.state.page==1?styles.btnDisable:styles.btn} onPress={()=>this.prePage()}>
-                        <Text style={styles.btnText}>{'Previous'}</Text>
+                        <Text style={styles.btnText}>{'-'}</Text>
                     </TouchableHighlight>
+                    <View style={styles.btnText}><Text style={styles.btnText}>Page</Text></View>
                     <TouchableHighlight  disabled={this.state.page==this.state.pageCount} style={this.state.page==this.state.pageCount?styles.btnDisable:styles.btn}  onPress={()=>this.nextPage()}>
-                        <Text style={styles.btnText}>{'Next'}</Text>
+                        <Text style={styles.btnText}>{'+'}</Text>
                     </TouchableHighlight>
+                    <TouchableHighlight  disabled={this.state.scale==1} style={this.state.scale==1?styles.btnDisable:styles.btn} onPress={()=>this.zoomOut()}>
+                        <Text style={styles.btnText}>{'-'}</Text>
+                    </TouchableHighlight>
+                    <View style={styles.btnText}><Text style={styles.btnText}>Scale</Text></View>
+                    <TouchableHighlight  disabled={this.state.scale>=3} style={this.state.scale>=3?styles.btnDisable:styles.btn}  onPress={()=>this.zoomIn()}>
+                        <Text style={styles.btnText}>{'+'}</Text>
+                    </TouchableHighlight>
+                    <View style={styles.btnText}><Text style={styles.btnText}>{'Horizontal'}</Text></View>
+                    <TouchableHighlight  style={styles.btn} onPress={()=>this.switchHorizontal()}>
+                        {!this.state.horizontal?(<Text style={styles.btnText}>{'☒'}</Text>):(<Text style={styles.btnText}>{'☑'}</Text>)}
+                    </TouchableHighlight>
+                    
                 </View>
                 <Pdf ref={(pdf)=>{this.pdf = pdf;}}
                     source={source}
-                    page={1}
-                    scale={1}
-                    horizontal={false}
-                    onLoadComplete={(pageCount,pdfPath)=>{
+                    page={this.state.page}
+                    scale={this.state.scale}
+                    horizontal={this.state.horizontal}
+                    onLoadComplete={(pageCount)=>{
                         this.setState({pageCount: pageCount});
-                        console.log(`total page count: ${pageCount} path:${pdfPath}`);
+                        console.log(`total page count: ${pageCount}`);
                     }}
                     onPageChanged={(page,pageCount)=>{
-                        this.setState({page:page});
+                        this.setState({currentPage:page});
                         console.log(`current page: ${page}`);
                     }}
                     onError={(error)=>{
@@ -168,23 +199,25 @@ const styles = StyleSheet.create({
         marginTop: 25,
     },
     btn: {
-        margin: 5,
-        padding:5,
-        backgroundColor: "blue",
+        margin: 2,
+        padding:2,
+        backgroundColor: "aqua",
     },
     btnDisable: {
-        margin: 5,
-        padding:5,
+        margin: 2,
+        padding:2,
         backgroundColor: "gray",
     },
     btnText: {
-        color: "#FFF",
+        margin: 2,
+        padding:2,
     },
     pdf: {
         flex:1,
         width:Dimensions.get('window').width,
     }
 });
+
 ```
 
 
