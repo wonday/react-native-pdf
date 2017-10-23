@@ -223,9 +223,9 @@
         static int lastPage = -1;
         
         if (_horizontal) {
-            _pageOffset = ((UIScrollView *)self.superview).contentOffset.x/((UIScrollView *)self.superview).zoomScale/(_pageCanvasSize.width+_spacing);
+            _pageOffset = ((((UIScrollView *)self.superview).contentOffset.x+((UIScrollView *)self.superview).bounds.size.width/2)/((UIScrollView *)self.superview).zoomScale-((UIScrollView *)self.superview).bounds.size.width/2)/(_pageCanvasSize.width+_spacing);
         } else {
-            _pageOffset = ((UIScrollView *)self.superview).contentOffset.y/((UIScrollView *)self.superview).zoomScale/(_pageCanvasSize.height+_spacing);
+            _pageOffset = ((((UIScrollView *)self.superview).contentOffset.y+((UIScrollView *)self.superview).bounds.size.height/2)/((UIScrollView *)self.superview).zoomScale-((UIScrollView *)self.superview).bounds.size.height/2)/(_pageCanvasSize.height+_spacing);
         }
         
         if (_pageOffset<0) _pageOffset = 0;
