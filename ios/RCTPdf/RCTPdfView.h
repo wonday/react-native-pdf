@@ -17,7 +17,7 @@
 
 @class RCTEventDispatcher;
 
-@interface RCTPdfView : UIView
+@interface RCTPdfView : UIScrollView <UIScrollViewDelegate>  
 
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic) int page;

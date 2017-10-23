@@ -21,7 +21,6 @@
 
 @property(nonatomic, strong) NSString *path;
 @property(nonatomic) int page;
-@property(nonatomic) float scale;
 @property(nonatomic) BOOL horizontal;
 @property(nonatomic) BOOL fitWidth;
 @property(nonatomic) int spacing;
@@ -32,5 +31,9 @@
 
 - (void)loadPdf;
 - (void)updateBounds;
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView;
+- (void)scrollViewWillEndDragging:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset;
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView;
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
 
 @end
