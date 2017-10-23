@@ -25,7 +25,6 @@ export default class PDFExample extends React.Component {
             scale: 1,
             pageCount: 1,
             horizontal: false,
-            correntPage: 1,
         };
         this.pdf = null;
     }
@@ -34,32 +33,32 @@ export default class PDFExample extends React.Component {
     }
 
     prePage=()=>{
-		let prePage = this.state.currentPage>1?this.state.currentPage-1:1;
-		this.setState({page:prePage});
-		console.log(`prePage: ${prePage}`);
+        let prePage = this.state.currentPage>1?this.state.currentPage-1:1;
+        this.setState({page:prePage});
+        console.log(`prePage: ${prePage}`);
     }
 
     nextPage=()=>{
-		let nextPage = this.state.currentPage+1>this.state.pageCount?this.state.pageCount:this.state.currentPage+1;
-		this.setState({page:nextPage});
-		console.log(`nextPage: ${nextPage}`);
+        let nextPage = this.state.currentPage+1>this.state.pageCount?this.state.pageCount:this.state.currentPage+1;
+        this.setState({page:nextPage});
+        console.log(`nextPage: ${nextPage}`);
     }
     
     zoomOut=()=>{
-		let scale = this.state.scale>1?this.state.scale/1.2:1;
-		this.setState({scale:scale});
-		console.log(`zoomOut scale: ${scale}`);
+        let scale = this.state.scale>1?this.state.scale/1.2:1;
+        this.setState({scale:scale});
+        console.log(`zoomOut scale: ${scale}`);
     }
 
     zoomIn=()=>{
-		let scale = this.state.scale*1.2;
-		scale = scale>3?3:scale;
-		this.setState({scale:scale});
-		console.log(`zoomIn scale: ${scale}`);
+        let scale = this.state.scale*1.2;
+        scale = scale>3?3:scale;
+        this.setState({scale:scale});
+        console.log(`zoomIn scale: ${scale}`);
     }
     
     switchHorizontal=()=>{
-    	this.setState({horizontal:!this.state.horizontal});
+        this.setState({horizontal:!this.state.horizontal,page:this.state.currentPage});
     }
     
     render() {

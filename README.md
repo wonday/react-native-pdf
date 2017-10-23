@@ -101,7 +101,6 @@ export default class PDFExample extends React.Component {
             scale: 1,
             pageCount: 1,
             horizontal: false,
-            correntPage: 1,
         };
         this.pdf = null;
     }
@@ -135,9 +134,9 @@ export default class PDFExample extends React.Component {
     }
     
     switchHorizontal=()=>{
-        this.setState({horizontal:!this.state.horizontal});
+        this.setState({horizontal:!this.state.horizontal,page:this.state.currentPage});
     }
-    
+        
     render() {
         //let source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
         //let source = require('./test.pdf');  // ios only
