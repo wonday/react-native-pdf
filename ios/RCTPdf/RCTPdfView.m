@@ -45,6 +45,7 @@
         self.maximumZoomScale = 3.0;
         self.bouncesZoom = NO;
         self.bounces = NO;
+        self.delaysContentTouches = NO;
         
         // fix statusbar effect when statusbar show/hide
         if (@available(iOS 11.0, *)) {

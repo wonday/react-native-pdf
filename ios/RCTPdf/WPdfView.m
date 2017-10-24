@@ -436,7 +436,7 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    [self fixPageOffset];
+    
 }
 
 - (void)scrollViewWillEndDragging:(CGPoint)velocity
@@ -447,7 +447,7 @@
     if (_horizontal) {
         if (velocity.x ==0) {
             
-           // do nothing
+           [self fixPageOffset];
             
         }else if (velocity.x < 0) {
             
@@ -469,7 +469,7 @@
     } else {
         if (velocity.y == 0) {
             
-            // do nothing
+            [self fixPageOffset];
             
         }else if (velocity.y < 0) {
             
@@ -499,6 +499,6 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
-
+    [self fixPageOffset];
 }
 @end
