@@ -23,7 +23,7 @@ export default class PDFExample extends React.Component {
         this.state = {
             page: 1,
             scale: 1,
-            pageCount: 1,
+            pageCount: 0,
             horizontal: false,
         };
         this.pdf = null;
@@ -33,13 +33,13 @@ export default class PDFExample extends React.Component {
     }
 
     prePage=()=>{
-        let prePage = this.state.currentPage>1?this.state.currentPage-1:1;
+        let prePage = this.state.page>1?this.state.page-1:1;
         this.setState({page:prePage});
         console.log(`prePage: ${prePage}`);
     }
 
     nextPage=()=>{
-        let nextPage = this.state.currentPage+1>this.state.pageCount?this.state.pageCount:this.state.currentPage+1;
+        let nextPage = this.state.page+1>this.state.pageCount?this.state.pageCount:this.state.page+1;
         this.setState({page:nextPage});
         console.log(`nextPage: ${nextPage}`);
     }
@@ -58,7 +58,7 @@ export default class PDFExample extends React.Component {
     }
     
     switchHorizontal=()=>{
-        this.setState({horizontal:!this.state.horizontal,page:this.state.currentPage});
+        this.setState({horizontal:!this.state.horizontal,page:this.state.page});
     }
     
     render() {
@@ -87,9 +87,9 @@ export default class PDFExample extends React.Component {
                     <TouchableHighlight  disabled={this.state.scale>=3} style={this.state.scale>=3?styles.btnDisable:styles.btn}  onPress={()=>this.zoomIn()}>
                         <Text style={styles.btnText}>{'+'}</Text>
                     </TouchableHighlight>
-                    <View style={styles.btnText}><Text style={styles.btnText}>{'Horizontal'}</Text></View>
+                    <View style={styles.btnText}><Text style={styles.btnText}>{'Horizontal:'}</Text></View>
                     <TouchableHighlight  style={styles.btn} onPress={()=>this.switchHorizontal()}>
-                        {!this.state.horizontal?(<Text style={styles.btnText}>{'☒︎'}</Text>):(<Text style={styles.btnText}>{'☑︎'}</Text>)}
+                        {!this.state.horizontal?(<Text style={styles.btnText}>{'false'}</Text>):(<Text style={styles.btnText}>{'true'}</Text>)}
                     </TouchableHighlight>
                     
                 </View>
@@ -99,11 +99,11 @@ export default class PDFExample extends React.Component {
                     scale={this.state.scale}
                     horizontal={this.state.horizontal}
                     onLoadComplete={(pageCount)=>{
-                        this.setState({pageCount: pageCount});
+                        this.state.pageCount = pageCount; //do not use setState, it will cause re-render
                         console.log(`total page count: ${pageCount}`);
                     }}
                     onPageChanged={(page,pageCount)=>{
-                        this.setState({currentPage:page});
+                        this.state.page = page; //do not use setState, it will cause re-render
                         console.log(`current page: ${page}`);
                     }}
                     onError={(error)=>{
