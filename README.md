@@ -36,7 +36,7 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 v2.0.1
 
-1. improving scrolling
+1. improve scrolling
 2. fix example code for unlimited render problem
 
 v2.0.0
@@ -46,7 +46,7 @@ v2.0.0
 
 v1.3.5
 
-1. improving scolling
+1. improve scolling
 2. return pdf local/cache path when callback onLoadComplete [`#57`](https://github.com/wonday/react-native-pdf/issues/57)
 
 v1.3.4
