@@ -34,6 +34,11 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v2.0.1
+
+1. improving scrolling
+2. fix example code for unlimited render problem
+
 v2.0.0
 
 1. Reimplement ios version, improving scrolling
