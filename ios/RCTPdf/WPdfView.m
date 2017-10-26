@@ -90,7 +90,7 @@
 - (void)setPath:(NSString *)path
 {
     
-    if (![path isEqual:_path]) {
+    if (![path isEqualToString:_path]) {
         
         _path = [path copy];
         _page = 1;
@@ -108,7 +108,7 @@
 - (void)setPassword:(NSString *)password
 {
     
-    if (![password isEqual:_password]) {
+    if (![password isEqualToString:_password]) {
         
         _password = [password copy];
         
@@ -172,6 +172,14 @@
 
 - (void) loadPdf {
     if (_path != nil && _path.length != 0) {
+        
+        static NSString *lastPath = @"";
+        if ([lastPath isEqualToString:_path]) {
+            return;
+        } else {
+            lastPath = [_path copy];
+        }
+        
         if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
         
         NSURL *pdfURL = [NSURL fileURLWithPath:_path];
@@ -184,6 +192,7 @@
                     
                     ALog(@"error|Password required or incorrect password.");
                     _onChange(@{ @"message": @"error|Password required or incorrect password."});
+                    _path = @"";
 
                 }
                 return;
@@ -196,6 +205,7 @@
                 
                 ALog(@"error|load pdf failed. path=%s", _path.UTF8String);
                 _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"error|Load pdf failed. path=%s",_path.UTF8String]]});
+                _path = @"";
                 
             }
             return;
