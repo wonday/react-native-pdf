@@ -283,7 +283,7 @@
         CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
         CGContextFillRect(context, pageBounds);
         
-        CGAffineTransform pageTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFTrimBox, pageBounds, 0, true);
+        CGAffineTransform pageTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, pageBounds, 0, true);
         CGContextConcatCTM(context, pageTransform);
         
         CGContextDrawPDFPage(context, pdfPage);
