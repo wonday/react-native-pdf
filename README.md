@@ -37,7 +37,7 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 v2.0.1
 
 1. improve iOS version scrolling performance
-2. fix unlimited rendering problem in example code
+2. fix never ending loop rendering problem in example code
 
 v2.0.0
 
@@ -51,7 +51,7 @@ v1.3.5
 
 v1.3.4
 
-1. update iOS project to xCode9 format.
+1. update iOS project to Xcode9 format.
 2. fix crash problem when load from base64 [`#58`](https://github.com/wonday/react-native-pdf/issues/58)
 3. fix TypeScript definition for onError [`#53`](https://github.com/wonday/react-native-pdf/issues/53)
 4. update sample code in readme
