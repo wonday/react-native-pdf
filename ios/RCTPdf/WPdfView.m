@@ -34,6 +34,7 @@
 
 #define SCREEN_BUFFER_NUM 7.0f
 #define DEFAULT_SPACING 10
+#define INVALID_TARGETCONTENTOFFSET -100000.0f
 
 @implementation WPdfView
 {
@@ -45,9 +46,11 @@
     CGSize _pageCanvasSize;
     CGPoint _pageCanvasOffset;
     CGFloat _pageOffset;
+    CGFloat _targetContentOffset;
 
     double _numberOfBufferPages;
     BOOL _isScrollToUpOrLeft; // TRUE:Up/Left FALSE:Down/Right
+    BOOL _needFixPageOffset;
     
 }
 
@@ -73,8 +76,10 @@
         _pdfPageRect = CGRectZero;
         _pageCanvasSize = CGSizeZero;
         _pageCanvasOffset = CGPointZero;
+        _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
         
         _isScrollToUpOrLeft = NO;
+        _needFixPageOffset = NO;
         
     }
     
@@ -405,6 +410,8 @@
 
 - (void)fixPageOffset
 {
+    _needFixPageOffset = NO;
+    
     CGPoint contentOffset = ((UIScrollView *)self.superview).contentOffset;
     
     if(_horizontal) {
@@ -431,69 +438,91 @@
     }
     
     ((UIScrollView *)self.superview).contentOffset = contentOffset;
+    ((UIScrollView *)self.superview).decelerationRate = UIScrollViewDecelerationRateNormal;
     [self setNeedsDisplay];
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    
+    if (_needFixPageOffset) {
+        
+        [self fixPageOffset];
+        
+    }
 }
 
 - (void)scrollViewWillEndDragging:(CGPoint)velocity
               targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     CGSize contentSize = ((UIScrollView *)self.superview).contentSize;
-    
+
     if (_horizontal) {
         if (velocity.x ==0) {
             
-           [self fixPageOffset];
+            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
+            [self fixPageOffset];
             
         }else if (velocity.x < 0) {
             
             _isScrollToUpOrLeft = NO;
+            _needFixPageOffset = YES;
             
-            if (targetContentOffset->x <= 0) {
-                targetContentOffset->x = 0;
+            if (targetContentOffset->x <= 0 ) {
+                _targetContentOffset = targetContentOffset->x;
             }
             
         } else {
             
             _isScrollToUpOrLeft = YES;
+            _needFixPageOffset = YES;
             
-            if (targetContentOffset->x >= contentSize.width - self.superview.bounds.size.width) {
-                targetContentOffset->x = contentSize.width - self.superview.bounds.size.width;
+            if (targetContentOffset->x >= contentSize.width - self.superview.bounds.size.width && _page<_numberOfPages - _numberOfBufferPages + 1) {
+                _targetContentOffset = targetContentOffset->x;
             }
             
         }
     } else {
         if (velocity.y == 0) {
             
+            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
             [self fixPageOffset];
             
         }else if (velocity.y < 0) {
             
             _isScrollToUpOrLeft = NO;
+            _needFixPageOffset = YES;
             
-            if (targetContentOffset->y <= 0) {
-                targetContentOffset->y = 0;
+            if (targetContentOffset->y <= 0 ) {
+                _targetContentOffset = targetContentOffset->y;
             }
             
         } else {
             
             _isScrollToUpOrLeft = YES;
+            _needFixPageOffset = YES;
             
-            if (targetContentOffset->y >= contentSize.height - self.superview.bounds.size.height) {
-                targetContentOffset->y = contentSize.height - self.superview.bounds.size.height;
+            if (targetContentOffset->y >= contentSize.height - self.superview.bounds.size.height && _page<_numberOfPages - _numberOfBufferPages + 1) {
+                _targetContentOffset = targetContentOffset->y;
             }
             
         }
     }
-    
+
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    if (_horizontal) {
+        if (_targetContentOffset!=INVALID_TARGETCONTENTOFFSET && fabs(_targetContentOffset-((UIScrollView *)self.superview).contentOffset.x)<=100) {
+            ((UIScrollView *)self.superview).decelerationRate = UIScrollViewDecelerationRateFast;
+            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
+        }
+    } else {
+        if (_targetContentOffset!=INVALID_TARGETCONTENTOFFSET && fabs(_targetContentOffset-((UIScrollView *)self.superview).contentOffset.y)<=100) {
+            ((UIScrollView *)self.superview).decelerationRate = UIScrollViewDecelerationRateFast;
+            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
+        }
+    }
     [self noticePageChanged];
 }
 

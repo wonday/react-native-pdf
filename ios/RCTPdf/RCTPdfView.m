@@ -44,7 +44,7 @@
         self.minimumZoomScale = 1.0;
         self.maximumZoomScale = 3.0;
         self.bouncesZoom = NO;
-        self.bounces = NO;
+        self.bounces = YES;
         self.delaysContentTouches = NO;
         
         // fix statusbar effect when statusbar show/hide
