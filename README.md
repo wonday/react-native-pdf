@@ -34,6 +34,10 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v2.0.3
+
+1. Fix iOS load pdf problem [`#76`](https://github.com/wonday/react-native-pdf/issues/76)
+
 v2.0.2
 
 1. Fix pdf canvas was clipped problem [`#69`](https://github.com/wonday/react-native-pdf/issues/69)
