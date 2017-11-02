@@ -45,9 +45,10 @@
     CGRect _pdfPageRect;
     CGSize _pageCanvasSize;
     CGPoint _pageCanvasOffset;
+    int _lastPage;
     CGFloat _pageOffset;
     CGFloat _targetContentOffset;
-
+    
     double _numberOfBufferPages;
     BOOL _isScrollToUpOrLeft; // TRUE:Up/Left FALSE:Down/Right
     BOOL _needFixPageOffset;
@@ -63,8 +64,9 @@
         self.backgroundColor = UIColor.clearColor;
         
         _page = 1;
+        _lastPage = -1;
         _pageOffset = 0;
-
+        
         _horizontal = NO;
         _fitWidth = NO;
         _spacing = DEFAULT_SPACING;
@@ -92,6 +94,13 @@
     
     if (![path isEqualToString:_path]) {
         
+        if (_pdfDoc != NULL) {
+            
+            CGPDFDocumentRelease(_pdfDoc);
+            _pdfDoc = NULL;
+            
+        }
+        
         _path = [path copy];
         _page = 1;
         _pageOffset = 0;
@@ -110,10 +119,17 @@
     
     if (![password isEqualToString:_password]) {
         
+        if (_pdfDoc != NULL) {
+            
+            CGPDFDocumentRelease(_pdfDoc);
+            _pdfDoc = NULL;
+            
+        }
+        
         _password = [password copy];
         
         if (_password == nil || _password.length == 0) {
-
+            
             DLog(@"null password");
             
         }
@@ -171,16 +187,11 @@
 }
 
 - (void) loadPdf {
+    
+    // have loaded
+    if (_pdfDoc!=NULL) return;
+    
     if (_path != nil && _path.length != 0) {
-        
-        static NSString *lastPath = @"";
-        if ([lastPath isEqualToString:_path]) {
-            return;
-        } else {
-            lastPath = [_path copy];
-        }
-        
-        if (_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
         
         NSURL *pdfURL = [NSURL fileURLWithPath:_path];
         _pdfDoc = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
@@ -193,7 +204,7 @@
                     ALog(@"error|Password required or incorrect password.");
                     _onChange(@{ @"message": @"error|Password required or incorrect password."});
                     _path = @"";
-
+                    
                 }
                 return;
             }
@@ -235,7 +246,7 @@
 {
     
     if(_onChange){
-        static int lastPage = -1;
+        
         
         if (_horizontal) {
             _pageOffset = ((((UIScrollView *)self.superview).contentOffset.x+((UIScrollView *)self.superview).bounds.size.width/2)/((UIScrollView *)self.superview).zoomScale-((UIScrollView *)self.superview).bounds.size.width/2)/(_pageCanvasSize.width+_spacing);
@@ -245,10 +256,10 @@
         
         if (_pageOffset<0) _pageOffset = 0;
         
-        if (floor(_pageOffset)+_page!=lastPage) {
-            lastPage = floor(_pageOffset)+_page;
-            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", lastPage, _numberOfPages]]});
-            DLog(@"pageChanged,%d,%d", lastPage, _numberOfPages);
+        if (floor(_pageOffset)+_page!=_lastPage) {
+            _lastPage = floor(_pageOffset)+_page;
+            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%d|%d", _lastPage, _numberOfPages]]});
+            DLog(@"pageChanged,%d,%d", _lastPage, _numberOfPages);
         }
     }
     
@@ -267,16 +278,16 @@
         CGRect pageBounds;
         
         if (_horizontal){
-                pageBounds = CGRectMake(pageOffset*(_pageCanvasSize.width + _spacing) + _pageCanvasOffset.x,
-                                         - _pageCanvasSize.height - _pageCanvasOffset.y,
-                                        _pageCanvasSize.width,
-                                        _pageCanvasSize.height);
-
+            pageBounds = CGRectMake(pageOffset*(_pageCanvasSize.width + _spacing) + _pageCanvasOffset.x,
+                                    - _pageCanvasSize.height - _pageCanvasOffset.y,
+                                    _pageCanvasSize.width,
+                                    _pageCanvasSize.height);
+            
         } else {
-                pageBounds = CGRectMake(_pageCanvasOffset.x,
-                                        -pageOffset*(_pageCanvasSize.height + _spacing) - _pageCanvasSize.height - _pageCanvasOffset.y,
-                                        _pageCanvasSize.width,
-                                        _pageCanvasSize.height);
+            pageBounds = CGRectMake(_pageCanvasOffset.x,
+                                    -pageOffset*(_pageCanvasSize.height + _spacing) - _pageCanvasSize.height - _pageCanvasOffset.y,
+                                    _pageCanvasSize.width,
+                                    _pageCanvasSize.height);
         }
         
         // Fill the background with white.
@@ -303,7 +314,7 @@
         CGContextScaleCTM(context, 1.0, -1.0);
         
         for(int i=0; i<_numberOfBufferPages; i++) [self drawPage:i :context];
-
+        
         [self noticePageChanged];
     }
     
@@ -316,7 +327,7 @@
  */
 - (void)updateBounds
 {
-
+    
     CGRect bounds = self.superview.bounds;
     if (bounds.size.width==0 || bounds.size.height==0 || _pdfPageRect.size.width==0 || _pdfPageRect.size.height==0) return;
     bounds.origin.x = 0;
@@ -415,7 +426,10 @@
 // Clean up.
 - (void)dealloc
 {
-    if(_pdfDoc != NULL) CGPDFDocumentRelease(_pdfDoc);
+    if(_pdfDoc != NULL) {
+    	CGPDFDocumentRelease(_pdfDoc);
+    	_pdfDoc = NULL;
+    }
 }
 
 - (void)fixPageOffset
@@ -435,12 +449,12 @@
             contentOffset.x -= (_pageCanvasSize.width+_spacing)*((UIScrollView *)self.superview).zoomScale;
         }
     } else {
-
+        
         while (!_isScrollToUpOrLeft && _page>1 && contentOffset.y < (_pageCanvasSize.height+_spacing)*floor(_numberOfBufferPages/2)*((UIScrollView *)self.superview).zoomScale) {
             _page --;
             contentOffset.y += (_pageCanvasSize.height+_spacing)*((UIScrollView *)self.superview).zoomScale;
         }
-
+        
         while (_isScrollToUpOrLeft && _page<_numberOfPages - _numberOfBufferPages + 1 && contentOffset.y > (_pageCanvasSize.height+_spacing)*floor(_numberOfBufferPages/2)*((UIScrollView *)self.superview).zoomScale) {
             _page ++;
             contentOffset.y -= (_pageCanvasSize.height+_spacing)*((UIScrollView *)self.superview).zoomScale;
@@ -465,7 +479,7 @@
               targetContentOffset:(inout CGPoint *)targetContentOffset
 {
     CGSize contentSize = ((UIScrollView *)self.superview).contentSize;
-
+    
     if (_horizontal) {
         if (velocity.x ==0) {
             
@@ -517,7 +531,7 @@
             
         }
     }
-
+    
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
