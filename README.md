@@ -34,6 +34,10 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v2.0.4
+
+1. add .git to .npmignore
+
 v2.0.3
 
 1. Fix iOS load pdf problem [`#76`](https://github.com/wonday/react-native-pdf/issues/76)
