@@ -7,8 +7,8 @@
  */
 
 'use strict'
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   ActivityIndicator,
   requireNativeComponent,
@@ -17,10 +17,11 @@ import {
   ProgressBarAndroid,
   ProgressViewIOS,
   ViewPropTypes
-} from 'react-native'
-import RNFetchBlob from 'react-native-fetch-blob'
-const SHA1 = require('crypto-js/sha1')
-import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
+} from 'react-native';
+
+import RNFetchBlob from 'react-native-fetch-blob';
+const SHA1 = require('crypto-js/sha1');
+import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 
 export default class Pdf extends Component {
   constructor(props) {
