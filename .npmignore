@@ -47,4 +47,5 @@ yarn-error.log
 .git
 .gitattributes
 .gitignore
+.git
 .watchmanconfig
