@@ -44,7 +44,6 @@ yarn-error.log
 .npmignore
 .buckconfig
 .flowconfig
-.git
 .gitattributes
 .gitignore
 .git
