@@ -127,7 +127,7 @@ export default class PDFExample extends React.Component {
             <View style={styles.container}>
                 <Pdf
                     source={source}
-                    onLoadComplete={(pageCount)=>{
+                    onLoadComplete={(pageCount,filePath)=>{
                         console.log(`total page count: ${pageCount}`);
                     }}
                     onPageChanged={(page,pageCount)=>{
