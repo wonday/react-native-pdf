@@ -32,9 +32,8 @@
 // output log both debug and release
 #define ALog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 
-#define SCREEN_BUFFER_NUM 7.0f
+#define SCREEN_BUFFER_NUM 5.0f
 #define DEFAULT_SPACING 10
-#define INVALID_TARGETCONTENTOFFSET -100000.0f
 
 @implementation WPdfView
 {
@@ -47,11 +46,11 @@
     CGPoint _pageCanvasOffset;
     int _lastPage;
     CGFloat _pageOffset;
-    CGFloat _targetContentOffset;
     
     double _numberOfBufferPages;
     BOOL _isScrollToUpOrLeft; // TRUE:Up/Left FALSE:Down/Right
     BOOL _needFixPageOffset;
+    BOOL _needUpdateBounds;
     
 }
 
@@ -78,10 +77,10 @@
         _pdfPageRect = CGRectZero;
         _pageCanvasSize = CGSizeZero;
         _pageCanvasOffset = CGPointZero;
-        _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
         
         _isScrollToUpOrLeft = NO;
         _needFixPageOffset = NO;
+        _needUpdateBounds = YES;
         
     }
     
@@ -93,13 +92,6 @@
 {
     
     if (![path isEqualToString:_path]) {
-        
-        if (_pdfDoc != NULL) {
-            
-            CGPDFDocumentRelease(_pdfDoc);
-            _pdfDoc = NULL;
-            
-        }
         
         _path = [path copy];
         _page = 1;
@@ -118,13 +110,6 @@
 {
     
     if (![password isEqualToString:_password]) {
-        
-        if (_pdfDoc != NULL) {
-            
-            CGPDFDocumentRelease(_pdfDoc);
-            _pdfDoc = NULL;
-            
-        }
         
         _password = [password copy];
         
@@ -189,7 +174,12 @@
 - (void) loadPdf {
     
     // have loaded
-    if (_pdfDoc!=NULL) return;
+    if (_pdfDoc != NULL) {
+        
+        CGPDFDocumentRelease(_pdfDoc);
+        _pdfDoc = NULL;
+        
+    }
     
     if (_path != nil && _path.length != 0) {
         
@@ -427,8 +417,8 @@
 - (void)dealloc
 {
     if(_pdfDoc != NULL) {
-    	CGPDFDocumentRelease(_pdfDoc);
-    	_pdfDoc = NULL;
+        CGPDFDocumentRelease(_pdfDoc);
+        _pdfDoc = NULL;
     }
 }
 
@@ -462,7 +452,7 @@
     }
     
     ((UIScrollView *)self.superview).contentOffset = contentOffset;
-    ((UIScrollView *)self.superview).decelerationRate = UIScrollViewDecelerationRateNormal;
+    ((UIScrollView *)self.superview).contentSize = self.bounds.size;
     [self setNeedsDisplay];
 }
 
@@ -483,7 +473,6 @@
     if (_horizontal) {
         if (velocity.x ==0) {
             
-            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
             [self fixPageOffset];
             
         }else if (velocity.x < 0) {
@@ -492,7 +481,7 @@
             _needFixPageOffset = YES;
             
             if (targetContentOffset->x <= 0 ) {
-                _targetContentOffset = targetContentOffset->x;
+                
             }
             
         } else {
@@ -501,14 +490,13 @@
             _needFixPageOffset = YES;
             
             if (targetContentOffset->x >= contentSize.width - self.superview.bounds.size.width && _page<_numberOfPages - _numberOfBufferPages + 1) {
-                _targetContentOffset = targetContentOffset->x;
+                contentSize.width = targetContentOffset->x + 2*self.superview.bounds.size.width*((UIScrollView *)self.superview).zoomScale;
             }
             
         }
     } else {
         if (velocity.y == 0) {
             
-            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
             [self fixPageOffset];
             
         }else if (velocity.y < 0) {
@@ -517,7 +505,7 @@
             _needFixPageOffset = YES;
             
             if (targetContentOffset->y <= 0 ) {
-                _targetContentOffset = targetContentOffset->y;
+                
             }
             
         } else {
@@ -526,27 +514,17 @@
             _needFixPageOffset = YES;
             
             if (targetContentOffset->y >= contentSize.height - self.superview.bounds.size.height && _page<_numberOfPages - _numberOfBufferPages + 1) {
-                _targetContentOffset = targetContentOffset->y;
+                contentSize.height = targetContentOffset->y + 2*self.superview.bounds.size.height*((UIScrollView *)self.superview).zoomScale;
             }
             
         }
     }
     
+    ((UIScrollView *)self.superview).contentSize = contentSize;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    if (_horizontal) {
-        if (_targetContentOffset!=INVALID_TARGETCONTENTOFFSET && fabs(_targetContentOffset-((UIScrollView *)self.superview).contentOffset.x)<=100) {
-            ((UIScrollView *)self.superview).decelerationRate = UIScrollViewDecelerationRateFast;
-            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
-        }
-    } else {
-        if (_targetContentOffset!=INVALID_TARGETCONTENTOFFSET && fabs(_targetContentOffset-((UIScrollView *)self.superview).contentOffset.y)<=100) {
-            ((UIScrollView *)self.superview).decelerationRate = UIScrollViewDecelerationRateFast;
-            _targetContentOffset = INVALID_TARGETCONTENTOFFSET;
-        }
-    }
     [self noticePageChanged];
 }
 

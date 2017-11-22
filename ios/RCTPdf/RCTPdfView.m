@@ -45,7 +45,6 @@
         self.maximumZoomScale = 3.0;
         self.bouncesZoom = NO;
         self.bounces = YES;
-        self.delaysContentTouches = NO;
         
         // fix statusbar effect when statusbar show/hide
         if (@available(iOS 11.0, *)) {
@@ -178,7 +177,7 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    if (self.bounds.size.width>0 && self.bounds.size.height>0 && _needUpdateBounds) {
+    if (_needUpdateBounds) {
         [wPdfView updateBounds];
         _needUpdateBounds = NO;
     }
@@ -186,9 +185,30 @@
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
-    [wPdfView loadPdf];
-    _needUpdateBounds = YES;
-    [self setNeedsLayout];
+    long int count = [changedProps count];
+    BOOL needLoadPdf = NO;
+    
+    for (int i = 0 ; i < count; i++) {
+        if ([[changedProps objectAtIndex:i] isEqualToString:@"path"]
+            ||[[changedProps objectAtIndex:i] isEqualToString:@"password"]) {
+            needLoadPdf = YES;
+        }
+        
+        if ([[changedProps objectAtIndex:i] isEqualToString:@"horizontal"]
+            ||[[changedProps objectAtIndex:i] isEqualToString:@"fitWidth"]
+            ||[[changedProps objectAtIndex:i] isEqualToString:@"spacing"]) {
+            _needUpdateBounds = YES;
+        }
+    }
+    
+    if (needLoadPdf) {
+        [wPdfView loadPdf];
+        _needUpdateBounds = YES;
+    }
+    
+    if (_needUpdateBounds) {
+        [self setNeedsLayout];
+    }
 }
 
 /**
