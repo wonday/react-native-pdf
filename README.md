@@ -34,6 +34,12 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v2.0.5
+
+1. add code protect for not load the same pdf twice
+2. can scroll out of bounds with blank page, after stop, redraw pages
+3. cancel not finished download task when componentWillUnmount.
+
 v2.0.4
 
 1. add .git to .npmignore
