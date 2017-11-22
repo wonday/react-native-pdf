@@ -46,6 +46,15 @@ export default class Pdf extends Component {
   componentDidMount() {
     this._loadFromSource(this.props.source)
   }
+  
+  componentWillUnmount() {   
+    if (this.lastRNBFTask) {
+      this.lastRNBFTask.cancel(err => {
+        //__DEV__ && console.log("Load pdf from url was cancelled.");
+      });
+      this.lastRNBFTask = null;
+    }
+  }
 
   _loadFromSource = newSource => {
     const source = resolveAssetSource(newSource) || {}
@@ -136,10 +145,11 @@ export default class Pdf extends Component {
   }
 
   _downloadFile = (source, cacheFile) => {
-    if (this.lastRNBFTask != null) {
+    if (this.lastRNBFTask) {
       this.lastRNBFTask.cancel(err => {
         //__DEV__ && console.log("Load pdf from url was cancelled.");
-      })
+      });
+      this.lastRNBFTask = null;
     }
 
     this.lastRNBFTask = RNFetchBlob.config({
