@@ -106,28 +106,18 @@ v1.3.0
  */
 
 import React from 'react';
-import {
-    StyleSheet,
-    TouchableHighlight,
-    Dimensions,
-    View,
-    Text
-} from 'react-native';
+import { StyleSheet, Dimensions, View } from 'react-native';
 
 import Pdf from 'react-native-pdf';
 
 export default class PDFExample extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-        
     render() {
-        let source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
-        //let source = require('./test.pdf');  // ios only
-        //let source = {uri:'bundle-assets://test.pdf'};
+        const source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
+        //const source = require('./test.pdf');  // ios only
+        //const source = {uri:'bundle-assets://test.pdf'};
 
-        //let source = {uri:'file:///sdcard/test.pdf'};
-        //let source = {uri:"data:application/pdf;base64,..."};
+        //const source = {uri:'file:///sdcard/test.pdf'};
+        //const source = {uri:"data:application/pdf;base64,..."};
 
         return (
             <View style={styles.container}>
