@@ -34,6 +34,10 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v2.0.6
+
+1. fixed change page number, do not redraw problem
+
 v2.0.5
 
 1. add code protect for not load the same pdf twice
