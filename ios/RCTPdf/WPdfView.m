@@ -130,7 +130,8 @@
         DLog(@"setPage %d -> %d", _page, page);
         _page = page;
         _pageOffset = 0;
-        
+
+        [self setNeedsDisplay];        
     }
     
 }
@@ -219,6 +220,8 @@
         
         DLog(@"loadComplete,%d", _numberOfPages);
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%d",_numberOfPages]]});
+
+        [self setNeedsDisplay];
         
     } else {
         
