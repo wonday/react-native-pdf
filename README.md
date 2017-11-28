@@ -36,7 +36,7 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 v2.0.6
 
-1. fixed change page number, do not redraw problem
+1. fix change page number, do not redraw problem
 
 v2.0.5
 
