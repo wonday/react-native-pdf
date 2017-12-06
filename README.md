@@ -34,6 +34,10 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v2.0.7
+
+1. update android dependent lib
+
 v2.0.6
 
 1. fix change page number, do not redraw problem
