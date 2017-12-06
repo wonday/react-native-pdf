@@ -36,7 +36,7 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 v2.0.7
 
-1. update android dependent lib
+1. update android dependent lib AndroidPdfViewer to 2.8.1
 
 v2.0.6
 
