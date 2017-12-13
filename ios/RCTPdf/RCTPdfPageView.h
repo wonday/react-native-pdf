@@ -7,12 +7,16 @@
  */
 
 #if __has_include(<React/RCTAssert.h>)
-#import <React/RCTViewManager.h>
+#import <React/UIView+React.h>
 #else
-#import "RCTViewManager.h"
+#import "UIView+React.h"
 #endif
 
 
-@interface RCTPdfManager : RCTViewManager
+@interface RCTPdfPageView : UIView
+
+@property(nonatomic) int fileNo;
+@property(nonatomic) int page;
+
 
 @end

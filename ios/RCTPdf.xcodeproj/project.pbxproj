@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		526B80401EABD92200259970 /* RCTPdfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 526B803F1EABD92200259970 /* RCTPdfManager.m */; };
-		52F79DB71EB2DA4F00CAD00C /* RCTPdfView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F79DB41EB2DA4F00CAD00C /* RCTPdfView.m */; };
-		52F79DB81EB2DA4F00CAD00C /* WPdfView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F79DB61EB2DA4F00CAD00C /* WPdfView.m */; };
+		526B80401EABD92200259970 /* RCTPdfPageViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 526B803F1EABD92200259970 /* RCTPdfPageViewManager.m */; };
+		52A324EA1FD3C3FB000B0B18 /* PdfManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 52A324E91FD3C3FB000B0B18 /* PdfManager.m */; };
+		52F79DB71EB2DA4F00CAD00C /* RCTPdfPageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 52F79DB41EB2DA4F00CAD00C /* RCTPdfPageView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,12 +26,12 @@
 
 /* Begin PBXFileReference section */
 		20D8E03F1C8E946C00039823 /* libRCTPdf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTPdf.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		526B803E1EABD92200259970 /* RCTPdfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfManager.h; sourceTree = "<group>"; };
-		526B803F1EABD92200259970 /* RCTPdfManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfManager.m; sourceTree = "<group>"; };
-		52F79DB31EB2DA4F00CAD00C /* RCTPdfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfView.h; sourceTree = "<group>"; };
-		52F79DB41EB2DA4F00CAD00C /* RCTPdfView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfView.m; sourceTree = "<group>"; };
-		52F79DB51EB2DA4F00CAD00C /* WPdfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPdfView.h; sourceTree = "<group>"; };
-		52F79DB61EB2DA4F00CAD00C /* WPdfView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPdfView.m; sourceTree = "<group>"; };
+		526B803E1EABD92200259970 /* RCTPdfPageViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfPageViewManager.h; sourceTree = "<group>"; };
+		526B803F1EABD92200259970 /* RCTPdfPageViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfPageViewManager.m; sourceTree = "<group>"; };
+		52A324E81FD3C3FB000B0B18 /* PdfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PdfManager.h; sourceTree = "<group>"; };
+		52A324E91FD3C3FB000B0B18 /* PdfManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PdfManager.m; sourceTree = "<group>"; };
+		52F79DB31EB2DA4F00CAD00C /* RCTPdfPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTPdfPageView.h; sourceTree = "<group>"; };
+		52F79DB41EB2DA4F00CAD00C /* RCTPdfPageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTPdfPageView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,12 +64,12 @@
 		20D8E0411C8E946C00039823 /* RCTPdf */ = {
 			isa = PBXGroup;
 			children = (
-				52F79DB31EB2DA4F00CAD00C /* RCTPdfView.h */,
-				52F79DB41EB2DA4F00CAD00C /* RCTPdfView.m */,
-				52F79DB51EB2DA4F00CAD00C /* WPdfView.h */,
-				52F79DB61EB2DA4F00CAD00C /* WPdfView.m */,
-				526B803E1EABD92200259970 /* RCTPdfManager.h */,
-				526B803F1EABD92200259970 /* RCTPdfManager.m */,
+				52A324E81FD3C3FB000B0B18 /* PdfManager.h */,
+				52A324E91FD3C3FB000B0B18 /* PdfManager.m */,
+				52F79DB31EB2DA4F00CAD00C /* RCTPdfPageView.h */,
+				52F79DB41EB2DA4F00CAD00C /* RCTPdfPageView.m */,
+				526B803E1EABD92200259970 /* RCTPdfPageViewManager.h */,
+				526B803F1EABD92200259970 /* RCTPdfPageViewManager.m */,
 			);
 			path = RCTPdf;
 			sourceTree = "<group>";
@@ -131,9 +131,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				526B80401EABD92200259970 /* RCTPdfManager.m in Sources */,
-				52F79DB71EB2DA4F00CAD00C /* RCTPdfView.m in Sources */,
-				52F79DB81EB2DA4F00CAD00C /* WPdfView.m in Sources */,
+				52A324EA1FD3C3FB000B0B18 /* PdfManager.m in Sources */,
+				526B80401EABD92200259970 /* RCTPdfPageViewManager.m in Sources */,
+				52F79DB71EB2DA4F00CAD00C /* RCTPdfPageView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

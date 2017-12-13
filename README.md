@@ -8,7 +8,7 @@ A react native PDF view component (cross-platform support)
 * read a PDF from url/local file/asset and can cache it.
 * display horizontally or vertically
 * drag and zoom
-* first tap for reset zoom and continuous tap for zoom in
+* double tap for zoom
 * support password protected pdf
 
 ### Installation
@@ -33,6 +33,12 @@ Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acess
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
+
+v3.0.0-alpha.1
+
+1. rewrite all iOS codes
+improve scroll performance/Smoothness, fix scale/onPageChanged...
+(Just a test version, Do not use in your product)
 
 v2.0.7
 
@@ -164,22 +170,23 @@ const styles = StyleSheet.create({
 
 ### Configuration
 
-| Property      | Type          | Default          | Description         | iOS   | Android |
-| ------------- |:-------------:|:----------------:| ------------------- | ------| ------- |
-| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔   | ✔ |
-| page          | number        | 1                | initial page index          | ✔   | ✔ |
-| scale         | number        | 1.0              | zoom scale, 1<=scale<=3| ✔   | ✔ |
-| horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ |
-| fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ |
-| spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ |
-| password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ |
-| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ |
-| activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ |
-| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ |
-| onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ |
-| onLoadComplete      | function        | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ |
-| onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ |
-| onError       | function        | null        | callback when error happened | ✔   | ✔ |
+| Property      | Type          | Default          | Description         | iOS   | Android | FirstRelease |
+| ------------- |:-------------:|:----------------:| ------------------- | ------| ------- | ------------ |
+| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | <3.0 |
+| page          | number        | 1                | initial page index          | ✔   | ✔ | <3.0 |
+| scale         | number        | 1.0              | zoom scale, 1<=scale<=3| ✔   | ✔ | <3.0 |
+| horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | <3.0 |
+| fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | <3.0, abandoned from 3.0 |
+| fitPolicy     | number        | 0                | 0:auto fit(horizontal=true fit width, horizontal=false fit height), 1:fit width, 2:fit height, 3:fit page(only show one page in window)| ✔   | ✔ | 3.0 |
+| spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | <3.0 |
+| password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | <3.0 |
+| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | <3.0 |
+| activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | <3.0 |
+| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
+| onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
+| onLoadComplete      | function        | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
+| onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
+| onError       | function        | null        | callback when error happened | ✔   | ✔ | <3.0 |
 
 #### parameters of source
 
