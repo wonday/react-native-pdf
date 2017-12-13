@@ -252,7 +252,7 @@ export default class Pdf extends Component {
         if (!this.state.isDownloaded) {
             return (
                 <View
-                    style={{flex: 1, justifyContent: 'center'}}
+                    style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}
                 >
                     {this.props.activityIndicator
                         ? this.props.activityIndicator
