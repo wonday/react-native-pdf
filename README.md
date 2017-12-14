@@ -41,7 +41,7 @@ improve scroll performance/Smoothness, fix scale/onPageChanged...
 (Just a test version, Do not use in your product)
 
 Notice:
-I tested by RN 0.47.1
+I tested by RN 0.47.1,
 RN 0.50.0+ will cause "Changing viewabilityConfig on the fly is not supported" error.
 see also [`react-native#16776`](https://github.com/facebook/react-native/pull/16776)
 waiting RN to fix this bug.
@@ -183,16 +183,18 @@ const styles = StyleSheet.create({
 | scale         | number        | 1.0              | zoom scale, 1<=scale<=3| ✔   | ✔ | <3.0 |
 | horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | <3.0 |
 | fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | <3.0, abandoned from 3.0 |
-| fitPolicy     | number        | 0                | 0:auto fit(horizontal=true fit width, horizontal=false fit height), 1:fit width, 2:fit height, 3:fit page(only show one page in window)| ✔   | ✔ | 3.0 |
+| fitPolicy     | number        | 0                | 0:default autofit(horizontal=true fit height else fit width), 1:fit width, 2:fit height, 3:fit page(only show one page in view)| ✔   | ✔ | 3.0 |
 | spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | <3.0 |
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | <3.0 |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | <3.0 |
 | activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | <3.0 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
-| onLoadProgress      | function        | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
-| onLoadComplete      | function        | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
-| onPageChanged       | function        | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
-| onError       | function        | null        | callback when error happened | ✔   | ✔ | <3.0 |
+| onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
+| onLoadComplete      | function(numberOfPage, path) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
+| onPageChanged       | function(page,totalPage)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
+| onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
+| onPagePress   | function(page)  | null        | callback when page was pressed | ✔   | - | 3.0 |
+| onScale       | function(scale) | null        | callback when scale page | ✔   | - | 3.0 |
 
 #### parameters of source
 

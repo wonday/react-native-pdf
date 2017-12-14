@@ -47,12 +47,28 @@ export default class Pdf extends Component {
         activityIndicator: PropTypes.any,
         enableAntialiasing: PropTypes.bool,
         fitPolicy: PropTypes.number,
-        onChange: PropTypes.func,
         onLoadComplete: PropTypes.func,
         onPageChanged: PropTypes.func,
         onError: PropTypes.func,
+        onPagePress: PropTypes.func,
+        onScale: PropTypes.func,
     };
 
+    static defaultProps = {
+        password: "",
+        scale: 1,
+        spacing: 10,
+        fitPolicy: 0,
+        horizontal: false,
+        page: 1,
+        onLoadProgress: (percent)=>{},
+        onLoadComplete: (numberOfPages,path)=>{},
+        onPageChanged: (page,totalPage)=>{},
+        onError: (error)=>{},
+        onPagePress: (page)=>{},
+        onScale: (scale)=>{},
+    };
+    
     constructor(props) {
 
         super(props);
@@ -278,6 +294,8 @@ export default class Pdf extends Component {
                         style={[{backgroundColor: '#EEE'}, this.props.style]}
                         path={this.state.path}
                         onChange={this._onChange}
+                        onPagePress={this.props.onPagePress}
+                        onScale={this.props.onScale}
                     />
                 );
             } else if (Platform.OS === "ios") {
@@ -289,6 +307,8 @@ export default class Pdf extends Component {
                         onLoadComplete={this.props.onLoadComplete}
                         onPageChanged={this.props.onPageChanged}
                         onError={this.props.onError}
+                        onPagePress={this.props.onPagePress}
+                        onScale={this.props.onScale}
                     />
                 );
             } else {

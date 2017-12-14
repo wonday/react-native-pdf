@@ -18,11 +18,14 @@ interface Props {
     spacing?: number,
     password?: string,
     activityIndicator?: any,
-    enableAntialiasing: PropTypes.bool,
+    enableAntialiasing: boolean,
     fitPolicy?: number,
+    onLoadProgress?: (percent: number)=> void,
     onLoadComplete?: (pageCount: number) => void,
-    onPageChanged?: (page: number, pageCount: number) => void,
+    onPageChanged?: (page: number, totalPage: number) => void,
     onError?: (error: string) => void,
+    onPagePress?: (page:number) =>void,
+    onScale?: (scale:number) =>void,
 }
 
 declare class Pdf extends React.Component<Props, any> {

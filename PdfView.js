@@ -9,6 +9,7 @@
 'use strict';
 import React, {Component} from 'react';
 import {FlatList, View} from 'react-native';
+
 import PropTypes from 'prop-types';
 
 import PdfManager from './PdfManager';
@@ -40,6 +41,8 @@ export default class PdfView extends Component {
         fitPolicy: 0,
         horizontal: false,
         page: 1,
+        onPagePress: (page)=>{},
+        onScale: (scale)=>{},
     };
 
     constructor(props) {
@@ -53,7 +56,7 @@ export default class PdfView extends Component {
             pageAspectRate: 0.5,
             contentSize: {width: 0, height: 0},
             scale: 1,
-            contentOffset: null,
+            contentOffset: {x:0, y:0},
             scrollEnabled: true,
         };
 
@@ -98,6 +101,12 @@ export default class PdfView extends Component {
 
     _getPageWidth = () => {
 
+        // if only one page, process as case 3
+        if (this.state.numberOfPages===1) {
+            return this.state.contentSize.width * this.state.scale;
+        }
+
+
         switch (this.props.fitPolicy) {
             case 1:  //fit width
                 return this.state.contentSize.width * this.state.scale;
@@ -118,6 +127,13 @@ export default class PdfView extends Component {
     };
 
     _getPageHeight = () => {
+
+        // if only one page, process as case 3
+        if (this.state.numberOfPages===1) {
+            return this.state.contentSize.height * this.state.scale;
+        }
+
+
 
         switch (this.props.fitPolicy) {
             case 1: //fit width
@@ -142,14 +158,19 @@ export default class PdfView extends Component {
         <View style={this.props.horizontal ? {
             width: this.props.spacing,
             backgroundColor: 'transparent'
-        } : {height: this.props.spacing, backgroundColor: 'transparent'}}/>
+        } : {
+            height: this.props.spacing,
+            backgroundColor: 'transparent'
+        }}/>
     );
 
-    _onItemPress = () => {
+    _onItemPress = (index) => {
+
+        this.props.onPagePress(index+1);
 
     };
 
-    _onItemDoublePress = () => {
+    _onItemDoublePress = (index) => {
 
         if (this.state.scale >= MAX_SCALE) {
             this._onScale(1 / this.state.scale);
@@ -159,7 +180,7 @@ export default class PdfView extends Component {
 
     };
 
-    _onScale = (scale) => {
+    _onScale = (scale, center) => {
 
         let newScale = scale * this.state.scale;
         newScale = newScale > MAX_SCALE ? MAX_SCALE : newScale;
@@ -173,6 +194,7 @@ export default class PdfView extends Component {
         }
 
         this.setState({scale: newScale, scrollEnabed: false});
+        this.props.onScale(newScale);
 
         if (this.scaleTimer) {
             clearTimeout(this.scaleTimer);
@@ -187,8 +209,8 @@ export default class PdfView extends Component {
 
         return (
             <DoublePressView style={{flexDirection: this.props.horizontal ? 'row' : 'column'}}
-                onPress={this._onItemPress}
-                onDoublePress={this._onItemDoublePress}
+                onPress={()=>this._onItemPress(index)}
+                onDoublePress={()=>this._onItemDoublePress(index)}
             >
                 <PdfPageView
                     key={item.id}
@@ -252,7 +274,7 @@ export default class PdfView extends Component {
                 onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={{minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false}}
                 onScroll={(e) => {
-                    this.setState({contentOffset: e.nativeEvent.contentOffset});
+                    this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
                 }}
                 scrollEnabled={this.state.scrollEnabled}
             />

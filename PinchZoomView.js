@@ -46,6 +46,7 @@ export default class PinchZoomView extends Component {
             onPanResponderMove: this._handlePanResponderMove,
             onPanResponderRelease: this._handlePanResponderEnd,
             onPanResponderTerminationRequest: evt => false,
+            onPanResponderTerminate: this._handlePanResponderTerminate,
             onShouldBlockNativeResponder: evt => true
         });
 
@@ -60,16 +61,17 @@ export default class PinchZoomView extends Component {
 
     _handleMoveShouldSetPanResponder = (e, gestureState) => {
 
-        return this.props.scalable && (gestureState.numberActiveTouches >= 2);
+        return this.props.scalable && (e.nativeEvent.changedTouches.length>=2 || gestureState.numberActiveTouches >= 2);
 
     };
 
     _handlePanResponderGrant = (e, gestureState) => {
 
-        if (gestureState.numberActiveTouches >= 2) {
+        if (e.nativeEvent.changedTouches.length>=2 || gestureState.numberActiveTouches >= 2) {
             let dx = Math.abs(e.nativeEvent.touches[0].pageX - e.nativeEvent.touches[1].pageX);
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
             this.distant = Math.sqrt(dx * dx + dy * dy);
+            this.props.onScale(1);
         }
 
     };
@@ -80,20 +82,28 @@ export default class PinchZoomView extends Component {
 
     };
 
+    _handlePanResponderTerminate = (e, gestureState) => {
+
+        this.distant = 0;
+
+    };
+
     _handlePanResponderMove = (e, gestureState) => {
 
-        // zoom
-        if (gestureState.numberActiveTouches >= 2 && this.distant !== 0) {
+        if ((e.nativeEvent.changedTouches.length>=2 || gestureState.numberActiveTouches >= 2) && this.distant >100) {
+
             let dx = Math.abs(e.nativeEvent.touches[0].pageX - e.nativeEvent.touches[1].pageX);
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
             let distant = Math.sqrt(dx * dx + dy * dy);
-            let scale = (distant / this.distant).toFixed(2);
+            let scale = (distant / this.distant);
+
+            // for zoom smooth
             if (scale > 1.1) scale = 1.1;
             if (scale < 0.9) scale = 0.9;
-            this.props.onScale(scale);
-            this.distant = distant;
-        } else {
-            this.distant = 0;
+            if (scale>1.05 || scale<0.95) {
+                this.props.onScale(scale, {x:(e.nativeEvent.touches[0].locationX+e.nativeEvent.touches[1].locationX)/2, y:(e.nativeEvent.touches[0].locationY+e.nativeEvent.touches[1].locationY)/2});
+                this.distant = distant;
+            }
         }
 
     };
