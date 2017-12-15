@@ -31,6 +31,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import static java.lang.String.format;
 import java.lang.ClassCastException;
 
+import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 public class RCTPdfManager extends SimpleViewManager<PdfView> {
     private static final String REACT_CLASS = "RCTPdf";
@@ -94,9 +95,9 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setEnableAntialiasing(enableAntialiasing);
     }
 
-    @ReactProp(name = "fitWidth")
-    public void setFitWidth(PdfView pdfView, boolean fitWidth) {
-        pdfView.setFitWidth(fitWidth);
+    @ReactProp(name = "fitPolicy")
+    public void setFitPolycy(PdfView pdfView, int fitPolicy) {
+        pdfView.setFitPolicy(fitPolicy);
     }
 
     @Override

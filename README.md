@@ -25,25 +25,25 @@ react-native link react-native-fetch-blob
 
 ### FAQ
 
-Q1. After installation and running, I can not see the pdf file.
+Q1. After installation and running, I can not see the pdf file.  
 A1: maybe you forgot to excute ```react-native link``` or it does not run correctly.
 You can add it manually. For detail you can see the issue [`#24`](https://github.com/wonday/react-native-pdf/issues/24) and [`#2`](https://github.com/wonday/react-native-pdf/issues/2)
 
-Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```
+Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```  
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
 
-v3.0.0-alpha.1
+v3.0.0-alpha
 
 1. rewrite all iOS codes
-improve scroll performance/Smoothness, fix scale/onPageChanged...
+improve scroll performance/Smoothness, fix scale/onPageChanged...  
 (Just a test version, Do not use in your product)
 
 Notice:
-I tested by RN 0.47.1,
-RN 0.50.0+ will cause "Changing viewabilityConfig on the fly is not supported" error.
-see also [`react-native#16776`](https://github.com/facebook/react-native/pull/16776)
+I tested by RN 0.47.  
+RN 0.50.0+ will cause "Changing viewabilityConfig on the fly is not supported" error.  
+see also [`react-native#16776`](https://github.com/facebook/react-native/pull/16776)  
 waiting RN to fix this bug.
 
 v2.0.7
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
 | scale         | number        | 1.0              | zoom scale, 1<=scale<=3| ✔   | ✔ | <3.0 |
 | horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | <3.0 |
 | fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | <3.0, abandoned from 3.0 |
-| fitPolicy     | number        | 0                | 0:default autofit(horizontal=true fit height else fit width), 1:fit width, 2:fit height, 3:fit page(only show one page in view)| ✔   | ✔ | 3.0 |
+| fitPolicy     | number        | 2                | 0:fit width, 1:fit height, 2:fit both(default)| ✔   | ✔ | 3.0 |
 | spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | <3.0 |
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | <3.0 |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | <3.0 |
@@ -193,8 +193,8 @@ const styles = StyleSheet.create({
 | onLoadComplete      | function(numberOfPage, path) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
 | onPageChanged       | function(page,totalPage)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
 | onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
-| onPagePress   | function(page)  | null        | callback when page was pressed | ✔   | - | 3.0 |
-| onScale       | function(scale) | null        | callback when scale page | ✔   | - | 3.0 |
+| onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | 3.0 |
+| onScaleChanged    | function(scale) | null        | callback when scale page | ✔ | ✔ | 3.0 |
 
 #### parameters of source
 

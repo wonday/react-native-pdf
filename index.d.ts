@@ -24,8 +24,8 @@ interface Props {
     onLoadComplete?: (pageCount: number) => void,
     onPageChanged?: (page: number, totalPage: number) => void,
     onError?: (error: string) => void,
-    onPagePress?: (page:number) =>void,
-    onScale?: (scale:number) =>void,
+    onPageSingleTap?: (page:number) =>void,
+    onScaleChanged?: (scale:number) =>void,
 }
 
 declare class Pdf extends React.Component<Props, any> {

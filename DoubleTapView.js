@@ -14,22 +14,22 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-export default class DoublePressView extends Component {
+export default class DoubleTapView extends Component {
 
     static propTypes = {
         ...View.propTypes,
         delay: PropTypes.number,
         radius: PropTypes.number,
-        onPress: PropTypes.func,
-        onDoublePress: PropTypes.func,
+        onSingleTap: PropTypes.func,
+        onDoubleTap: PropTypes.func,
     };
 
     static defaultProps = {
         delay: 300,
-        radius: 40,
-        onPress: () => {
+        radius: 50,
+        onSingleTap: () => {
         },
-        onDoublePress: () => {
+        onDoubleTap: () => {
         },
     };
 
@@ -64,7 +64,7 @@ export default class DoublePressView extends Component {
         return Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)).toFixed(1);
     };
 
-    isDoublePress = (currentTouchTimeStamp, {x0, y0}) => {
+    isDoubleTap = (currentTouchTimeStamp, {x0, y0}) => {
         const {prevTouchX, prevTouchY, prevTouchTimeStamp} = this.prevTouchInfo;
         const dt = currentTouchTimeStamp - prevTouchTimeStamp;
         const {delay, radius} = this.props;
@@ -78,28 +78,29 @@ export default class DoublePressView extends Component {
 
         if (this.timer) {
 
-            clearTimeout(this.timer);
-            this.timer = null;
+            if (this.isDoubleTap(currentTouchTimeStamp, gestureState)) {
 
-            if (this.isDoublePress(currentTouchTimeStamp, gestureState)) {
-
-                this.props.onDoublePress();
+                clearTimeout(this.timer);
+                this.timer = null;
+                this.props.onDoubleTap();
 
             } else {
 
-                this.timer = setTimeout(() => {
-                    this.timer = null;
-                    this.props.onPress();
-                }, this.props.delay);
+                const {prevTouchX, prevTouchY, prevTouchTimeStamp} = this.prevTouchInfo;
+                const {radius} = this.props;
 
-                this.props.onPress();
+                // if not in radius, it's a move
+                if (this.distance(prevTouchX, prevTouchY, gestureState.x0, gestureState.y0) < radius) {
+                    this.timer = null;
+                    this.props.onSingleTap();
+                }
 
             }
         } else {
 
             this.timer = setTimeout(() => {
+                this.props.onSingleTap();
                 this.timer = null;
-                this.props.onPress();
             }, this.props.delay);
 
         }

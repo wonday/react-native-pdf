@@ -17,15 +17,21 @@ import android.util.Log;
 import android.graphics.PointF;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.graphics.Canvas;
+import javax.annotation.Nullable;
+
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 import com.github.barteksc.pdfviewer.listener.OnRenderListener;
+import com.github.barteksc.pdfviewer.listener.OnTapListener;
+import com.github.barteksc.pdfviewer.listener.OnDrawListener;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
 
 import com.facebook.react.bridge.NativeModule;
-import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
@@ -35,13 +41,15 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.common.logging.FLog;
+import com.facebook.react.common.ReactConstants;
 
 import static java.lang.String.format;
 import java.lang.ClassCastException;
 
 
-public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener {
-    private Context context;
+public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener {
+    private ThemedReactContext context;
     private int page = 1;               // start from 1
     private boolean horizontal = false;
     private float scale = 1;
@@ -50,11 +58,15 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
-    private boolean fitWidth = false;
+    private FitPolicy fitPolicy = FitPolicy.WIDTH;
     private static PdfView instance = null;
+    private boolean isMove = false;
+
+    private float lastPageWidth = 0;
+    private float lastPageHeight = 0;
 
 
-    public PdfView(Context context, AttributeSet set){
+    public PdfView(ThemedReactContext context, AttributeSet set){
         super(context,set);
         this.context = context;
         this.instance = this;
@@ -79,6 +91,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     @Override
     public void loadComplete(int pageCount) {
+
+        this.zoomTo(this.scale);
+
         WritableMap event = Arguments.createMap();
         event.putString("message", "loadComplete|"+pageCount);
         ReactContext reactContext = (ReactContext)this.getContext();
@@ -106,10 +121,47 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
          );
     }
 
+    @Override
+    public boolean onTap(MotionEvent e){
+
+        WritableMap event = Arguments.createMap();
+        event.putString("message", "pageSingleTap|"+page);
+
+        ReactContext reactContext = (ReactContext)this.getContext();
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+            this.getId(),
+            "topChange",
+            event
+         );
+
+        // process as tap
+         return true;
+
+    }
+
+    @Override
+    public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage){
+
+        if (lastPageWidth>0 && lastPageHeight>0 && (pageWidth!=lastPageWidth || pageHeight!=lastPageHeight)) {
+            WritableMap event = Arguments.createMap();
+            event.putString("message", "scaleChanged|"+(pageWidth/lastPageWidth));
+
+            ReactContext reactContext = (ReactContext)this.getContext();
+            reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+                this.getId(),
+                "topChange",
+                event
+             );
+        }
+
+        lastPageWidth = pageWidth;
+        lastPageHeight = pageHeight;
+
+    }
+
+
     public void drawPdf() {
         showLog(format("drawPdf path:%s %s", this.path, this.page));
-
-        PointF pivot = new PointF(this.scale, this.scale);
 
         if (this.path != null){
             File pdfFile = new File(this.path);
@@ -121,9 +173,13 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .onPageChange(this)
                 .onLoad(this)
                 .onError(this)
+                .onTap(this)
+                .onDraw(this)
                 .spacing(this.spacing)
                 .password(this.password)
                 .enableAntialiasing(this.enableAntialiasing)
+                .pageFitPolicy(this.fitPolicy)
+/*
                 .onRender(new OnRenderListener() {
                                 @Override
                                 public void onInitiallyRendered(int nbPages, float pageWidth, float pageHeight) {
@@ -132,9 +188,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                                     }
                                 }
                             })
+*/
                 .load();
 
-            this.zoomCenteredTo(this.scale, pivot);
 
         }
     }
@@ -168,8 +224,22 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         this.enableAntialiasing = enableAntialiasing;
     }
 
-    public void setFitWidth(boolean fitWidth) {
-        this.fitWidth = fitWidth;
+    public void setFitPolicy(int fitPolicy) {
+        switch(fitPolicy){
+            case 0:
+                this.fitPolicy = FitPolicy.WIDTH;
+                break;
+            case 1:
+                this.fitPolicy = FitPolicy.HEIGHT;
+                break;
+            case 2:
+            default:
+            {
+                this.fitPolicy = FitPolicy.BOTH;
+                break;
+            }
+        }
+
     }
 
     private void showLog(final String str) {
