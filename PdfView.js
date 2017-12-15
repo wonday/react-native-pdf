@@ -88,7 +88,7 @@ export default class PdfView extends Component {
     componentWillReceiveProps(nextProps) {
 
         if (nextProps.scale !== this.state.scale) {
-            this.onScaleChanged(nextProps.scale / this.state.scale);
+            this._onScaleChanged(nextProps.scale / this.state.scale);
         }
 
     }
@@ -170,9 +170,9 @@ export default class PdfView extends Component {
     _onItemDoubleTap = (index) => {
 
         if (this.state.scale >= MAX_SCALE) {
-            this.onScaleChanged(1 / this.state.scale);
+            this._onScaleChanged(1 / this.state.scale);
         } else {
-            this.onScaleChanged(1.2);
+            this._onScaleChanged(1.2);
         }
 
     };

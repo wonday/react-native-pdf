@@ -20,6 +20,7 @@ export default class PinchZoomView extends Component {
     static propTypes = {
         ...View.propTypes,
         scalable: PropTypes.bool,
+        onScaleChanged: PropTypes.func,
     };
 
     static defaultProps = {
