@@ -65,7 +65,7 @@ export default class Pdf extends Component {
         onLoadComplete: (numberOfPages,path)=>{},
         onPageChanged: (page,totalPage)=>{},
         onError: (error)=>{},
-        onPageSingleTap: (page)=>{alert("SingleTap:"+page);},
+        onPageSingleTap: (page)=>{},
         onScaleChanged: (scale)=>{},
     };
     
