@@ -63,7 +63,7 @@ export default class Pdf extends Component {
         page: 1,
         onLoadProgress: (percent)=>{},
         onLoadComplete: (numberOfPages,path)=>{},
-        onPageChanged: (page,totalPage)=>{},
+        onPageChanged: (page,numberOfPages)=>{},
         onError: (error)=>{},
         onPageSingleTap: (page)=>{},
         onScaleChanged: (scale)=>{},

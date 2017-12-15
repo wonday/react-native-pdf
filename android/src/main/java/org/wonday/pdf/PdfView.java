@@ -73,14 +73,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     }
 
     @Override
-    public void onPageChanged(int page, int pageCount) {
+    public void onPageChanged(int page, int numberOfPages) {
         // pdf lib page start from 0, convert it to our page (start from 1)
         page = page+1;
         this.page = page;
-        showLog(format("%s %s / %s", path, page, pageCount));
+        showLog(format("%s %s / %s", path, page, numberOfPages));
 
         WritableMap event = Arguments.createMap();
-        event.putString("message", "pageChanged|"+page+"|"+pageCount);
+        event.putString("message", "pageChanged|"+page+"|"+numberOfPages);
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             this.getId(),
@@ -90,12 +90,12 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     }
 
     @Override
-    public void loadComplete(int pageCount) {
+    public void loadComplete(int numberOfPages) {
 
         this.zoomTo(this.scale);
 
         WritableMap event = Arguments.createMap();
-        event.putString("message", "loadComplete|"+pageCount);
+        event.putString("message", "loadComplete|"+numberOfPages);
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             this.getId(),
