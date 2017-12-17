@@ -23,7 +23,7 @@ export default class PDFExample extends React.Component {
         this.state = {
             page: 1,
             scale: 1,
-            pageCount: 0,
+            numberOfPages: 0,
             horizontal: false,
         };
         this.pdf = null;
@@ -39,7 +39,7 @@ export default class PDFExample extends React.Component {
     };
 
     nextPage = () => {
-        let nextPage = this.state.page + 1 > this.state.pageCount ? this.state.pageCount : this.state.page + 1;
+        let nextPage = this.state.page + 1 > this.state.numberOfPages ? this.state.numberOfPages : this.state.page + 1;
         this.setState({page: nextPage});
         console.log(`nextPage: ${nextPage}`);
     };
@@ -78,8 +78,8 @@ export default class PDFExample extends React.Component {
                         <Text style={styles.btnText}>{'-'}</Text>
                     </TouchableHighlight>
                     <View style={styles.btnText}><Text style={styles.btnText}>Page</Text></View>
-                    <TouchableHighlight disabled={this.state.page === this.state.pageCount}
-                                        style={this.state.page === this.state.pageCount ? styles.btnDisable : styles.btn}
+                    <TouchableHighlight disabled={this.state.page === this.state.numberOfPages}
+                                        style={this.state.page === this.state.numberOfPages ? styles.btnDisable : styles.btn}
                                         onPress={() => this.nextPage()}>
                         <Text style={styles.btnText}>{'+'}</Text>
                     </TouchableHighlight>
@@ -108,11 +108,11 @@ export default class PDFExample extends React.Component {
                      page={this.state.page}
                      scale={this.state.scale}
                      horizontal={this.state.horizontal}
-                     onLoadComplete={(pageCount, filePath) => {
-                         this.state.pageCount = pageCount; //do not use setState, it will cause re-render
-                         console.log(`total page count: ${pageCount}`);
+                     onLoadComplete={(numberOfPages, filePath) => {
+                         this.state.numberOfPages = numberOfPages; //do not use setState, it will cause re-render
+                         console.log(`total page count: ${numberOfPages}`);
                      }}
-                     onPageChanged={(page, pageCount) => {
+                     onPageChanged={(page, numberOfPages) => {
                          this.state.page = page; //do not use setState, it will cause re-render
                          console.log(`current page: ${page}`);
                      }}
