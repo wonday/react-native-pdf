@@ -41,6 +41,9 @@ v3.0.0-alpha
 2. add onPageSigleTap(), onScaleChanged()
 3. update android dependent lib AndroidPdfViewer to 3.0.0.alpha.4
 
+Known issues  
+1. iOS zooming can not scroll to pinch center 
+
 v2.0.7
 
 1. update android dependent lib AndroidPdfViewer to 2.8.1
