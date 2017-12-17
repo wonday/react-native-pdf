@@ -34,19 +34,12 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
-v3.0.0-alpha
+v3.0.0-alpha  
+(Just a test version, Do not use in your product)  
 
-1. rewrite all iOS codes
-improve scroll performance/Smoothness, fix scale/onPageChanged...  
-(Just a test version, Do not use in your product)
+1. rewrite all iOS codes， improve scroll performance/Smoothness, fix scale/onPageChanged...  
 2. add onPageSigleTap(), onScaleChanged()
-3. update android dependent lib AndroidPdfViewer to 3.0.0.alpha.3
-
-Notice:
-I tested by RN 0.47.  
-RN 0.50.0+ will cause "Changing viewabilityConfig on the fly is not supported" error.  
-see also [`react-native#16776`](https://github.com/facebook/react-native/pull/16776)  
-waiting RN to fix this bug.
+3. update android dependent lib AndroidPdfViewer to 3.0.0.alpha.4
 
 v2.0.7
 

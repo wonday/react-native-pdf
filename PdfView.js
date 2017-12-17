@@ -18,6 +18,7 @@ import DoubleTapView from './DoubleTapView';
 import PinchZoomView from './PinchZoomView';
 
 const MAX_SCALE = 3;
+const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false};
 
 export default class PdfView extends Component {
 
@@ -269,7 +270,7 @@ export default class PdfView extends Component {
                 removeClippedSubviews={true}
                 /*initialScrollIndex={this.props.page - 1}*/ /* not action? */
                 onViewableItemsChanged={this._onViewableItemsChanged}
-                viewabilityConfig={{minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false}}
+                viewabilityConfig={VIEWABILITYCONFIG}
                 onScroll={(e) => {
                     this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
                 }}
