@@ -109,7 +109,7 @@ export default class Pdf extends Component {
 
     }
 
-    _loadFromSource = newSource => {
+    _loadFromSource = (newSource) => {
 
         const source = resolveAssetSource(newSource) || {};
         //__DEV__ && console.log("PDF source:");
@@ -146,7 +146,7 @@ export default class Pdf extends Component {
 
     };
 
-    _prepareFile = source => {
+    _prepareFile = (source) => {
 
         if (source.uri) {
             let uri = source.uri || '';
@@ -272,7 +272,7 @@ export default class Pdf extends Component {
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {
-                this.props.onError && this.props.onError(message[1]);
+                this._onError(message[1]);
             } else if (message[0] === 'pageSingleTap') {
                 this.props.onPageSingleTap && this.props.onPageSingleTap(message[1]);
             } else if (message[0] === 'scaleChanged') {
@@ -281,6 +281,17 @@ export default class Pdf extends Component {
         }
 
     };
+    
+    _onError = (error) => {
+
+        if (this.props.source && this.props.source.uri && this.props.source.cache===true) {
+            const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(this.props.source.uri) + '.pdf';
+            RNFetchBlob.fs.unlink(cacheFile);
+        }
+        
+        this.props.onError && this.props.onError(error);
+
+    }
 
     render() {
 
@@ -323,7 +334,7 @@ export default class Pdf extends Component {
                         path={this.state.path}
                         onLoadComplete={this.props.onLoadComplete}
                         onPageChanged={this.props.onPageChanged}
-                        onError={this.props.onError}
+                        onError={this._onError}
                         onPageSingleTap={this.props.onPageSingleTap}
                         onScaleChanged={this.props.onScaleChanged}
                     />
