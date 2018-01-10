@@ -34,12 +34,13 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
-v3.0.0-alpha  
-(Just a test version, Do not use in your product)  
+v3.0.0
 
 1. rewrite all iOS codes， improve scroll performance/Smoothness, fix scale/onPageChanged...  
 2. add onPageSigleTap(), onScaleChanged()
-3. update android dependent lib AndroidPdfViewer to 3.0.0.alpha.4
+3. update android dependent lib AndroidPdfViewer to 3.0.0.alpha.5
+4. android support link in pdf
+5. delete cache file when error happened
 
 Known issues  
 1. iOS zooming can not scroll to pinch center 
