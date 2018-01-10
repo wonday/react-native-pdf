@@ -82,6 +82,9 @@ export default class PdfView extends Component {
                     pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3]
                 });
                 if (this.props.onLoadComplete) this.props.onLoadComplete(pdfInfo[1], this.props.path);
+            })
+            .catch((error) => {
+                this.props.onError(error);
             });
 
     }
@@ -277,6 +280,7 @@ export default class PdfView extends Component {
                 scrollEnabled={this.state.scrollEnabled}
             />
         );
+
     };
 
 

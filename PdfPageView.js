@@ -17,19 +17,16 @@ import {
 export default class PdfPageView extends Component {
 
     constructor(props) {
-
         super(props);
         this.state = {}
-
     }
-
 
     render() {
 
         return (
             <PdfPageViewCustom {...this.props} />
         );
-
+        
     }
 }
 

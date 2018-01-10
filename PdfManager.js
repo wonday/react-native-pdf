@@ -15,6 +15,7 @@ export default class PdfManager {
 
     static loadFile(path: string,
                     password?: string,): Promise<string> {
+
         invariant(
             typeof path === 'string',
             'path must be a valid string.',
@@ -25,5 +26,6 @@ export default class PdfManager {
         }
 
         return PdfManagerNative.loadFile(path, password);
+
     }
 }
