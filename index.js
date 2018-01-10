@@ -228,9 +228,24 @@ export default class Pdf extends Component {
 
         this.lastRNBFTask
             .then(res => {
-                //__DEV__ && console.log('Load pdf from url and saved to ', res.path())
+                let { status } = res.respInfo;
+
                 this.lastRNBFTask = null;
-                this.setState({path: cacheFile, isDownloaded: true, progress: 1})
+
+                //__DEV__ && console.log('Load pdf from url and saved to ', res.path())
+
+                switch (status) {
+                    case 200: /* OK */
+                    case 204: /* No content */
+                    case 304: /* Not modified */
+                        this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                        break;
+
+                    default:
+                        RNFetchBlob.fs.unlink(cacheFile);
+                        this.props.onError && this.props.onError(`load pdf failed with code ${status}`);
+                        break;
+                }
             })
             .catch(error => {
                 console.warn(`download ${source.uri} error:${error}.`);
