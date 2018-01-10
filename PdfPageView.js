@@ -26,7 +26,7 @@ export default class PdfPageView extends Component {
         return (
             <PdfPageViewCustom {...this.props} />
         );
-        
+
     }
 }
 
