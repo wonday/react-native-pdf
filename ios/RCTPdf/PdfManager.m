@@ -54,7 +54,8 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
         CGPDFDocumentRef pdfRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
         
         if (pdfRef == NULL) {
-            //reject(RCTErrorUnspecified, [NSString stringWithFormat:@"error|Load pdf failed. path=%s",path.UTF8String], nil);
+            reject(RCTErrorUnspecified, [NSString stringWithFormat:@"Load pdf failed. path=%s",path.UTF8String], nil);
+            return;
         }
         
         if (CGPDFDocumentIsEncrypted(pdfRef)) {
@@ -62,6 +63,7 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
             bool isUnlocked = CGPDFDocumentUnlockWithPassword(pdfRef, [password UTF8String]);
             if (!isUnlocked) {
                 reject(RCTErrorUnspecified, @"Password required or incorrect password.", nil);
+                return;
             }
 
         }
@@ -75,8 +77,10 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
         NSArray *params =@[[NSNumber numberWithUnsignedLong:([pdfDocRefs count]-1)], [NSNumber numberWithInt:numberOfPages], [NSNumber numberWithFloat:pdfPageRect.size.width], [NSNumber numberWithFloat:pdfPageRect.size.height]];
         RLog(@"Pdf loaded numberOfPages=%d, fileNo=%lu, pageWidth=%f, pageHeight=%f", numberOfPages, [pdfDocRefs count]-1, pdfPageRect.size.width, pdfPageRect.size.height);
         resolve(params);
+        return;
     } else {
-        reject(RCTErrorUnspecified, @"error|Load pdf failed. path=null", nil);
+        reject(RCTErrorUnspecified, @"Load pdf failed. path=null", nil);
+        return;
     }
 }
 
