@@ -16,11 +16,11 @@ We use [`react-native-fetch-blob`](https://github.com/wkh237/react-native-fetch-
 So you should install react-native-pdf and react-native-fetch-blob
 
 ```bash
-npm install react-native-pdf --save
 npm install react-native-fetch-blob --save
+npm install react-native-pdf --save
 
-react-native link react-native-pdf
 react-native link react-native-fetch-blob
+react-native link react-native-pdf
 ```
 
 ### FAQ
