@@ -235,6 +235,11 @@ export default class PdfView extends Component {
 
     };
 
+    _countPageNum = () => {
+      let page = Math.abs((this.state.contentOffset.y / this._getPageHeight()).toFixed(0)) + 1
+      this.props.onPageChanged(page < this.state.numberOfPages ? page : this.state.numberOfPages, this.state.numberOfPages);
+    }
+
 
     _renderList = () => {
 
@@ -272,10 +277,11 @@ export default class PdfView extends Component {
                 maxToRenderPerBatch={1}
                 removeClippedSubviews={true}
                 /*initialScrollIndex={this.props.page - 1}*/ /* not action? */
-                onViewableItemsChanged={this._onViewableItemsChanged}
+                // onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={VIEWABILITYCONFIG}
                 onScroll={(e) => {
                     this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
+                    this._countPageNum();
                 }}
                 scrollEnabled={this.state.scrollEnabled}
             />
