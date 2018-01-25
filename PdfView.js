@@ -18,7 +18,7 @@ import DoubleTapView from './DoubleTapView';
 import PinchZoomView from './PinchZoomView';
 
 const MAX_SCALE = 3;
-const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false};
+const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 90, waitForInteraction: false};
 
 export default class PdfView extends Component {
 
@@ -227,9 +227,10 @@ export default class PdfView extends Component {
 
     _onViewableItemsChanged = (viewableInfo) => {
 
-        if (viewableInfo.viewableItems.length > 0) {
-            if (this.props.onPageChanged) {
-                this.props.onPageChanged(viewableInfo.viewableItems[0].index + 1, this.state.numberOfPages);
+        if (this.props.onPageChanged) {
+            for (let i = 0; i < viewableInfo.viewableItems.length; i++) {
+                this.props.onPageChanged(viewableInfo.viewableItems[i].index + 1, this.state.numberOfPages);
+                if (viewableInfo.viewableItems.length + viewableInfo.viewableItems[0].index<this.state.numberOfPages) break;
             }
         }
 
