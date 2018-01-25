@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
 | onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
 | onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | 3.0 |
 | onScaleChanged    | function(scale) | null        | callback when scale page | ✔ | ✔ | 3.0 |
+| progressBarColor  | string          | "#009900"   | the color of the progressBar, while the pdf loads 
 
 #### parameters of source
 
