@@ -18,7 +18,7 @@ import DoubleTapView from './DoubleTapView';
 import PinchZoomView from './PinchZoomView';
 
 const MAX_SCALE = 3;
-const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 90, waitForInteraction: false};
+const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 60, waitForInteraction: false};
 
 export default class PdfView extends Component {
 
@@ -31,6 +31,7 @@ export default class PdfView extends Component {
         fitPolicy: PropTypes.number,
         horizontal: PropTypes.bool,
         page: PropTypes.number,
+        currentPage: PropTypes.number,
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
     };
@@ -44,6 +45,7 @@ export default class PdfView extends Component {
         fitPolicy: 0,
         horizontal: false,
         page: 1,
+        currentPage:-1,
         onPageSingleTap: (page)=>{},
         onScaleChanged: (scale)=>{},
     };
@@ -56,6 +58,7 @@ export default class PdfView extends Component {
             fileNo: -1,
             numberOfPages: 0,
             page: -1,
+            currentPage: -1,
             pageAspectRate: 0.5,
             contentContainerSize: {width: 0, height: 0},
             scale: 1,
@@ -227,14 +230,19 @@ export default class PdfView extends Component {
 
     _onViewableItemsChanged = (viewableInfo) => {
 
-        if (this.props.onPageChanged) {
-            for (let i = 0; i < viewableInfo.viewableItems.length; i++) {
-                this.props.onPageChanged(viewableInfo.viewableItems[i].index + 1, this.state.numberOfPages);
-                if (viewableInfo.viewableItems.length + viewableInfo.viewableItems[0].index<this.state.numberOfPages) break;
-            }
-        }
+        for (let i = 0; i < viewableInfo.viewableItems.length; i++) {
+            this._onPageChanged(viewableInfo.viewableItems[i].index + 1, this.state.numberOfPages);
+            if (viewableInfo.viewableItems.length + viewableInfo.viewableItems[0].index<this.state.numberOfPages) break;
+         }
 
     };
+
+    _onPageChanged = (page,numberOfPages) => {
+        if (this.props.onPageChanged && this.state.currentPage !== page) {
+            this.props.onPageChanged(page, numberOfPages);
+            this.setState({currentPage:page});
+        }
+    }
 
 
     _renderList = () => {
