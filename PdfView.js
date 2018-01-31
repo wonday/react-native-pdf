@@ -255,8 +255,10 @@ export default class PdfView extends Component {
         if (this.state.page !== this.props.page) {
             this.timer = setTimeout(() => {
                 if (this.flatList) {
-                    this.flatList.scrollToIndex({animated: true, index: ((this.props.page - 1)<=0)?0:(this.props.page - 1)});
-                    this.state.page = this.props.page;
+                    let page = (this.props.page - 1)<0 ? 0 : (this.props.page - 1);
+                    page = page>(this.state.numberOfPages-1) ? (this.state.numberOfPages-1) : page;
+                    this.flatList.scrollToIndex({animated: true, index: page});
+                    this.state.page = page;
                 }
             }, 200);
         }
