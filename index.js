@@ -308,12 +308,12 @@ export default class Pdf extends Component {
                                 indeterminate={false}
                                 styleAttr="Horizontal"
                                 style={{ width: 200, height: 2 }}
-                                {...activityIndicatorProps}
+                                {...this.props.activityIndicatorProps}
                             />
                             : <ProgressViewIOS
                                 progress={this.state.progress}
                                 style={{ width: 200, height: 2 }}
-                                {...activityIndicatorProps}
+                                {...this.props.activityIndicatorProps}
                             />}
                 </View>
             )
