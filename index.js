@@ -46,6 +46,7 @@ export default class Pdf extends Component {
         password: PropTypes.string,
         progressBarColor: PropTypes.string,
         activityIndicator: PropTypes.any,
+        activityIndicatorProps: PropTypes.any,
         enableAntialiasing: PropTypes.bool,
         fitPolicy: PropTypes.number,
         onLoadComplete: PropTypes.func,
@@ -62,7 +63,7 @@ export default class Pdf extends Component {
         fitPolicy: 2, //fit both
         horizontal: false,
         page: 1,
-        progressBarColor: '#009900',
+        activityIndicatorProps: {color:'#009900',progressTintColor:'#009900'},
         onLoadProgress: (percent) => { },
         onLoadComplete: (numberOfPages, path) => { },
         onPageChanged: (page, numberOfPages) => { },
@@ -307,12 +308,12 @@ export default class Pdf extends Component {
                                 indeterminate={false}
                                 styleAttr="Horizontal"
                                 style={{ width: 200, height: 2 }}
-                                color={this.props.progressBarColor}
+                                {...activityIndicatorProps}
                             />
                             : <ProgressViewIOS
                                 progress={this.state.progress}
                                 style={{ width: 200, height: 2 }}
-                                progressTintColor={this.props.progressBarColor}
+                                {...activityIndicatorProps}
                             />}
                 </View>
             )
