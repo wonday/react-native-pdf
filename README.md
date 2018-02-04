@@ -34,6 +34,11 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.1
+
+1. add activityIndicatorProps to support ActivityIndicator customize
+2. fix not trigger onPageChanged() at last screen when screen has more then one pages
+
 v3.0.0
 
 1. rewrite all iOS codes， improve scroll performance/Smoothness, fix scale/onPageChanged...  
