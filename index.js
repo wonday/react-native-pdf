@@ -78,7 +78,7 @@ export default class Pdf extends Component {
             path: '',
             isDownloaded: false,
             progress: 0,
-        };
+       };
 
         this.uri = '';
         this.lastRNBFTask = null;
@@ -128,7 +128,7 @@ export default class Pdf extends Component {
 
         const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
-        if (source.cache) {
+        if (this.state.useCache && source.cache) {
             RNFetchBlob.fs
                 .exists(cacheFile)
                 .then(exist => {
@@ -270,6 +270,13 @@ export default class Pdf extends Component {
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
             if (message[0] === 'loadComplete') {
+            	if (Number(message[1])<=0) {
+			        if (this.props.source && this.props.source.uri && this.props.source.cache === true) {
+			            const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(this.props.source.uri) + '.pdf';
+			            RNFetchBlob.fs.unlink(cacheFile);
+			            this.setState({isDownloaded:false});
+			        }
+            	}
                 this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path);
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));

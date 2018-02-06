@@ -61,7 +61,7 @@ export default class PdfView extends Component {
             currentPage: -1,
             pageAspectRate: 0.5,
             contentContainerSize: {width: 0, height: 0},
-            scale: 1,
+            scale: this.props.scale,
             contentOffset: {x:0, y:0},
             scrollEnabled: true,
         };
@@ -252,12 +252,12 @@ export default class PdfView extends Component {
             data[i] = {key: i};
         }
 
-        if (this.state.page !== this.props.page) {
+        let page = (this.props.page)<1 ? 1 : this.props.page;
+        page = page>this.state.numberOfPages ? this.state.numberOfPages : page;
+        if (this.state.page !== page) {
             this.timer = setTimeout(() => {
                 if (this.flatList) {
-                    let page = (this.props.page - 1)<0 ? 0 : (this.props.page - 1);
-                    page = page>(this.state.numberOfPages-1) ? (this.state.numberOfPages-1) : page;
-                    this.flatList.scrollToIndex({animated: true, index: page});
+                    this.flatList.scrollToIndex({animated: true, index: page-1});
                     this.state.page = page;
                 }
             }, 200);
