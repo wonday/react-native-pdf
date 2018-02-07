@@ -126,17 +126,32 @@ export default class Pdf extends Component {
         // first set to initial state
         this.setState({ isDownloaded: false, path: '', progress: 0 });
 
+        const tempCacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf.tmp';
         const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
-        if (this.state.useCache && source.cache) {
+        if (source.cache) {
             RNFetchBlob.fs
-                .exists(cacheFile)
+                .exists(tempCacheFile)
                 .then(exist => {
                     if (exist) {
-                        this.setState({ path: cacheFile, isDownloaded: true })
-                    } else {
-                        // cache not exist then re load it
+                        // delete temp file
+                        RNFetchBlob.fs.unlink(tempCacheFile);
+                        // download from source
                         this._prepareFile(source)
+                    } else {
+                        RNFetchBlob.fs
+                            .exists(cacheFile)
+                            .then(exist => {
+                                if (exist) {
+                                    this.setState({ path: cacheFile, isDownloaded: true })
+                                } else {
+                                    // cache not exist then re load it
+                                    this._prepareFile(source)
+                                }
+                            })
+                            .catch(() => {
+                                this._prepareFile(source)
+                            })
                     }
                 })
                 .catch(() => {
@@ -157,13 +172,15 @@ export default class Pdf extends Component {
             const isAsset = !!(uri && uri.match(/^bundle-assets:\/\//));
             const isBase64 = !!(uri && uri.match(/^data:application\/pdf;base64/));
 
+            const tempCacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf.tmp';
             const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
             // delete old cache file
+            RNFetchBlob.fs.unlink(tempCacheFile);
             RNFetchBlob.fs.unlink(cacheFile);
 
             if (isNetwork) {
-                this._downloadFile(source, cacheFile)
+                this._downloadFile(source, tempCacheFile, cacheFile)
             } else if (isAsset) {
                 RNFetchBlob.fs
                     .cp(uri, cacheFile)
@@ -203,10 +220,11 @@ export default class Pdf extends Component {
 
     };
 
-    _downloadFile = (source, cacheFile) => {
+    _downloadFile = (source, tempCacheFile, cacheFile) => {
 
         if (this.lastRNBFTask) {
             this.lastRNBFTask.cancel(err => {
+                RNFetchBlob.fs.unlink(tempCacheFile);
                 //__DEV__ && console.log("Load pdf from url was cancelled.");
             });
             this.lastRNBFTask = null;
@@ -214,7 +232,7 @@ export default class Pdf extends Component {
 
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
-            path: cacheFile,
+            path: tempCacheFile,
         })
             .fetch(
             source.method ? source.method : 'GET',
@@ -240,11 +258,17 @@ export default class Pdf extends Component {
                     case 200: /* OK */
                     case 204: /* No content */
                     case 304: /* Not modified */
-                        this.setState({ path: cacheFile, isDownloaded: true, progress: 1 });
+                    {
+                        RNFetchBlob.fs
+                            .mv(tempCacheFile,cacheFile)
+                            .then(() => {
+                                //__DEV__ && console.log("load from asset:"+uri);
+                                this.setState({ path: cacheFile, isDownloaded: true, progress: 1 });
+                            });
                         break;
-
+                    }
                     default:
-                        RNFetchBlob.fs.unlink(cacheFile);
+                        RNFetchBlob.fs.unlink(tempCacheFile);
                         this.props.onError && this.props.onError(`load pdf failed with code ${status}`);
                         break;
                 }
@@ -252,7 +276,7 @@ export default class Pdf extends Component {
             .catch(error => {
                 console.warn(`download ${source.uri} error:${error}.`);
                 this.lastRNBFTask = null;
-                RNFetchBlob.fs.unlink(cacheFile);
+                RNFetchBlob.fs.unlink(tempCacheFile);
                 this.props.onError && this.props.onError('load pdf failed.')
             });
 
@@ -270,13 +294,6 @@ export default class Pdf extends Component {
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
             if (message[0] === 'loadComplete') {
-            	if (Number(message[1])<=0) {
-			        if (this.props.source && this.props.source.uri && this.props.source.cache === true) {
-			            const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(this.props.source.uri) + '.pdf';
-			            RNFetchBlob.fs.unlink(cacheFile);
-			            this.setState({isDownloaded:false});
-			        }
-            	}
                 this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path);
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
@@ -292,10 +309,6 @@ export default class Pdf extends Component {
     };
     _onError = (error) => {
 
-        if (this.props.source && this.props.source.uri && this.props.source.cache === true) {
-            const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(this.props.source.uri) + '.pdf';
-            RNFetchBlob.fs.unlink(cacheFile);
-        }
         this.props.onError && this.props.onError(error);
 
     }
