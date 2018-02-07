@@ -34,6 +34,10 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.3
+
+1. when cache failed, can re-load at next time
+
 v3.0.2
 
 1. add activityIndicatorProps to support ActivityIndicator customize
