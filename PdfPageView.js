@@ -32,8 +32,15 @@ export default class PdfPageView extends PureComponent {
     };
 
     render() {
+        const {
+            style,
+            ...restProps
+        } = this.props;
         return (
-            <PdfPageViewCustom {...this.props} style={[style, this._getStylePropsProps()]} />
+            <PdfPageViewCustom
+              {...restProps}
+              style={[style, this._getStylePropsProps()]}
+            />
         );
 
     }
