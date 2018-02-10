@@ -8,7 +8,7 @@
 
 'use strict';
 import React, {Component} from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList, View, StyleSheet} from 'react-native';
 
 import PropTypes from 'prop-types';
 
@@ -209,12 +209,16 @@ export default class PdfView extends Component {
 
     };
 
+    _onSingleTap  = index => () => this._onItemSingleTap(index);
+
+	  _onDoubleTap = index => ()=>this._onItemDoubleTap(index);
+
     _renderItem = ({item, index}) => {
 
         return (
             <DoubleTapView style={{flexDirection: this.props.horizontal ? 'row' : 'column'}}
-                onSingleTap={()=>this._onItemSingleTap(index)}
-                onDoubleTap={()=>this._onItemDoubleTap(index)}
+                onSingleTap={this._onSingleTap(index)}
+                onDoubleTap={this._onDoubleTap(index)}
             >
                 <PdfPageView
                     key={item.id}
@@ -243,8 +247,20 @@ export default class PdfView extends Component {
             this.props.onPageChanged(page, numberOfPages);
             this.setState({currentPage:page});
         }
-    }
+    };
 
+
+    _getRef = (ref) => this.flatList = ref;
+
+    _getItemLayout = (data, index) => ({
+			length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
+			offset: ((this.props.horizontal ? this._getPageWidth() : this._getPageHeight()) + this.props.spacing*this.state.scale) * index,
+			index
+		});
+
+    _onScroll = (e) => {
+			this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
+		};
 
     _renderList = () => {
 
@@ -253,7 +269,7 @@ export default class PdfView extends Component {
             data[i] = {key: i};
         }
 
-        let page = (this.props.page)<1 ? 1 : this.props.page;
+        let page = (this.props.page) < 1 ? 1 : this.props.page;
         page = page>this.state.numberOfPages ? this.state.numberOfPages : page;
         if (this.state.page !== page) {
             this.timer = setTimeout(() => {
@@ -266,9 +282,7 @@ export default class PdfView extends Component {
 
         return (
             <FlatList
-                ref={(ref) => {
-                    this.flatList = ref;
-                }}
+                ref={this._getRef}
                 style={this.props.style}
                 contentContainerStyle={this.props.horizontal ? {height: this.state.contentContainerSize.height * this.state.scale} : {width: this.state.contentContainerSize.width * this.state.scale}}
                 horizontal={this.props.horizontal}
@@ -276,45 +290,47 @@ export default class PdfView extends Component {
                 renderItem={this._renderItem}
                 keyExtractor={this._keyExtractor}
                 windowSize={11}
-                getItemLayout={(data, index) => ({
-                    length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
-                    offset: ((this.props.horizontal ? this._getPageWidth() : this._getPageHeight()) + this.props.spacing*this.state.scale) * index,
-                    index
-                })}
+                getItemLayout={this._getItemLayout}
                 maxToRenderPerBatch={1}
-                removeClippedSubviews={true}
+                removeClippedSubviews
                 /*initialScrollIndex={this.props.page - 1}*/ /* not action? */
                 onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={VIEWABILITYCONFIG}
-                onScroll={(e) => {
-                    this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
-                }}
+                onScroll={this._onScroll}
                 scrollEnabled={this.state.scrollEnabled}
             />
         );
 
     };
 
+    _onLayout = (event) => {
+			this.setState({
+				contentContainerSize: {
+					width: event.nativeEvent.layout.width,
+					height: event.nativeEvent.layout.height
+				}
+			});
+		};
+
 
     render() {
 
         return (
             <PinchZoomView
-                style={{flex: 1}}
-                onLayout={(event) => {
-                    this.setState({
-                        contentContainerSize: {
-                            width: event.nativeEvent.layout.width,
-                            height: event.nativeEvent.layout.height
-                        }
-                    });
-                }}
+                style={styles.container}
+                onLayout={this._onLayout}
                 onScaleChanged={this._onScaleChanged}
             >
-                {this.state.pdfLoaded ? this._renderList() : (null)}
+                {this.state.pdfLoaded && this._renderList()}
             </PinchZoomView>
         );
 
     }
 
 }
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1
+  }
+});

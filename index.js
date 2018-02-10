@@ -10,13 +10,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-    ActivityIndicator,
     requireNativeComponent,
     View,
     Platform,
     ProgressBarAndroid,
     ProgressViewIOS,
-    ViewPropTypes
+    ViewPropTypes,
+    StyleSheet
 } from 'react-native';
 
 import RNFetchBlob from 'react-native-fetch-blob';
@@ -316,18 +316,19 @@ export default class Pdf extends Component {
         }
 
     };
+
     _onError = (error) => {
 
         this.props.onError && this.props.onError(error);
 
-    }
+    };
 
     render() {
 
         if (!this.state.isDownloaded) {
             return (
                 <View
-                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+                    style={styles.progressContainer}
                 >
                     {this.props.activityIndicator
                         ? this.props.activityIndicator
@@ -336,12 +337,12 @@ export default class Pdf extends Component {
                                 progress={this.state.progress}
                                 indeterminate={false}
                                 styleAttr="Horizontal"
-                                style={{ width: 200, height: 2 }}
+                                style={styles.progressBar}
                                 {...this.props.activityIndicatorProps}
                             />
                             : <ProgressViewIOS
                                 progress={this.state.progress}
-                                style={{ width: 200, height: 2 }}
+                                style={styles.progressBar}
                                 {...this.props.activityIndicatorProps}
                             />}
                 </View>
@@ -384,3 +385,15 @@ if (Platform.OS === "android") {
         nativeOnly: { path: true, onChange: true },
     })
 }
+
+const styles = StyleSheet.create({
+  progressContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  progressBar: {
+    width: 200,
+    height: 2
+  }
+});

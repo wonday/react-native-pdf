@@ -14,15 +14,8 @@ import {
     ViewPropTypes,
     requireNativeComponent,
 } from 'react-native';
-import {style} from "./index";
 
 export default class PdfPageView extends PureComponent {
-
-    constructor(props) {
-        super(props);
-        this.state = {}
-    }
-
     _getStylePropsProps = () => {
         const { width, height } = this.props;
         if( width || height ) {
