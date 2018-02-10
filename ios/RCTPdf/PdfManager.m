@@ -45,19 +45,19 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
     if (pdfDocRefs==Nil) {
         pdfDocRefs = [NSMutableArray arrayWithCapacity:1];
     }
-    
+
     int numberOfPages = 0;
-    
+
     if (path != nil && path.length != 0) {
-        
+
         NSURL *pdfURL = [NSURL fileURLWithPath:path];
         CGPDFDocumentRef pdfRef = CGPDFDocumentCreateWithURL((__bridge CFURLRef) pdfURL);
-        
+
         if (pdfRef == NULL) {
             reject(RCTErrorUnspecified, [NSString stringWithFormat:@"Load pdf failed. path=%s",path.UTF8String], nil);
             return;
         }
-        
+
         if (CGPDFDocumentIsEncrypted(pdfRef)) {
 
             bool isUnlocked = CGPDFDocumentUnlockWithPassword(pdfRef, [password UTF8String]);
@@ -67,9 +67,9 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
             }
 
         }
-        
+
         [pdfDocRefs addObject:[NSValue valueWithPointer:pdfRef]];
-        
+
         numberOfPages = (int)CGPDFDocumentGetNumberOfPages(pdfRef);
         CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfRef, 1);
         CGRect pdfPageRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
@@ -87,11 +87,11 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
 + (CGPDFDocumentRef) getPdf:(NSUInteger) index
 {
     if (pdfDocRefs && [pdfDocRefs count]>index){
-        
+
         return (CGPDFDocumentRef)[(NSValue *)[pdfDocRefs objectAtIndex:index] pointerValue];
-                
+
     }
-    
+
     return NULL;
 }
 
@@ -99,11 +99,17 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
 {
     
     if ((self = [super init])) {
-        
+
     }
     return self;
-    
+
 }
+
++ (BOOL)requiresMainQueueSetup
+{
+    return YES;
+}
+
 
 - (void)dealloc
 {
@@ -111,14 +117,14 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
     for(NSValue *item in pdfDocRefs) {
         CGPDFDocumentRef pdfItem = [item pointerValue];
         if (pdfItem != NULL) {
-            
+
             CGPDFDocumentRelease(pdfItem);
             pdfItem = NULL;
-            
+
         }
     }
     pdfDocRefs = Nil;
-    
+
 }
 
 
