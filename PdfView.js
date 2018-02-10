@@ -224,7 +224,8 @@ export default class PdfView extends Component {
                     key={item.id}
                     fileNo={this.state.fileNo}
                     page={item.key + 1}
-                    style={{width: this._getPageWidth(), height: this._getPageHeight()}}
+                    width={this._getPageWidth()}
+                    height={this._getPageHeight()}
                 />
                 {(index !== this.state.numberOfPages - 1) && this._renderSeparator()}
             </DoubleTapView>

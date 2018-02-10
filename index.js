@@ -54,7 +54,16 @@ export default class Pdf extends Component {
         onError: PropTypes.func,
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
-    };
+
+        // Props that are not available in the earlier react native version, added to prevent crashed on android
+        accessibilityLabel: PropTypes.string,
+        importantForAccessibility: PropTypes.string,
+        renderToHardwareTextureAndroid: PropTypes.string,
+        testID: PropTypes.string,
+        onLayout: PropTypes.bool,
+        accessibilityLiveRegion: PropTypes.string,
+        accessibilityComponentType: PropTypes.string,
+		};
 
     static defaultProps = {
         password: "",
