@@ -105,6 +105,12 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
     
 }
 
++ (BOOL)requiresMainQueueSetup
+{
+    return YES;
+}
+
+
 - (void)dealloc
 {
     // release pdf docs
