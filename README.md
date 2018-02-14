@@ -34,6 +34,13 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.4
+
+1. fix 'virtualizedCell.cellKey' warning [`#125`](https://github.com/wonday/react-native-pdf/issues/125)
+2. fix android crashed because of missing props [`#127`](https://github.com/wonday/react-native-pdf/issues/127)
+3. use pure component to render pdf pages [`#129`](https://github.com/wonday/react-native-pdf/issues/129)
+4. add requiresMainQueueSetup to cure RN v0.52 warning [`#130`](https://github.com/wonday/react-native-pdf/issues/130)
+
 v3.0.3
 
 1. when cache failed, can re-load at next time
