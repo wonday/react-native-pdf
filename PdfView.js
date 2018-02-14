@@ -106,7 +106,7 @@ export default class PdfView extends Component {
 
     }
 
-    _keyExtractor = (item, index) => index;
+    _keyExtractor = (item, index) => "pdf-page-"+index;
 
     _getPageWidth = () => {
 
