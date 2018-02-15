@@ -268,12 +268,11 @@ export default class Pdf extends Component {
                     case 204: /* No content */
                     case 304: /* Not modified */
                     {
-                        RNFetchBlob.fs
-                            .mv(tempCacheFile,cacheFile)
-                            .then(() => {
-                                //__DEV__ && console.log("load from asset:"+uri);
-                                this.setState({ path: cacheFile, isDownloaded: true, progress: 1 });
-                            });
+                      RNFetchBlob.fs.unlink(cacheFile)
+                          .then(() => RNFetchBlob.fs
+                              .mv(tempCacheFile,cacheFile))
+                          .then(() => this.setState({ path: cacheFile, isDownloaded: true, progress: 1 }))
+                          .catch(this._onError);
                         break;
                     }
                     default:
