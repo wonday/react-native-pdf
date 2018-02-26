@@ -164,8 +164,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         showLog(format("drawPdf path:%s %s", this.path, this.page));
 
         if (this.path != null){
-            File pdfFile = new File(this.path);
-            this.fromFile(pdfFile)
+            this.fromUri(getURI(this.path))
                 .defaultPage(this.page-1)
                 //.showMinimap(false)
                 //.enableSwipe(true)
@@ -244,5 +243,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     private void showLog(final String str) {
         Log.d("PdfView", str);
+    }
+
+    private Uri getURI(final String uri) {
+        Uri parsed = Uri.parse(uri);
+
+        if (parsed.getScheme() == null || parsed.getScheme().isEmpty()) {
+          return Uri.fromFile(new File(uri));
+        }
+        return parsed;
     }
 }
