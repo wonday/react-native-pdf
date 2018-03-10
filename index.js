@@ -246,7 +246,8 @@ export default class Pdf extends Component {
             .fetch(
             source.method ? source.method : 'GET',
             source.uri,
-            source.headers ? source.headers : {}
+            source.headers ? source.headers : {},		
+            source.body ? source.body : ""
             )
             // listen to download progress event
             .progress((received, total) => {
