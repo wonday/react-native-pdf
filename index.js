@@ -199,9 +199,7 @@ export default class Pdf extends Component {
                     })
                     .catch(error => {
                         RNFetchBlob.fs.unlink(cacheFile);
-                        console.warn('load from asset error');
-                        console.log(error);
-                        this.props.onError && this.props.onError('load pdf failed.')
+                        this._onError(error)
                     })
             } else if (isBase64) {
                 let data = uri.replace(/data:application\/pdf;base64,/i, '');
@@ -211,10 +209,9 @@ export default class Pdf extends Component {
                         //__DEV__ && console.log("write base64 to file:" + cacheFile);
                         this.setState({ path: cacheFile, isDownloaded: true })
                     })
-                    .catch(() => {
+                    .catch(error => {
                         RNFetchBlob.fs.unlink(this.path);
-                        console.warn('write base64 file error!');
-                        this.props.onError && this.props.onError('load pdf failed.')
+                        this._onError(error)
                     })
             } else {
                 //__DEV__ && console.log("default source type as file");
@@ -224,7 +221,7 @@ export default class Pdf extends Component {
                 })
             }
         } else {
-            console.error('no pdf source!');
+            this._onError(new Error('no pdf source!'));
         }
 
     };
@@ -278,15 +275,14 @@ export default class Pdf extends Component {
                     }
                     default:
                         RNFetchBlob.fs.unlink(tempCacheFile);
-                        this.props.onError && this.props.onError(`load pdf failed with code ${status}`);
+                        this._onError(new Error(`load pdf failed with code ${status}`));
                         break;
                 }
             })
             .catch(error => {
-                console.warn(`download ${source.uri} error:${error}.`);
                 this.lastRNBFTask = null;
                 RNFetchBlob.fs.unlink(tempCacheFile);
-                this.props.onError && this.props.onError('load pdf failed.')
+                this._onError(error)
             });
 
     };
@@ -307,7 +303,7 @@ export default class Pdf extends Component {
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {
-                this._onError(message[1]);
+                this._onError(new Error(message[1]));
             } else if (message[0] === 'pageSingleTap') {
                 this.props.onPageSingleTap && this.props.onPageSingleTap(message[1]);
             } else if (message[0] === 'scaleChanged') {
