@@ -23,7 +23,7 @@ interface Props {
     onLoadProgress?: (percent: number,)=> void,
     onLoadComplete?: (numberOfPages: number, path: string) => void,
     onPageChanged?: (page: number, numberOfPages: number) => void,
-    onError?: (error: string) => void,
+    onError?: (error: object) => void,
     onPageSingleTap?: (page:number) =>void,
     onScaleChanged?: (scale:number) =>void,
 }
