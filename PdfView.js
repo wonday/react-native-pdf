@@ -8,7 +8,7 @@
 
 'use strict';
 import React, {Component} from 'react';
-import {FlatList, View, StyleSheet} from 'react-native';
+import {FlatList, View, StyleSheet, ViewPropTypes} from 'react-native';
 
 import PropTypes from 'prop-types';
 
@@ -23,7 +23,7 @@ const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 60
 export default class PdfView extends Component {
 
     static propTypes = {
-        ...View.propTypes,
+        ...ViewPropTypes,
         path: PropTypes.string,
         password: PropTypes.string,
         scale: PropTypes.number,

@@ -12,13 +12,14 @@ import PropTypes from 'prop-types';
 import {
     View,
     StyleSheet,
-    PanResponder
+    PanResponder,
+    ViewPropTypes,
 } from 'react-native';
 
 export default class PinchZoomView extends Component {
 
     static propTypes = {
-        ...View.propTypes,
+        ...ViewPropTypes,
         scalable: PropTypes.bool,
         onScaleChanged: PropTypes.func,
     };
