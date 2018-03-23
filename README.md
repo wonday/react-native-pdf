@@ -34,6 +34,13 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.5
+1. OnError return Error() object
+2. fix cache overwrite error
+3. add Android content:// support
+4. fix type error
+5. Refactor view.propTypes to ViewPropTypes.
+
 v3.0.4
 
 1. fix 'virtualizedCell.cellKey' warning [`#125`](https://github.com/wonday/react-native-pdf/issues/125)
