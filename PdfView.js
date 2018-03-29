@@ -45,9 +45,11 @@ export default class PdfView extends Component {
         fitPolicy: 0,
         horizontal: false,
         page: 1,
-        currentPage:-1,
-        onPageSingleTap: (page)=>{},
-        onScaleChanged: (scale)=>{},
+        currentPage: -1,
+        onPageSingleTap: (page) => {
+        },
+        onScaleChanged: (scale) => {
+        },
     };
 
     constructor(props) {
@@ -62,12 +64,13 @@ export default class PdfView extends Component {
             pageAspectRate: 0.5,
             contentContainerSize: {width: 0, height: 0},
             scale: this.props.scale,
-            contentOffset: {x:0, y:0},
+            contentOffset: {x: 0, y: 0},
             scrollEnabled: true,
         };
 
         this.flatList = null;
         this.scaleTimer = null;
+        this.scrollTimer = null;
 
     }
 
@@ -98,20 +101,33 @@ export default class PdfView extends Component {
             this._onScaleChanged(nextProps.scale / this.state.scale);
         }
 
+        if (nextProps.horizontal !== this.props.horizontal || nextProps.page !== this.props.page) {
+            let page = (nextProps.page) < 1 ? 1 : nextProps.page;
+            page = page > this.state.numberOfPages ? this.state.numberOfPages : page;
+
+            if (this.flatList) {
+                clearTimeout(this.scrollTimer);
+                this.scrollTimer = setTimeout(() => {
+                    this.flatList.scrollToIndex({animated: false, index: page - 1});
+                }, 50);
+            }
+        }
+
     }
 
     componentWillUnmount() {
 
         clearTimeout(this.scaleTimer);
+        clearTimeout(this.scrollTimer);
 
     }
 
-    _keyExtractor = (item, index) => "pdf-page-"+index;
+    _keyExtractor = (item, index) => "pdf-page-" + index;
 
     _getPageWidth = () => {
 
         // if only one page, show whole page in center
-        if (this.state.numberOfPages===1) {
+        if (this.state.numberOfPages === 1) {
             return this.state.contentContainerSize.width * this.state.scale;
         }
 
@@ -123,7 +139,7 @@ export default class PdfView extends Component {
                 return this.state.contentContainerSize.height * this.state.pageAspectRate * this.state.scale;
             case 2: //fit both
             default: {
-                if ((this.state.contentContainerSize.width/this.state.contentContainerSize.height) > this.state.pageAspectRate) {
+                if ((this.state.contentContainerSize.width / this.state.contentContainerSize.height) > this.state.pageAspectRate) {
                     return this.state.contentContainerSize.height * this.state.scale * this.state.pageAspectRate;
                 } else {
                     return this.state.contentContainerSize.width * this.state.scale;
@@ -136,7 +152,7 @@ export default class PdfView extends Component {
     _getPageHeight = () => {
 
         // if only one page, show whole page in center
-        if (this.state.numberOfPages===1) {
+        if (this.state.numberOfPages === 1) {
             return this.state.contentContainerSize.height * this.state.scale;
         }
 
@@ -147,7 +163,7 @@ export default class PdfView extends Component {
                 return this.state.contentContainerSize.height * this.state.scale;
             case 2: //fit both
             default: {
-                if ((this.state.contentContainerSize.width/this.state.contentContainerSize.height) > this.state.pageAspectRate) {
+                if ((this.state.contentContainerSize.width / this.state.contentContainerSize.height) > this.state.pageAspectRate) {
                     return this.state.contentContainerSize.height * this.state.scale;
                 } else {
 
@@ -160,17 +176,17 @@ export default class PdfView extends Component {
 
     _renderSeparator = () => (
         <View style={this.props.horizontal ? {
-            width: this.props.spacing*this.state.scale,
+            width: this.props.spacing * this.state.scale,
             backgroundColor: 'transparent'
         } : {
-            height: this.props.spacing*this.state.scale,
+            height: this.props.spacing * this.state.scale,
             backgroundColor: 'transparent'
         }}/>
     );
 
     _onItemSingleTap = (index) => {
 
-        this.props.onPageSingleTap(index+1);
+        this.props.onPageSingleTap(index + 1);
 
     };
 
@@ -209,16 +225,16 @@ export default class PdfView extends Component {
 
     };
 
-    _onSingleTap  = index => () => this._onItemSingleTap(index);
+    _onSingleTap = index => () => this._onItemSingleTap(index);
 
-	  _onDoubleTap = index => ()=>this._onItemDoubleTap(index);
+    _onDoubleTap = index => () => this._onItemDoubleTap(index);
 
     _renderItem = ({item, index}) => {
 
         return (
             <DoubleTapView style={{flexDirection: this.props.horizontal ? 'row' : 'column'}}
-                onSingleTap={this._onSingleTap(index)}
-                onDoubleTap={this._onDoubleTap(index)}
+                           onSingleTap={this._onSingleTap(index)}
+                           onDoubleTap={this._onDoubleTap(index)}
             >
                 <PdfPageView
                     key={item.id}
@@ -237,15 +253,15 @@ export default class PdfView extends Component {
 
         for (let i = 0; i < viewableInfo.viewableItems.length; i++) {
             this._onPageChanged(viewableInfo.viewableItems[i].index + 1, this.state.numberOfPages);
-            if (viewableInfo.viewableItems.length + viewableInfo.viewableItems[0].index<this.state.numberOfPages) break;
-         }
+            if (viewableInfo.viewableItems.length + viewableInfo.viewableItems[0].index < this.state.numberOfPages) break;
+        }
 
     };
 
-    _onPageChanged = (page,numberOfPages) => {
+    _onPageChanged = (page, numberOfPages) => {
         if (this.props.onPageChanged && this.state.currentPage !== page) {
             this.props.onPageChanged(page, numberOfPages);
-            this.setState({currentPage:page});
+            this.setState({currentPage: page});
         }
     };
 
@@ -253,31 +269,20 @@ export default class PdfView extends Component {
     _getRef = (ref) => this.flatList = ref;
 
     _getItemLayout = (data, index) => ({
-			length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
-			offset: ((this.props.horizontal ? this._getPageWidth() : this._getPageHeight()) + this.props.spacing*this.state.scale) * index,
-			index
-		});
+        length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
+        offset: ((this.props.horizontal ? this._getPageWidth() : this._getPageHeight()) + this.props.spacing * this.state.scale) * index,
+        index
+    });
 
     _onScroll = (e) => {
-			this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
-		};
+        this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
+    };
 
     _renderList = () => {
 
         let data = [];
         for (let i = 0; i < this.state.numberOfPages; i++) {
             data[i] = {key: i};
-        }
-
-        let page = (this.props.page) < 1 ? 1 : this.props.page;
-        page = page>this.state.numberOfPages ? this.state.numberOfPages : page;
-        if (this.state.page !== page) {
-            this.timer = setTimeout(() => {
-                if (this.flatList) {
-                    this.flatList.scrollToIndex({animated: true, index: page-1});
-                    this.state.page = page;
-                }
-            }, 200);
         }
 
         return (
@@ -293,7 +298,7 @@ export default class PdfView extends Component {
                 getItemLayout={this._getItemLayout}
                 maxToRenderPerBatch={1}
                 removeClippedSubviews
-                /*initialScrollIndex={this.props.page - 1}*/ /* not action? */
+                initialScrollIndex={this.props.page - 1}
                 onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={VIEWABILITYCONFIG}
                 onScroll={this._onScroll}
@@ -304,13 +309,13 @@ export default class PdfView extends Component {
     };
 
     _onLayout = (event) => {
-			this.setState({
-				contentContainerSize: {
-					width: event.nativeEvent.layout.width,
-					height: event.nativeEvent.layout.height
-				}
-			});
-		};
+        this.setState({
+            contentContainerSize: {
+                width: event.nativeEvent.layout.width,
+                height: event.nativeEvent.layout.height
+            }
+        });
+    };
 
 
     render() {
@@ -330,7 +335,7 @@ export default class PdfView extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-      flex: 1
-  }
+    container: {
+        flex: 1
+    }
 });
