@@ -298,7 +298,7 @@ export default class PdfView extends Component {
                 getItemLayout={this._getItemLayout}
                 maxToRenderPerBatch={1}
                 removeClippedSubviews
-                initialScrollIndex={this.props.page - 1}
+                initialScrollIndex={this.props.page < 1 ? 0 : this.props.page - 1}
                 onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={VIEWABILITYCONFIG}
                 onScroll={this._onScroll}

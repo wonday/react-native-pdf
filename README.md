@@ -34,6 +34,10 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.6
+1. add cache file expiration
+2. enhanced file download stability
+
 v3.0.5
 1. OnError return Error() object
 2. fix cache overwrite error
@@ -229,6 +233,7 @@ const styles = StyleSheet.create({
 | ------------ | ----------- | ------- | --- | ------- |
 | uri          | pdf source, see the forllowing for detail.| required | ✔   | ✔ |
 | cache        | use cache or not | false | ✔ | ✔ |
+| expiration   | cache file expired seconds (0 is not expired) | 0 | ✔ | ✔ |
 | method       | request method when uri is a url | "GET" | ✔ | ✔ |
 | headers      | request headers when uri is a url | {} | ✔ | ✔ |
 
