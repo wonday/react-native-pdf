@@ -63,13 +63,13 @@ export default class PinchZoomView extends Component {
 
     _handleMoveShouldSetPanResponder = (e, gestureState) => {
 
-        return this.props.scalable && (e.nativeEvent.changedTouches.length>=2 || gestureState.numberActiveTouches >= 2);
+        return this.props.scalable && (e.nativeEvent.changedTouches.length >= 2 || gestureState.numberActiveTouches >= 2);
 
     };
 
     _handlePanResponderGrant = (e, gestureState) => {
 
-        if (e.nativeEvent.changedTouches.length>=2 || gestureState.numberActiveTouches >= 2) {
+        if (e.nativeEvent.changedTouches.length >= 2 || gestureState.numberActiveTouches >= 2) {
             let dx = Math.abs(e.nativeEvent.touches[0].pageX - e.nativeEvent.touches[1].pageX);
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
             this.distant = Math.sqrt(dx * dx + dy * dy);
@@ -92,7 +92,7 @@ export default class PinchZoomView extends Component {
 
     _handlePanResponderMove = (e, gestureState) => {
 
-        if ((e.nativeEvent.changedTouches.length>=2 || gestureState.numberActiveTouches >= 2) && this.distant >100) {
+        if ((e.nativeEvent.changedTouches.length >= 2 || gestureState.numberActiveTouches >= 2) && this.distant > 100) {
 
             let dx = Math.abs(e.nativeEvent.touches[0].pageX - e.nativeEvent.touches[1].pageX);
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
@@ -102,8 +102,11 @@ export default class PinchZoomView extends Component {
             // for zoom smooth
             if (scale > 1.1) scale = 1.1;
             if (scale < 0.9) scale = 0.9;
-            if (scale>1.05 || scale<0.95) {
-                this.props.onScaleChanged(scale, {x:(e.nativeEvent.touches[0].locationX+e.nativeEvent.touches[1].locationX)/2, y:(e.nativeEvent.touches[0].locationY+e.nativeEvent.touches[1].locationY)/2});
+            if (scale > 1.05 || scale < 0.95) {
+                this.props.onScaleChanged(scale, {
+                    x: (e.nativeEvent.touches[0].locationX + e.nativeEvent.touches[1].locationX) / 2,
+                    y: (e.nativeEvent.touches[0].locationY + e.nativeEvent.touches[1].locationY) / 2
+                });
                 this.distant = distant;
             }
         }

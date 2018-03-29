@@ -17,9 +17,9 @@ import {
 
 export default class PdfPageView extends PureComponent {
     _getStylePropsProps = () => {
-        const { width, height } = this.props;
-        if( width || height ) {
-            return { width, height };
+        const {width, height} = this.props;
+        if (width || height) {
+            return {width, height};
         }
         return {};
     };
@@ -31,8 +31,8 @@ export default class PdfPageView extends PureComponent {
         } = this.props;
         return (
             <PdfPageViewCustom
-              {...restProps}
-              style={[style, this._getStylePropsProps()]}
+                {...restProps}
+                style={[style, this._getStylePropsProps()]}
             />
         );
 
