@@ -12,4 +12,5 @@ Pod::Spec.new do |s|
   s.source        = { :git => 'https://github.com/wonday/react-native-pdf.git' }
   s.platform      = :ios, '8.0'
   s.source_files  = "ios/**/*.{h,m}"
+  s.dependency 'React'
 end
