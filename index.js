@@ -185,7 +185,7 @@ export default class Pdf extends Component {
                     .then(() => {
                         this.setState({path: cacheFile, isDownloaded: true});
                     })
-                    .catch(error => {
+                    .catch(async (error) => {
                         await RNFetchBlob.fs.unlink(cacheFile);
                         this._onError(error);
                     })
@@ -197,7 +197,7 @@ export default class Pdf extends Component {
                         //__DEV__ && console.log("write base64 to file:" + cacheFile);
                         this.setState({path: cacheFile, isDownloaded: true});
                     })
-                    .catch(error => {
+                    .catch(async (error) => {
                         await RNFetchBlob.fs.unlink(cacheFile);
                         this._onError(error)
                     });
@@ -242,7 +242,7 @@ export default class Pdf extends Component {
             });
 
         this.lastRNBFTask
-            .then(res => {
+            .then(async (res) => {
                 let {status} = res.respInfo;
                 this.lastRNBFTask = null;
 
@@ -258,13 +258,13 @@ export default class Pdf extends Component {
                                     .then(() => {
                                         this.setState({path: cacheFile, isDownloaded: true, progress: 1});
                                     })
-                                    .catch(error => {
+                                    .catch(async (error) => {
                                         await RNFetchBlob.fs.unlink(tempCacheFile);
                                         await RNFetchBlob.fs.unlink(cacheFile);
                                         this._onError(error)
                                     })
                             })
-                            .catch(error => {
+                            .catch(async (error) => {
                                 await RNFetchBlob.fs.unlink(tempCacheFile);
                                 await RNFetchBlob.fs.unlink(cacheFile);
                                 this._onError(error)
@@ -278,7 +278,7 @@ export default class Pdf extends Component {
                         break;
                 }
             })
-            .catch(error => {
+            .catch(async (error) => {
                 await RNFetchBlob.fs.unlink(tempCacheFile);
                 await RNFetchBlob.fs.unlink(cacheFile);
                 this._onError(error);
