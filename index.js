@@ -163,7 +163,7 @@ export default class Pdf extends Component {
         }
     };
 
-    _prepareFile = (source) => {
+    _prepareFile = async (source) => {
 
         if (source.uri) {
             let uri = source.uri || '';
@@ -175,7 +175,7 @@ export default class Pdf extends Component {
             const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
             // delete old cache file
-            RNFetchBlob.fs.unlink(cacheFile);
+            await RNFetchBlob.fs.unlink(cacheFile);
 
             if (isNetwork) {
                 this._downloadFile(source, cacheFile);
@@ -186,7 +186,7 @@ export default class Pdf extends Component {
                         this.setState({path: cacheFile, isDownloaded: true});
                     })
                     .catch(error => {
-                        RNFetchBlob.fs.unlink(cacheFile);
+                        await RNFetchBlob.fs.unlink(cacheFile);
                         this._onError(error);
                     })
             } else if (isBase64) {
@@ -198,7 +198,7 @@ export default class Pdf extends Component {
                         this.setState({path: cacheFile, isDownloaded: true});
                     })
                     .catch(error => {
-                        RNFetchBlob.fs.unlink(cacheFile);
+                        await RNFetchBlob.fs.unlink(cacheFile);
                         this._onError(error)
                     });
             } else {
@@ -214,7 +214,7 @@ export default class Pdf extends Component {
 
     };
 
-    _downloadFile = (source, cacheFile) => {
+    _downloadFile = async (source, cacheFile) => {
 
         if (this.lastRNBFTask) {
             this.lastRNBFTask.cancel(err => {
@@ -223,7 +223,7 @@ export default class Pdf extends Component {
         }
 
         const tempCacheFile = cacheFile + '.tmp';
-        RNFetchBlob.fs.unlink(tempCacheFile);
+        await RNFetchBlob.fs.unlink(tempCacheFile);
 
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
@@ -259,28 +259,28 @@ export default class Pdf extends Component {
                                         this.setState({path: cacheFile, isDownloaded: true, progress: 1});
                                     })
                                     .catch(error => {
-                                        RNFetchBlob.fs.unlink(tempCacheFile);
-                                        RNFetchBlob.fs.unlink(cacheFile);
+                                        await RNFetchBlob.fs.unlink(tempCacheFile);
+                                        await RNFetchBlob.fs.unlink(cacheFile);
                                         this._onError(error)
                                     })
                             })
                             .catch(error => {
-                                RNFetchBlob.fs.unlink(tempCacheFile);
-                                RNFetchBlob.fs.unlink(cacheFile);
+                                await RNFetchBlob.fs.unlink(tempCacheFile);
+                                await RNFetchBlob.fs.unlink(cacheFile);
                                 this._onError(error)
                             });
                         break;
                     }
                     default:
-                        RNFetchBlob.fs.unlink(tempCacheFile);
-                        RNFetchBlob.fs.unlink(cacheFile);
+                        await RNFetchBlob.fs.unlink(tempCacheFile);
+                        await RNFetchBlob.fs.unlink(cacheFile);
                         this._onError(new Error(`load pdf failed with code ${status}`));
                         break;
                 }
             })
             .catch(error => {
-                RNFetchBlob.fs.unlink(tempCacheFile);
-                RNFetchBlob.fs.unlink(cacheFile);
+                await RNFetchBlob.fs.unlink(tempCacheFile);
+                await RNFetchBlob.fs.unlink(cacheFile);
                 this._onError(error);
             });
 
