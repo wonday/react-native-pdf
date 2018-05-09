@@ -34,7 +34,7 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
-v3.0.7
+v3.0.8
 1. use await to unlink file
 2. fix podspec
 3. do not count a scrolling gesture as a tap
