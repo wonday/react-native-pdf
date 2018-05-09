@@ -34,6 +34,11 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.7
+1. use await to unlink file
+2. fix podspec
+3. do not count a scrolling gesture as a tap
+
 v3.0.6
 1. add cache file expiration
 2. enhanced file download stability
@@ -43,7 +48,7 @@ v3.0.5
 2. fix cache overwrite error
 3. add Android content:// support
 4. fix type error
-5. Refactor view.propTypes to ViewPropTypes.
+5. refactor view.propTypes to ViewPropTypes.
 
 v3.0.4
 
