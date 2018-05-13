@@ -47,10 +47,17 @@
     if (self) {
         
         self.backgroundColor = UIColor.whiteColor;
+        CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
         
     }
     
     return self;
+}
+
+// The layer's class should be CATiledLayer.
++ (Class)layerClass
+{
+    return [CATiledLayer class];
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
@@ -73,9 +80,8 @@
     [super reactSetFrame:frame];
 }
 
-- (void)drawRect:(CGRect)rect
+-(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
     
     // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system before drawing.
     CGContextScaleCTM(context, 1.0, -1.0);
