@@ -147,7 +147,7 @@ export default class Pdf extends Component {
             RNFetchBlob.fs
                 .stat(cacheFile)
                 .then(stats => {
-                    if (!!!source.expiration || (source.expiration * 1000 + stats.lastModified) < (new Date().getTime())) {
+                    if (Boolean(source.expiration) || (source.expiration * 1000 + stats.lastModified) < (new Date().getTime())) {
                         // cache expirated then reload it
                         this._prepareFile(source);
                     } else {
