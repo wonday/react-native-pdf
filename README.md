@@ -33,6 +33,10 @@ Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acess
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
+v3.0.11
+1. improve iOS zoom, can zoom from pinch center
+2. fix call setState on an unmounted component
+
 v3.0.10
 1. fix source.expiration check [`#163`](https://github.com/wonday/react-native-pdf/issues/163)
 
