@@ -16,6 +16,7 @@ import PdfManager from './PdfManager';
 import PdfPageView from './PdfPageView';
 import DoubleTapView from './DoubleTapView';
 import PinchZoomView from './PinchZoomView';
+import PdfViewFlatList from './PdfViewFlatList';
 
 const MAX_SCALE = 3;
 const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 60, waitForInteraction: false};
@@ -65,7 +66,7 @@ export default class PdfView extends Component {
             contentContainerSize: {width: 0, height: 0},
             scale: this.props.scale,
             contentOffset: {x: 0, y: 0},
-            scrollEnabled: true,
+            newContentOffset: {x: 0, y: 0},
         };
 
         this.flatList = null;
@@ -98,7 +99,7 @@ export default class PdfView extends Component {
     componentWillReceiveProps(nextProps) {
 
         if (nextProps.scale !== this.state.scale) {
-            this._onScaleChanged(nextProps.scale / this.state.scale);
+            this._onScaleChanged({scale:nextProps.scale / this.state.scale, pageX:this.state.contentContainerSize.width/2, pageY:this.state.contentContainerSize.height/2});
         }
 
         if (nextProps.horizontal !== this.props.horizontal || nextProps.page !== this.props.page) {
@@ -193,48 +194,33 @@ export default class PdfView extends Component {
     _onItemDoubleTap = (index) => {
 
         if (this.state.scale >= MAX_SCALE) {
-            this._onScaleChanged(1 / this.state.scale);
+            this._onScaleChanged({scale:1 / this.state.scale, pageX:this.state.contentContainerSize.width/2, pageY:this.state.contentContainerSize.height/2});
         } else {
-            this._onScaleChanged(1.2);
+            this._onScaleChanged({scale:1.2, pageX:this.state.contentContainerSize.width/2, pageY:this.state.contentContainerSize.height/2});
         }
 
     };
 
-    _onScaleChanged = (scale, center) => {
+    _onScaleChanged = (pinchInfo) => {
 
-        let newScale = scale * this.state.scale;
+        let newScale = pinchInfo.scale * this.state.scale;
         newScale = newScale > MAX_SCALE ? MAX_SCALE : newScale;
         newScale = newScale < 1 ? 1 : newScale;
-
-        if (this.flatList && this.state.contentOffset) {
-            this.flatList.scrollToOffset({
-                animated: false,
-                offset: (this.props.horizontal ? this.state.contentOffset.x : this.state.contentOffset.y) * scale
-            });
+        let newContentOffset = {
+            x: (this.state.contentOffset.x+pinchInfo.pageX)*(newScale/this.state.scale) - pinchInfo.pageX,
+            y: (this.state.contentOffset.y+pinchInfo.pageY)*(newScale/this.state.scale) - pinchInfo.pageY
         }
-
-        this.setState({scale: newScale, scrollEnabed: false});
+        this.setState({scale: newScale, newContentOffset:newContentOffset});
         this.props.onScaleChanged(newScale);
 
-        if (this.scaleTimer) {
-            clearTimeout(this.scaleTimer);
-            this.scaleTimer = setTimeout(() => {
-                this.setState({scrollEnabled: true});
-            }, 1000);
-        }
-
     };
-
-    _onSingleTap = index => () => this._onItemSingleTap(index);
-
-    _onDoubleTap = index => () => this._onItemDoubleTap(index);
 
     _renderItem = ({item, index}) => {
 
         return (
             <DoubleTapView style={{flexDirection: this.props.horizontal ? 'row' : 'column'}}
-                           onSingleTap={this._onSingleTap(index)}
-                           onDoubleTap={this._onDoubleTap(index)}
+                           onSingleTap={()=>{this._onItemSingleTap(index);}}
+                           onDoubleTap={()=>{this._onItemDoubleTap(index);}}
             >
                 <PdfPageView
                     key={item.id}
@@ -275,7 +261,14 @@ export default class PdfView extends Component {
     });
 
     _onScroll = (e) => {
-        this.state.scrollEnabled && this.setState({contentOffset: e.nativeEvent.contentOffset});
+        this.setState({contentOffset: e.nativeEvent.contentOffset, newContentOffset: e.nativeEvent.contentOffset});
+    };
+
+    _onListContentSizeChange = (contentWidth, contentHeight) => {
+        if (this.state.contentOffset.x!=this.state.newContentOffset.x 
+                || this.state.contentOffset.y!=this.state.newContentOffset.y) {
+            this.flatList.scrollToXY(this.state.newContentOffset.x, this.state.newContentOffset.y);
+        }
     };
 
     _renderList = () => {
@@ -286,7 +279,7 @@ export default class PdfView extends Component {
         }
 
         return (
-            <FlatList
+            <PdfViewFlatList
                 ref={this._getRef}
                 style={this.props.style}
                 contentContainerStyle={this.props.horizontal ? {height: this.state.contentContainerSize.height * this.state.scale} : {width: this.state.contentContainerSize.width * this.state.scale}}
@@ -297,12 +290,12 @@ export default class PdfView extends Component {
                 windowSize={11}
                 getItemLayout={this._getItemLayout}
                 maxToRenderPerBatch={1}
-                removeClippedSubviews
+                
                 initialScrollIndex={this.props.page < 1 ? 0 : this.props.page - 1}
                 onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={VIEWABILITYCONFIG}
                 onScroll={this._onScroll}
-                scrollEnabled={this.state.scrollEnabled}
+                onContentSizeChange ={this._onListContentSizeChange }
             />
         );
 

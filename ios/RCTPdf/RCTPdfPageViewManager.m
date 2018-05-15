@@ -24,4 +24,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_VIEW_PROPERTY(fileNo, int);
 RCT_EXPORT_VIEW_PROPERTY(page, int);
 
++ (BOOL)requiresMainQueueSetup {
+    return YES;
+}
 @end

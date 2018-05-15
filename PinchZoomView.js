@@ -73,7 +73,6 @@ export default class PinchZoomView extends Component {
             let dx = Math.abs(e.nativeEvent.touches[0].pageX - e.nativeEvent.touches[1].pageX);
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
             this.distant = Math.sqrt(dx * dx + dy * dy);
-            this.props.onScaleChanged(1);
         }
 
     };
@@ -98,17 +97,13 @@ export default class PinchZoomView extends Component {
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
             let distant = Math.sqrt(dx * dx + dy * dy);
             let scale = (distant / this.distant);
+            let pageX = (e.nativeEvent.touches[0].pageX + e.nativeEvent.touches[1].pageX) / 2;
+            let pageY = (e.nativeEvent.touches[0].pageY + e.nativeEvent.touches[1].pageY) / 2;
+            let pinchInfo = {scale:scale, pageX:pageX, pageY:pageY};            
 
-            // for zoom smooth
-            if (scale > 1.1) scale = 1.1;
-            if (scale < 0.9) scale = 0.9;
-            if (scale > 1.05 || scale < 0.95) {
-                this.props.onScaleChanged(scale, {
-                    x: (e.nativeEvent.touches[0].locationX + e.nativeEvent.touches[1].locationX) / 2,
-                    y: (e.nativeEvent.touches[0].locationY + e.nativeEvent.touches[1].locationY) / 2
-                });
-                this.distant = distant;
-            }
+            this.props.onScaleChanged(pinchInfo);
+            this.distant = distant;
+
         }
 
     };
