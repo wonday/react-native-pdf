@@ -72,6 +72,7 @@ export default class PdfView extends Component {
         this.flatList = null;
         this.scaleTimer = null;
         this.scrollTimer = null;
+        this.mounted = false;
 
     }
 
@@ -79,16 +80,19 @@ export default class PdfView extends Component {
     }
 
     componentDidMount() {
-
+        this.mounted = true;
         PdfManager.loadFile(this.props.path, this.props.password)
             .then((pdfInfo) => {
-                this.setState({
-                    pdfLoaded: true,
-                    fileNo: pdfInfo[0],
-                    numberOfPages: pdfInfo[1],
-                    pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3]
-                });
-                if (this.props.onLoadComplete) this.props.onLoadComplete(pdfInfo[1], this.props.path);
+                if (this.mounted) {
+                    this.setState({
+                        pdfLoaded: true,
+                        fileNo: pdfInfo[0],
+                        numberOfPages: pdfInfo[1],
+                        pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3]
+                    });
+                    if (this.props.onLoadComplete) this.props.onLoadComplete(pdfInfo[1], this.props.path);                    
+                }
+
             })
             .catch((error) => {
                 this.props.onError(error);
@@ -117,7 +121,7 @@ export default class PdfView extends Component {
     }
 
     componentWillUnmount() {
-
+        this.mounted = false;
         clearTimeout(this.scaleTimer);
         clearTimeout(this.scrollTimer);
 
