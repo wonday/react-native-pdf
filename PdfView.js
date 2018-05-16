@@ -69,10 +69,10 @@ export default class PdfView extends Component {
             newContentOffset: {x: 0, y: 0},
         };
 
-        this.flatList = null;
-        this.scaleTimer = null;
-        this.scrollTimer = null;
-        this.mounted = false;
+        this._flatList = null;
+        this._scaleTimer = null;
+        this._scrollTimer = null;
+        this._mounted = false;
 
     }
 
@@ -80,10 +80,10 @@ export default class PdfView extends Component {
     }
 
     componentDidMount() {
-        this.mounted = true;
+        this._mounted = true;
         PdfManager.loadFile(this.props.path, this.props.password)
             .then((pdfInfo) => {
-                if (this.mounted) {
+                if (this._mounted) {
                     this.setState({
                         pdfLoaded: true,
                         fileNo: pdfInfo[0],
@@ -110,10 +110,10 @@ export default class PdfView extends Component {
             let page = (nextProps.page) < 1 ? 1 : nextProps.page;
             page = page > this.state.numberOfPages ? this.state.numberOfPages : page;
 
-            if (this.flatList) {
-                clearTimeout(this.scrollTimer);
-                this.scrollTimer = setTimeout(() => {
-                    this.flatList.scrollToIndex({animated: false, index: page - 1});
+            if (this._flatList) {
+                clearTimeout(this._scrollTimer);
+                this._scrollTimer = setTimeout(() => {
+                    this._flatList.scrollToIndex({animated: false, index: page - 1});
                 }, 50);
             }
         }
@@ -121,9 +121,9 @@ export default class PdfView extends Component {
     }
 
     componentWillUnmount() {
-        this.mounted = false;
-        clearTimeout(this.scaleTimer);
-        clearTimeout(this.scrollTimer);
+        this._mounted = false;
+        clearTimeout(this._scaleTimer);
+        clearTimeout(this._scrollTimer);
 
     }
 
@@ -256,7 +256,7 @@ export default class PdfView extends Component {
     };
 
 
-    _getRef = (ref) => this.flatList = ref;
+    _getRef = (ref) => this._flatList = ref;
 
     _getItemLayout = (data, index) => ({
         length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
@@ -271,7 +271,7 @@ export default class PdfView extends Component {
     _onListContentSizeChange = (contentWidth, contentHeight) => {
         if (this.state.contentOffset.x!=this.state.newContentOffset.x 
                 || this.state.contentOffset.y!=this.state.newContentOffset.y) {
-            this.flatList.scrollToXY(this.state.newContentOffset.x, this.state.newContentOffset.y);
+            this._flatList.scrollToXY(this.state.newContentOffset.x, this.state.newContentOffset.y);
         }
     };
 
