@@ -285,8 +285,8 @@ export default class PdfView extends Component {
         return (
             <PdfViewFlatList
                 ref={this._getRef}
-                style={this.props.style}
-                contentContainerStyle={this.props.horizontal ? {height: this.state.contentContainerSize.height * this.state.scale} : {width: this.state.contentContainerSize.width * this.state.scale}}
+                style={[styles.container, this.props.style]}
+                contentContainerStyle={[{justifyContent: 'center',alignItems: 'center'},this.props.horizontal ? {height: this.state.contentContainerSize.height * this.state.scale} : {width: this.state.contentContainerSize.width * this.state.scale}]}
                 horizontal={this.props.horizontal}
                 data={data}
                 renderItem={this._renderItem}
