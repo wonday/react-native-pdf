@@ -33,6 +33,10 @@ Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acess
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
+
+v3.0.13
+1. fix in iPad layout not center problem
+
 v3.0.12
 1. fix source.expiration check
 
@@ -92,72 +96,6 @@ v3.0.0
 
 Known issues  
 1. iOS zooming can not scroll to pinch center 
-
-v2.0.7
-
-1. update android dependent lib AndroidPdfViewer to 2.8.1
-
-v2.0.6
-
-1. fix change page number, do not redraw problem
-
-v2.0.5
-
-1. add code protect for not load the same pdf twice
-2. can scroll out of bounds with blank page, after stop, redraw pages
-3. cancel not finished download task when componentWillUnmount.
-
-v2.0.4
-
-1. add .git to .npmignore
-
-v2.0.3
-
-1. Fix iOS load pdf problem [`#76`](https://github.com/wonday/react-native-pdf/issues/76)
-
-v2.0.2
-
-1. Fix pdf canvas was clipped problem [`#69`](https://github.com/wonday/react-native-pdf/issues/69)
-
-v2.0.1
-
-1. Improve iOS version scrolling performance
-2. Fix never ending loop rendering problem in example code
-
-v2.0.0
-
-1. Reimplement iOS version by UIScrollView, improve scrolling performance
-2. Fix iOS paging [`#63`](https://github.com/wonday/react-native-pdf/issues/63)
-
-v1.3.5
-
-1. Improve scolling performance
-2. Return pdf local/cache path when callback onLoadComplete [`#57`](https://github.com/wonday/react-native-pdf/issues/57)
-
-v1.3.4
-
-1. Update iOS project to Xcode9 format.
-2. Fix crash problem when load from base64 [`#58`](https://github.com/wonday/react-native-pdf/issues/58)
-3. Fix TypeScript definition for onError [`#53`](https://github.com/wonday/react-native-pdf/issues/53)
-4. Update sample code in readme
-
-v1.3.3
-
-1. Improve iOS scrolling performance, fix [`#47`](https://github.com/wonday/react-native-pdf/issues/47)
-
-v1.3.2
-
-1. Move react-native and react-native-fetch-blob to peerDependencies
-
-v1.3.1
-
-1. Refactor android source
-2. Stop page scrolling when tap screen [`#41`](https://github.com/wonday/react-native-pdf/issues/41)
-
-v1.3.0
-
-1. Fix drawing problem on Android 4.4 [`#31`](https://github.com/wonday/react-native-pdf/issues/31)
-2. Add fitWidth support [`#36`](https://github.com/wonday/react-native-pdf/issues/36) , [`#38`](https://github.com/wonday/react-native-pdf/issues/38)
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
