@@ -230,6 +230,7 @@ export default class PdfView extends Component {
                     key={item.id}
                     fileNo={this.state.fileNo}
                     page={item.key + 1}
+                    scale={this.state.scale}
                     width={this._getPageWidth()}
                     height={this._getPageHeight()}
                 />

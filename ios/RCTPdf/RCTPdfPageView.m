@@ -45,14 +45,16 @@
 {
     self = [super init];
     if (self) {
-        
+        self.scale = 1.0f;
         self.backgroundColor = UIColor.whiteColor;
         CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
+        tiledLayer.levelsOfDetailBias = 0;
         
     }
     
     return self;
 }
+
 
 // The layer's class should be CATiledLayer.
 + (Class)layerClass
@@ -78,6 +80,8 @@
 - (void)reactSetFrame:(CGRect)frame
 {
     [super reactSetFrame:frame];
+    CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
+    tiledLayer.tileSize = frame.size;
 }
 
 -(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
@@ -107,6 +111,7 @@
             
             CGAffineTransform pageTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, pageBounds, 0, true);
             CGContextConcatCTM(context, pageTransform);
+            CGContextScaleCTM(context, self.scale, self.scale);
             
             CGContextDrawPDFPage(context, pdfPage);
             CGContextRestoreGState(context);

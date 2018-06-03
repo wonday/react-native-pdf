@@ -34,6 +34,9 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 
 ### ChangeLog
 
+v3.0.14
+1. fix in iPad can not zoom problem(offset still has problem, but zoom works)
+
 v3.0.13
 1. fix in iPad layout not center problem
 
