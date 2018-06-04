@@ -165,52 +165,57 @@ export default class Pdf extends Component {
 
     _prepareFile = async (source) => {
 
-        if (source.uri) {
-            let uri = source.uri || '';
+        try {
+            if (source.uri) {
+                let uri = source.uri || '';
 
-            const isNetwork = !!(uri && uri.match(/^https?:\/\//));
-            const isAsset = !!(uri && uri.match(/^bundle-assets:\/\//));
-            const isBase64 = !!(uri && uri.match(/^data:application\/pdf;base64/));
+                const isNetwork = !!(uri && uri.match(/^https?:\/\//));
+                const isAsset = !!(uri && uri.match(/^bundle-assets:\/\//));
+                const isBase64 = !!(uri && uri.match(/^data:application\/pdf;base64/));
 
-            const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
+                const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
-            // delete old cache file
-            await RNFetchBlob.fs.unlink(cacheFile);
+                // delete old cache file
+                await RNFetchBlob.fs.unlink(cacheFile);
 
-            if (isNetwork) {
-                this._downloadFile(source, cacheFile);
-            } else if (isAsset) {
-                RNFetchBlob.fs
-                    .cp(uri, cacheFile)
-                    .then(() => {
-                        this.setState({path: cacheFile, isDownloaded: true});
-                    })
-                    .catch(async (error) => {
-                        await RNFetchBlob.fs.unlink(cacheFile);
-                        this._onError(error);
-                    })
-            } else if (isBase64) {
-                let data = uri.replace(/data:application\/pdf;base64,/i, '');
-                RNFetchBlob.fs
-                    .writeFile(cacheFile, data, 'base64')
-                    .then(() => {
-                        //__DEV__ && console.log("write base64 to file:" + cacheFile);
-                        this.setState({path: cacheFile, isDownloaded: true});
-                    })
-                    .catch(async (error) => {
-                        await RNFetchBlob.fs.unlink(cacheFile);
-                        this._onError(error)
+                if (isNetwork) {
+                    this._downloadFile(source, cacheFile);
+                } else if (isAsset) {
+                    RNFetchBlob.fs
+                        .cp(uri, cacheFile)
+                        .then(() => {
+                            this.setState({path: cacheFile, isDownloaded: true});
+                        })
+                        .catch(async (error) => {
+                            await RNFetchBlob.fs.unlink(cacheFile);
+                            this._onError(error);
+                        })
+                } else if (isBase64) {
+                    let data = uri.replace(/data:application\/pdf;base64,/i, '');
+                    RNFetchBlob.fs
+                        .writeFile(cacheFile, data, 'base64')
+                        .then(() => {
+                            //__DEV__ && console.log("write base64 to file:" + cacheFile);
+                            this.setState({path: cacheFile, isDownloaded: true});
+                        })
+                        .catch(async (error) => {
+                            await RNFetchBlob.fs.unlink(cacheFile);
+                            this._onError(error)
+                        });
+                } else {
+                    //__DEV__ && console.log("default source type as file");
+                    this.setState({
+                        path: uri.replace(/file:\/\//i, ''),
+                        isDownloaded: true,
                     });
+                }
             } else {
-                //__DEV__ && console.log("default source type as file");
-                this.setState({
-                    path: uri.replace(/file:\/\//i, ''),
-                    isDownloaded: true,
-                });
+                this._onError(new Error('no pdf source!'));
             }
-        } else {
-            this._onError(new Error('no pdf source!'));
+        } catch(e) {
+            this._onError(e)
         }
+
 
     };
 
