@@ -99,7 +99,7 @@ export default class PinchZoomView extends Component {
             let scale = (distant / this.distant);
             let pageX = (e.nativeEvent.touches[0].pageX + e.nativeEvent.touches[1].pageX) / 2;
             let pageY = (e.nativeEvent.touches[0].pageY + e.nativeEvent.touches[1].pageY) / 2;
-            let pinchInfo = {scale:scale, pageX:pageX, pageY:pageY};            
+            let pinchInfo = {scale: scale, pageX: pageX, pageY: pageY};
 
             this.props.onScaleChanged(pinchInfo);
             this.distant = distant;

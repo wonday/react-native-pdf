@@ -212,7 +212,7 @@ export default class Pdf extends Component {
             } else {
                 this._onError(new Error('no pdf source!'));
             }
-        } catch(e) {
+        } catch (e) {
             this._onError(e)
         }
 
