@@ -8,7 +8,7 @@
 
 'use strict';
 import React, {Component} from 'react';
-import {FlatList, View, StyleSheet, ViewPropTypes} from 'react-native';
+import {ScrollView, FlatList, View, StyleSheet, ViewPropTypes} from 'react-native';
 
 import PropTypes from 'prop-types';
 
@@ -135,13 +135,15 @@ export default class PdfView extends Component {
 
     _getPageWidth = () => {
 
+        let fitPolicy = this.props.fitPolicy;
+
         // if only one page, show whole page in center
         if (this.state.numberOfPages === 1) {
-            return this.state.contentContainerSize.width * this.state.scale;
+            fitPolicy = 2;
         }
 
 
-        switch (this.props.fitPolicy) {
+        switch (fitPolicy) {
             case 0:  //fit width
                 return this.state.contentContainerSize.width * this.state.scale;
             case 1:  //fit height
@@ -160,12 +162,14 @@ export default class PdfView extends Component {
 
     _getPageHeight = () => {
 
+        let fitPolicy = this.props.fitPolicy;
+
         // if only one page, show whole page in center
         if (this.state.numberOfPages === 1) {
-            return this.state.contentContainerSize.height * this.state.scale;
+            fitPolicy = 2;
         }
 
-        switch (this.props.fitPolicy) {
+        switch (fitPolicy) {
             case 0: //fit width
                 return this.state.contentContainerSize.width * (1 / this.state.pageAspectRate) * this.state.scale;
             case 1: //fit height
@@ -313,7 +317,10 @@ export default class PdfView extends Component {
                 windowSize={11}
                 getItemLayout={this._getItemLayout}
                 maxToRenderPerBatch={1}
-
+                renderScrollComponent={(props) => <ScrollView
+                    {...props}
+                    centerContent={true}
+                />}
                 initialScrollIndex={this.props.page < 1 ? 0 : this.props.page - 1}
                 onViewableItemsChanged={this._onViewableItemsChanged}
                 viewabilityConfig={VIEWABILITYCONFIG}

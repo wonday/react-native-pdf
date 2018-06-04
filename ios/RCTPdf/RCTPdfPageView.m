@@ -119,7 +119,13 @@
             CGContextConcatCTM(context, pageTransform);
             
             // then calculate the real scale and scale it
-            CGFloat scale = self.bounds.size.width/cropBox.size.width;
+            CGFloat scale = 1.0f;
+            if (self.bounds.size.width/self.bounds.size.height>cropBox.size.width/cropBox.size.height) {
+                scale = self.bounds.size.height/cropBox.size.height;
+            } else {
+                scale = self.bounds.size.width/cropBox.size.width;
+            }
+            
             CGContextScaleCTM(context, scale, scale);
             
             // draw the content to context
