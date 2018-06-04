@@ -43,7 +43,6 @@ PdfPageView.propTypes = {
     ...ViewPropTypes,
     fileNo: PropTypes.number,
     page: PropTypes.number,
-    scale: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number
 };

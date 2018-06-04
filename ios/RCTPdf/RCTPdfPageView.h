@@ -17,8 +17,5 @@
 
 @property(nonatomic) int fileNo;
 @property(nonatomic) int page;
-@property(nonatomic) CGFloat scale;
-
-
 
 @end

@@ -45,7 +45,6 @@
 {
     self = [super init];
     if (self) {
-        self.scale = 1.0f;
         self.backgroundColor = UIColor.whiteColor;
         CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
         tiledLayer.levelsOfDetailBias = 0;
@@ -87,8 +86,7 @@
 -(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
 {
     
-    // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system before drawing.
-    CGContextScaleCTM(context, 1.0, -1.0);
+
     
     CGPDFDocumentRef pdfRef= [PdfManager getPdf:_fileNo];
     if (pdfRef!=NULL)
@@ -99,20 +97,32 @@
         if (pdfPage != NULL) {
             
             CGContextSaveGState(context);
-            CGRect pageBounds;
-                pageBounds = CGRectMake(0,
-                                        -self.bounds.size.height,
-                                        self.bounds.size.width,
-                                        self.bounds.size.height);
             
             // Fill the background with white.
             CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
-            CGContextFillRect(context, pageBounds);
+            CGContextFillRect(context, self.bounds);
             
+            // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system before drawing.
+            CGContextScaleCTM(context, 1.0, -1.0);
+            
+            CGRect pageBounds;
+            
+            CGRect cropBox = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
+            
+            pageBounds = CGRectMake(0,
+                                    -self.bounds.size.height,
+                                    cropBox.size.width,
+                                    cropBox.size.height);
+            
+            // first transform the same size as original pdf page
             CGAffineTransform pageTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, pageBounds, 0, true);
             CGContextConcatCTM(context, pageTransform);
-            CGContextScaleCTM(context, self.scale, self.scale);
             
+            // then calculate the real scale and scale it
+            CGFloat scale = self.bounds.size.width/cropBox.size.width;
+            CGContextScaleCTM(context, scale, scale);
+            
+            // draw the content to context
             CGContextDrawPDFPage(context, pdfPage);
             CGContextRestoreGState(context);
             

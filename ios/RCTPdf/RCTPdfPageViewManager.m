@@ -23,7 +23,6 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_VIEW_PROPERTY(fileNo, int);
 RCT_EXPORT_VIEW_PROPERTY(page, int);
-RCT_EXPORT_VIEW_PROPERTY(scale, CGFloat);
 
 + (BOOL)requiresMainQueueSetup {
     return YES;
