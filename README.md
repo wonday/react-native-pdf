@@ -33,6 +33,12 @@ Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acess
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
 ### ChangeLog
+
+v3.0.16
+1. onPageChanged not fired in Landscape (IOS)
+2. draw the page with diffrent size to center
+3. support the page with rotation
+
 v3.0.15
 1. fix iPad scale offset problem
 2. add code protection to avoid crashes
