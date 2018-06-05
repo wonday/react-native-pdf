@@ -19,7 +19,7 @@ import PinchZoomView from './PinchZoomView';
 import PdfViewFlatList from './PdfViewFlatList';
 
 const MAX_SCALE = 3;
-const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 60, waitForInteraction: false};
+const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false};
 
 export default class PdfView extends Component {
 
