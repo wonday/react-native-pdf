@@ -114,11 +114,52 @@
                 pdfPageRect = CGRectMake(0, 0, pdfPageRect.size.height, pdfPageRect.size.width);
             }
             
-            CGContextScaleCTM(context, _viewFrame.size.width/pdfPageRect.size.width, _viewFrame.size.height/pdfPageRect.size.height);
+            CGFloat scale = 1.0f;
+            if (_viewFrame.size.width/_viewFrame.size.height>=pdfPageRect.size.width/pdfPageRect.size.height) {
+                scale = _viewFrame.size.height/pdfPageRect.size.height;
+                
+            } else {
+                scale = _viewFrame.size.width/pdfPageRect.size.width;
+            }
+            CGContextScaleCTM(context, scale, scale);
+            
+            
 
-            if (rotation == 90 || rotation == 270) {
-                CGContextRotateCTM(context, -rotation*M_PI/180);
-                CGContextTranslateCTM(context, -pdfPageRect.size.height, 0);
+            switch (rotation) {
+                case 0:
+                    if (_viewFrame.size.width/_viewFrame.size.height>=pdfPageRect.size.width/pdfPageRect.size.height) {
+                        CGContextTranslateCTM(context, (_viewFrame.size.width-pdfPageRect.size.width*scale)/2, 0);
+                    } else {
+                        CGContextTranslateCTM(context, 0, (_viewFrame.size.height-pdfPageRect.size.height*scale)/2);
+                    }
+                    break;
+                case 90:
+                    CGContextRotateCTM(context, -rotation*M_PI/180);
+                    CGContextTranslateCTM(context, -pdfPageRect.size.height, 0);
+                    if (_viewFrame.size.width/_viewFrame.size.height>=pdfPageRect.size.width/pdfPageRect.size.height) {
+                        CGContextTranslateCTM(context, 0, -(_viewFrame.size.height-pdfPageRect.size.height*scale)/2);
+                    } else {
+                        CGContextTranslateCTM(context, -(_viewFrame.size.height/scale-pdfPageRect.size.height)/2, 0);
+                    }
+                    break;
+                case 180:
+                    CGContextRotateCTM(context, -rotation*M_PI/180);
+                    CGContextTranslateCTM(context, -pdfPageRect.size.height, -pdfPageRect.size.width);
+                    if (_viewFrame.size.width/_viewFrame.size.height>=pdfPageRect.size.width/pdfPageRect.size.height) {
+                        CGContextTranslateCTM(context, (_viewFrame.size.width-pdfPageRect.size.width*scale)/2, 0);
+                    } else {
+                        CGContextTranslateCTM(context, 0, (_viewFrame.size.height-pdfPageRect.size.height*scale)/2);
+                    }
+                case 270:
+                    CGContextRotateCTM(context, -rotation*M_PI/180);
+                    CGContextTranslateCTM(context, 0, -pdfPageRect.size.width);
+                    if (_viewFrame.size.width/_viewFrame.size.height>=pdfPageRect.size.width/pdfPageRect.size.height) {
+                        CGContextTranslateCTM(context, 0, -(_viewFrame.size.height-pdfPageRect.size.height*scale)/2);
+                    } else {
+                        CGContextTranslateCTM(context, -(_viewFrame.size.height/scale-pdfPageRect.size.height)/2, 0);
+                    }
+                default:
+                    break;
             }
 
             
