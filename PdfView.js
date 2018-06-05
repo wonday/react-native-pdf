@@ -43,7 +43,7 @@ export default class PdfView extends Component {
         scale: 1,
         spacing: 10,
         style: {},
-        fitPolicy: 0,
+        fitPolicy: 2,
         horizontal: false,
         page: 1,
         currentPage: -1,
@@ -63,6 +63,7 @@ export default class PdfView extends Component {
             page: -1,
             currentPage: -1,
             pageAspectRate: 0.5,
+            pdfPageSize: {width: 0, height: 0},
             contentContainerSize: {width: 0, height: 0},
             scale: this.props.scale,
             contentOffset: {x: 0, y: 0},
@@ -88,7 +89,8 @@ export default class PdfView extends Component {
                         pdfLoaded: true,
                         fileNo: pdfInfo[0],
                         numberOfPages: pdfInfo[1],
-                        pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3]
+                        pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3],
+                        pdfPageSize: {width: pdfInfo[2], height: pdfInfo[3]}
                     });
                     if (this.props.onLoadComplete) this.props.onLoadComplete(pdfInfo[1], this.props.path);
                 }
@@ -156,10 +158,10 @@ export default class PdfView extends Component {
                 return this.state.contentContainerSize.height * this.state.pageAspectRate * this.state.scale;
             case 2: //fit both
             default: {
-                if ((this.state.contentContainerSize.width / this.state.contentContainerSize.height) > this.state.pageAspectRate) {
-                    return this.state.contentContainerSize.height * this.state.scale * this.state.pageAspectRate;
-                } else {
+                if (this.state.contentContainerSize.width/this.state.contentContainerSize.height<this.state.pageAspectRate) {
                     return this.state.contentContainerSize.width * this.state.scale;
+                } else {
+                    return this.state.contentContainerSize.height * this.state.pageAspectRate * this.state.scale;
                 }
             }
         }
@@ -182,11 +184,10 @@ export default class PdfView extends Component {
                 return this.state.contentContainerSize.height * this.state.scale;
             case 2: //fit both
             default: {
-                if ((this.state.contentContainerSize.width / this.state.contentContainerSize.height) > this.state.pageAspectRate) {
-                    return this.state.contentContainerSize.height * this.state.scale;
-                } else {
-
+                if (this.state.contentContainerSize.width/this.state.contentContainerSize.height<this.state.pageAspectRate) {
                     return this.state.contentContainerSize.width * (1 / this.state.pageAspectRate) * this.state.scale;
+                } else {
+                    return this.state.contentContainerSize.height * this.state.scale;
                 }
             }
         }

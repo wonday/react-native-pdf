@@ -72,10 +72,21 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
 
         numberOfPages = (int)CGPDFDocumentGetNumberOfPages(pdfRef);
         CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfRef, 1);
-        CGRect pdfPageRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
+        CGRect pdfPageRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
+        int rotation = CGPDFPageGetRotationAngle(pdfPage);
+        
+        NSArray *params;
+        
+        if (rotation == 90 || rotation==270) {
+             params =@[[NSNumber numberWithUnsignedLong:([pdfDocRefs count]-1)], [NSNumber numberWithInt:numberOfPages], [NSNumber numberWithFloat:pdfPageRect.size.height], [NSNumber numberWithFloat:pdfPageRect.size.width]];
+            RLog(@"Pdf loaded numberOfPages=%d, fileNo=%lu, pageWidth=%f, pageHeight=%f", numberOfPages, [pdfDocRefs count]-1, pdfPageRect.size.height, pdfPageRect.size.width);
 
-        NSArray *params =@[[NSNumber numberWithUnsignedLong:([pdfDocRefs count]-1)], [NSNumber numberWithInt:numberOfPages], [NSNumber numberWithFloat:pdfPageRect.size.width], [NSNumber numberWithFloat:pdfPageRect.size.height]];
-        RLog(@"Pdf loaded numberOfPages=%d, fileNo=%lu, pageWidth=%f, pageHeight=%f", numberOfPages, [pdfDocRefs count]-1, pdfPageRect.size.width, pdfPageRect.size.height);
+        } else {
+            params =@[[NSNumber numberWithUnsignedLong:([pdfDocRefs count]-1)], [NSNumber numberWithInt:numberOfPages], [NSNumber numberWithFloat:pdfPageRect.size.width], [NSNumber numberWithFloat:pdfPageRect.size.height]];
+            RLog(@"Pdf loaded numberOfPages=%d, fileNo=%lu, pageWidth=%f, pageHeight=%f", numberOfPages, [pdfDocRefs count]-1, pdfPageRect.size.width, pdfPageRect.size.height);
+
+        }
+
         resolve(params);
         return;
     } else {

@@ -38,7 +38,7 @@
 
 @implementation RCTPdfPageView {
 
-   
+    CGRect _viewFrame;
 }
 
 - (instancetype)init
@@ -46,6 +46,8 @@
     self = [super init];
     if (self) {
         self.backgroundColor = UIColor.whiteColor;
+        _viewFrame = CGRectMake(0, 0, 0, 0);
+        
         CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
         tiledLayer.levelsOfDetailBias = 0;
         
@@ -79,8 +81,7 @@
 - (void)reactSetFrame:(CGRect)frame
 {
     [super reactSetFrame:frame];
-    CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
-    tiledLayer.tileSize = frame.size;
+    _viewFrame = frame;
 }
 
 -(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
@@ -100,33 +101,26 @@
             
             // Fill the background with white.
             CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
-            CGContextFillRect(context, self.bounds);
+            CGContextFillRect(context, _viewFrame);
             
             // PDF page drawing expects a Lower-Left coordinate system, so we flip the coordinate system before drawing.
             CGContextScaleCTM(context, 1.0, -1.0);
+            CGContextTranslateCTM(context, 0, -_viewFrame.size.height);
             
-            CGRect pageBounds;
+            CGRect pdfPageRect = CGPDFPageGetBoxRect(pdfPage, kCGPDFMediaBox);
             
-            CGRect cropBox = CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
-            
-            pageBounds = CGRectMake(0,
-                                    -self.bounds.size.height,
-                                    cropBox.size.width,
-                                    cropBox.size.height);
-            
-            // first transform the same size as original pdf page
-            CGAffineTransform pageTransform = CGPDFPageGetDrawingTransform(pdfPage, kCGPDFCropBox, pageBounds, 0, true);
-            CGContextConcatCTM(context, pageTransform);
-            
-            // then calculate the real scale and scale it
-            CGFloat scale = 1.0f;
-            if (self.bounds.size.width/self.bounds.size.height>cropBox.size.width/cropBox.size.height) {
-                scale = self.bounds.size.height/cropBox.size.height;
-            } else {
-                scale = self.bounds.size.width/cropBox.size.width;
+            int rotation = CGPDFPageGetRotationAngle(pdfPage);
+            if (rotation == 90 || rotation == 270) {
+                pdfPageRect = CGRectMake(0, 0, pdfPageRect.size.height, pdfPageRect.size.width);
             }
             
-            CGContextScaleCTM(context, scale, scale);
+            CGContextScaleCTM(context, _viewFrame.size.width/pdfPageRect.size.width, _viewFrame.size.height/pdfPageRect.size.height);
+
+            if (rotation == 90 || rotation == 270) {
+                CGContextRotateCTM(context, -rotation*M_PI/180);
+                CGContextTranslateCTM(context, -pdfPageRect.size.height, 0);
+            }
+
             
             // draw the content to context
             CGContextDrawPDFPage(context, pdfPage);
