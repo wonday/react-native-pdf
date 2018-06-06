@@ -126,7 +126,7 @@ export default class PdfView extends Component {
                 clearTimeout(this._scrollTimer);
                 this._scrollTimer = setTimeout(() => {
                     this._flatList.scrollToIndex({animated: false, index: page - 1});
-                }, 50);
+                }, 200);
             }
         }
 
