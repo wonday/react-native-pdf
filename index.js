@@ -150,7 +150,7 @@ export default class Pdf extends Component {
                     if (!Boolean(source.expiration) || (source.expiration * 1000 + stats.lastModified) > (new Date().getTime())) {
                         this.setState({path: cacheFile, isDownloaded: true});
                     } else {
-                        // cache expirated then reload it
+                        // cache expired then reload it
                         this._prepareFile(source);
                     }
                 })
