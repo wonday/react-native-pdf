@@ -45,6 +45,7 @@ export default class PdfView extends Component {
         style: {},
         fitPolicy: 2,
         horizontal: false,
+        centerContent: false,
         page: 1,
         currentPage: -1,
         onPageSingleTap: (page) => {
@@ -90,7 +91,8 @@ export default class PdfView extends Component {
                         fileNo: pdfInfo[0],
                         numberOfPages: pdfInfo[1],
                         pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3],
-                        pdfPageSize: {width: pdfInfo[2], height: pdfInfo[3]}
+                        pdfPageSize: {width: pdfInfo[2], height: pdfInfo[3]},
+                        centerContent: pdfInfo[1]>1?false:true
                     });
                     if (this.props.onLoadComplete) this.props.onLoadComplete(pdfInfo[1], this.props.path);
                 }
@@ -326,7 +328,7 @@ export default class PdfView extends Component {
                 maxToRenderPerBatch={1}
                 renderScrollComponent={(props) => <ScrollView
                     {...props}
-                    centerContent={true}
+                    centerContent={this.state.centerContent}
                     pinchGestureEnabled={false}
                 />}
                 initialScrollIndex={this.props.page < 1 ? 0 : this.props.page - 1}
