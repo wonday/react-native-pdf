@@ -36,68 +36,31 @@
 // output log both debug and release
 #define RLog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 
-@implementation RCTPdfPageView {
+@interface CAPdfLayer : CATiledLayer
+-(void) setParentView:(RCTPdfPageView *)parentView;
+@end
 
-    CGRect _viewFrame;
-}
-
-- (instancetype)init
+@implementation CAPdfLayer
 {
-    self = [super init];
-    if (self) {
-        self.backgroundColor = UIColor.whiteColor;
-        _viewFrame = CGRectMake(0, 0, 0, 0);
-        
-        CATiledLayer *tiledLayer = (CATiledLayer *)[self layer];
-        tiledLayer.levelsOfDetailBias = 0;
-        
-    }
-    
-    return self;
+    RCTPdfPageView *_parentView;
 }
 
-
-// The layer's class should be CATiledLayer.
-+ (Class)layerClass
+-(void) setParentView:(RCTPdfPageView *)parentView
 {
-    return [CATiledLayer class];
+    _parentView = parentView;
 }
 
-- (void)didSetProps:(NSArray<NSString *> *)changedProps
-{
-    long int count = [changedProps count];
-    for (int i = 0 ; i < count; i++) {
-        
-        if ([[changedProps objectAtIndex:i] isEqualToString:@"page"]) {
-            [self setNeedsDisplay];
-        }
-
-    }
-    
-    [self setNeedsDisplay];
-}
-
-
-- (void)reactSetFrame:(CGRect)frame
-{
-    [super reactSetFrame:frame];
-    _viewFrame = frame;
-}
-
--(void)drawLayer:(CALayer*)layer inContext:(CGContextRef)context
+- (void)drawInContext:(CGContextRef)context
 {
     
-
-    
-    CGPDFDocumentRef pdfRef= [PdfManager getPdf:_fileNo];
+    CGRect _viewFrame = _parentView.frame;
+    CGPDFDocumentRef pdfRef= [PdfManager getPdf:_parentView.fileNo];
     if (pdfRef!=NULL)
     {
         
-        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfRef, _page);
+        CGPDFPageRef pdfPage = CGPDFDocumentGetPage(pdfRef, _parentView.page);
         
         if (pdfPage != NULL) {
-            
-            CGContextSaveGState(context);
             
             // Fill the background with white.
             CGContextSetRGBFillColor(context, 1.0,1.0,1.0,1.0);
@@ -124,7 +87,7 @@
             CGContextScaleCTM(context, scale, scale);
             
             
-
+            
             switch (rotation) {
                 case 0:
                     if (_viewFrame.size.width/_viewFrame.size.height>=pdfPageRect.size.width/pdfPageRect.size.height) {
@@ -161,16 +124,62 @@
                 default:
                     break;
             }
-
+            
             
             // draw the content to context
             CGContextDrawPDFPage(context, pdfPage);
-            CGContextRestoreGState(context);
-            
-            RLog(@"drawpage %d", _page);
         }
+        
+    }
+}
+@end
+
+@implementation RCTPdfPageView {
+    
+    CAPdfLayer         *_layer;
+}
+
+// The layer's class
++ (Class)layerClass
+{
+    return [CAPdfLayer class];
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
 
     }
+    
+    return self;
+}
+
+- (void)didSetProps:(NSArray<NSString *> *)changedProps
+{
+    long int count = [changedProps count];
+    for (int i = 0 ; i < count; i++) {
+        if ([[changedProps objectAtIndex:i] isEqualToString:@"page"]) {
+            // do something
+        }
+    }
+
+    [self.layer setNeedsDisplay];
+}
+
+
+- (void)reactSetFrame:(CGRect)frame
+{
+    [super reactSetFrame:frame];
+    
+    self.layer.backgroundColor= [UIColor whiteColor].CGColor;
+    self.layer.contentsScale = [[UIScreen mainScreen] scale];
+    [(CAPdfLayer *)self.layer setParentView:self];
+    [self.layer setNeedsDisplay];
+}
+
+- (void)dealloc{
+
 }
 
 @end
