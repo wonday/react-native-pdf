@@ -36,7 +36,7 @@
 // output log both debug and release
 #define RLog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 
-@interface CAPdfLayer : CATiledLayer
+@interface CAPdfLayer : CALayer
 -(void) setParentView:(RCTPdfPageView *)parentView;
 @end
 
