@@ -32,6 +32,31 @@ You can add it manually. For detail you can see the issue [`#24`](https://github
 Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```  
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
+Q3. When I run the example app I get a white screen / the loading bar isn't progressing on IOS. 
+A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to add an exception for the server hosting the pdf in the ios `info.plist`. Here is an example : 
+
+```
+<key>NSAppTransportSecurity</key>
+<dict>
+  <key>NSExceptionDomains</key>
+  <dict>
+    <key>yourserver.com</key>
+    <dict>
+      <!--Include to allow subdomains-->
+      <key>NSIncludesSubdomains</key>
+      <true/>
+      <!--Include to allow HTTP requests-->
+      <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+      <true/>
+      <!--Include to specify minimum TLS version-->
+      <key>NSTemporaryExceptionMinimumTLSVersion</key>
+      <string>TLSv1.1</string>
+    </dict>
+  </dict>
+</dict>
+```
+
+
 ### ChangeLog
 
 v3.0.16
