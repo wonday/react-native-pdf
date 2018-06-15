@@ -107,7 +107,7 @@ export default class PdfView extends Component {
             if (this._flatList) {
                 this._flatList.scrollToIndex({animated: false, index: this.props.page < 1 ? 0 : this.props.page - 1});
             }
-        }, 50);
+        }, 200);
     }
 
     componentWillReceiveProps(nextProps) {
