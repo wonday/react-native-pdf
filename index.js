@@ -303,7 +303,7 @@ export default class Pdf extends Component {
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
             if (message[0] === 'loadComplete') {
-                this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path);
+                this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path, {width:Number(message[2]),height:Number(message[3])});
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {

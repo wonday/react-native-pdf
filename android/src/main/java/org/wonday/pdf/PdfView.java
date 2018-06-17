@@ -92,10 +92,13 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     @Override
     public void loadComplete(int numberOfPages) {
 
+        float width = this.getPageSize();
+        float height = this.getHeight();
+
         this.zoomTo(this.scale);
 
         WritableMap event = Arguments.createMap();
-        event.putString("message", "loadComplete|"+numberOfPages);
+        event.putString("message", "loadComplete|"+numberOfPages+"|"+width+"|"+height);
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             this.getId(),
