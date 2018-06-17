@@ -86,15 +86,23 @@ export default class PdfView extends Component {
         PdfManager.loadFile(this.props.path, this.props.password)
             .then((pdfInfo) => {
                 if (this._mounted) {
+                    const fileNo = pdfInfo[0];
+                    const numberOfPages = pdfInfo[1];
+                    const width = pdfInfo[2];
+                    const height = pdfInfo[3];
+                    const pageAspectRatio = height === 0 ? 1 : width / height;
+
                     this.setState({
                         pdfLoaded: true,
-                        fileNo: pdfInfo[0],
-                        numberOfPages: pdfInfo[1],
-                        pageAspectRate: pdfInfo[3] === 0 ? 1 : pdfInfo[2] / pdfInfo[3],
-                        pdfPageSize: {width: pdfInfo[2], height: pdfInfo[3]},
-                        centerContent: pdfInfo[1]>1?false:true
+                        fileNo,
+                        numberOfPages,
+                        pageAspectRate: pageAspectRatio,
+                        pdfPageSize: {width, height},
+                        centerContent: numberOfPages > 1 ? false : true
                     });
-                    if (this.props.onLoadComplete) this.props.onLoadComplete(pdfInfo[1], this.props.path);
+                    if (this.props.onLoadComplete) {
+                        this.props.onLoadComplete(numberOfPages, this.props.path, {width, height});
+                    }
                 }
 
             })

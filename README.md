@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
 | activityIndicatorProps  | object      | {color:'#009900',progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | 3.1 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
-| onLoadComplete      | function(numberOfPages, path) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
+| onLoadComplete      | function(numberOfPages, path, {width, height}) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
 | onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
 | onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
 | onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | 3.0 |
