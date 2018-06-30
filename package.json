@@ -30,6 +30,6 @@
         "prop-types": "^15.5.10"
     },
     "peerDependencies": {
-        "react-native-fetch-blob": "^0.10.8"
+        "rn-fetch-blob": "^0.10.11",
     }
 }
