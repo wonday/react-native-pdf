@@ -4,10 +4,6 @@
     "description": "A react native PDF view component",
     "main": "index.js",
     "typings": "./index.d.ts",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/wonday/react-native-pdf.git"
-    },
     "keywords": [
         "react-component",
         "react-native",
@@ -17,14 +13,7 @@
         "view",
         "viewer"
     ],
-    "author": {
-        "name": "Wonday",
-        "url": "https://github.com/wonday"
-    },
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/wonday/react-native-pdf/issues"
-    },
     "dependencies": {
         "crypto-js": "^3.1.9-1",
         "prop-types": "^15.5.10"
