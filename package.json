@@ -19,6 +19,6 @@
         "prop-types": "^15.5.10"
     },
     "peerDependencies": {
-        "rn-fetch-blob": "^0.10.11",
+        "rn-fetch-blob": "^0.10.11"
     }
 }
