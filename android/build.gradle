@@ -13,13 +13,13 @@ buildscript {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    compileSdkVersion 26
+    buildToolsVersion '26.0.3'
 
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 26
     }
 }
 
@@ -29,5 +29,5 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
-    compile 'com.github.barteksc:android-pdf-viewer:3.0.0-beta.5'
+    compile 'com.github.barteksc:android-pdf-viewer:3.1.0-beta.1'
 }
