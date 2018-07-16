@@ -62,6 +62,7 @@ A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to
 v3.0.17
 1. update android build tool to v26.0.3
 2. update AndroidPdfViewer to v3.1.0.beta1
+3. add {width,height} to onLoadComplete
 
 v3.0.16
 1. onPageChanged not fired in Landscape (IOS)
