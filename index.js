@@ -19,7 +19,7 @@ import {
     StyleSheet
 } from 'react-native';
 
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const SHA1 = require('crypto-js/sha1');
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
@@ -150,7 +150,7 @@ export default class Pdf extends Component {
                     if (!Boolean(source.expiration) || (source.expiration * 1000 + stats.lastModified) > (new Date().getTime())) {
                         this.setState({path: cacheFile, isDownloaded: true});
                     } else {
-                        // cache expired then reload it
+                        // cache expirated then reload it
                         this._prepareFile(source);
                     }
                 })
@@ -176,7 +176,7 @@ export default class Pdf extends Component {
                 const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
                 // delete old cache file
-                await RNFetchBlob.fs.unlink(cacheFile);
+                RNFetchBlob.fs.unlink(cacheFile)
 
                 if (isNetwork) {
                     this._downloadFile(source, cacheFile);
@@ -228,7 +228,7 @@ export default class Pdf extends Component {
         }
 
         const tempCacheFile = cacheFile + '.tmp';
-        await RNFetchBlob.fs.unlink(tempCacheFile);
+        RNFetchBlob.fs.unlink(tempCacheFile);
 
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
@@ -264,15 +264,22 @@ export default class Pdf extends Component {
                                         this.setState({path: cacheFile, isDownloaded: true, progress: 1});
                                     })
                                     .catch(async (error) => {
-                                        await RNFetchBlob.fs.unlink(tempCacheFile);
-                                        await RNFetchBlob.fs.unlink(cacheFile);
+                                        RNFetchBlob.fs.unlink(tempCacheFile);
+                                        RNFetchBlob.fs.unlink(cacheFile);
                                         this._onError(error)
                                     })
                             })
                             .catch(async (error) => {
-                                await RNFetchBlob.fs.unlink(tempCacheFile);
-                                await RNFetchBlob.fs.unlink(cacheFile);
-                                this._onError(error)
+                                RNFetchBlob.fs
+                                    .cp(tempCacheFile, cacheFile)
+                                    .then(() => {
+                                        this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                                    })
+                                    .catch(async (error) => {
+                                        RNFetchBlob.fs.unlink(tempCacheFile);
+                                        RNFetchBlob.fs.unlink(cacheFile);
+                                        this._onError(error)
+                                    })
                             });
                         break;
                     }
