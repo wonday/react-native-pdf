@@ -176,8 +176,8 @@ export default class Pdf extends Component {
                 const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
                 // delete old cache file
-                await RNFetchBlob.fs.unlink(cacheFile)
-
+                this._unlinkFile(cacheFile);
+                
                 if (isNetwork) {
                     this._downloadFile(source, cacheFile);
                 } else if (isAsset) {
@@ -187,7 +187,7 @@ export default class Pdf extends Component {
                             this.setState({path: cacheFile, isDownloaded: true});
                         })
                         .catch(async (error) => {
-                            await RNFetchBlob.fs.unlink(cacheFile);
+                            this._unlinkFile(cacheFile);
                             this._onError(error);
                         })
                 } else if (isBase64) {
@@ -199,7 +199,7 @@ export default class Pdf extends Component {
                             this.setState({path: cacheFile, isDownloaded: true});
                         })
                         .catch(async (error) => {
-                            await RNFetchBlob.fs.unlink(cacheFile);
+                            this._unlinkFile(cacheFile);
                             this._onError(error)
                         });
                 } else {
@@ -228,7 +228,7 @@ export default class Pdf extends Component {
         }
 
         const tempCacheFile = cacheFile + '.tmp';
-        await RNFetchBlob.fs.unlink(tempCacheFile);
+        this._unlinkFile(tempCacheFile);
 
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
@@ -284,19 +284,27 @@ export default class Pdf extends Component {
                         break;
                     }
                     default:
-                        await RNFetchBlob.fs.unlink(tempCacheFile);
-                        await RNFetchBlob.fs.unlink(cacheFile);
+                        this._unlinkFile(tempCacheFile);
+                        this._unlinkFile(cacheFile);
                         this._onError(new Error(`load pdf failed with code ${status}`));
                         break;
                 }
             })
             .catch(async (error) => {
-                await RNFetchBlob.fs.unlink(tempCacheFile);
-                await RNFetchBlob.fs.unlink(cacheFile);
+                this._unlinkFile(tempCacheFile);
+                this._unlinkFile(cacheFile);
                 this._onError(error);
             });
 
     };
+
+    _unlinkFile = async (file) => {
+        try {
+            await RNFetchBlob.fs.unlink(file);
+        }catch (e) {
+
+        }
+    }
 
     setNativeProps = nativeProps => {
 
