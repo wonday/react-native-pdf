@@ -58,6 +58,16 @@ A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to
 
 
 ### ChangeLog
+v4.0.0 (**break change**)
+1. replace dependence lib ```react-native-fetch-blob``` with ```rn-fetch-blob```
+if you upgrade from an old version, you should 
+```
+react-native unlink react-native-fetch-blob
+npm uninstall react-native-fetch-blob
+
+npm install rn-fetch-blob --save
+react-native link rn-fetch-blob
+```
 
 v3.0.17
 1. update android build tool to v26.0.3

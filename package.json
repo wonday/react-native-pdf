@@ -1,6 +1,6 @@
 {
     "name": "react-native-pdf",
-    "version": "3.0.17",
+    "version": "4.0.0",
     "description": "A react native PDF view component",
     "main": "index.js",
     "typings": "./index.d.ts",
@@ -30,6 +30,6 @@
         "prop-types": "^15.5.10"
     },
     "peerDependencies": {
-        "rn-fetch-blob": "^0.10.11"
+        "rn-fetch-blob": "^0.10.12"
     }
 }
