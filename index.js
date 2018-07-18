@@ -176,7 +176,7 @@ export default class Pdf extends Component {
                 const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
                 // delete old cache file
-                RNFetchBlob.fs.unlink(cacheFile)
+                await RNFetchBlob.fs.unlink(cacheFile)
 
                 if (isNetwork) {
                     this._downloadFile(source, cacheFile);
@@ -228,7 +228,7 @@ export default class Pdf extends Component {
         }
 
         const tempCacheFile = cacheFile + '.tmp';
-        RNFetchBlob.fs.unlink(tempCacheFile);
+        await RNFetchBlob.fs.unlink(tempCacheFile);
 
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
