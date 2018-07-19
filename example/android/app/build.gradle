@@ -136,7 +136,7 @@ android {
 
 dependencies {
     compile project(':react-native-pdf')
-    compile project(':react-native-fetch-blob')
+    compile project(':rn-fetch-blob')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:+"  // From node_modules
