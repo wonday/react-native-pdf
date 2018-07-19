@@ -12,7 +12,7 @@ A react native PDF view component (cross-platform support)
 * support password protected pdf
 
 ### Installation
-We use [`rn-fetch-blob`](https://github.com/wonday/react-native-pdf#installation) to handle file system access in this package,
+We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
 So you should install react-native-pdf and rn-fetch-blob
 
 ```bash
