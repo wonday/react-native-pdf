@@ -135,6 +135,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-orientation-locker')
     compile project(':react-native-pdf')
     compile project(':rn-fetch-blob')
     compile fileTree(dir: "libs", include: ["*.jar"])

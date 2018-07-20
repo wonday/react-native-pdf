@@ -16,6 +16,11 @@ import {
 } from 'react-native';
 
 import Pdf from 'react-native-pdf';
+import Orientation from 'react-native-orientation-locker';
+
+const WIN_WIDTH = Dimensions.get('window').width;
+const WIN_HEIGHT = Dimensions.get('window').height;
+
 
 export default class PDFExample extends React.Component {
     constructor(props) {
@@ -25,11 +30,25 @@ export default class PDFExample extends React.Component {
             scale: 1,
             numberOfPages: 0,
             horizontal: false,
+            width: WIN_WIDTH
         };
         this.pdf = null;
     }
 
+    _onOrientationDidChange = (orientation) => {
+        if (orientation == 'LANDSCAPE-LEFT'||orientation == 'LANDSCAPE-RIGHT') {
+          this.setState({width:WIN_HEIGHT,horizontal:true});
+        } else {
+          this.setState({width:WIN_WIDTH,horizontal:false});
+        }
+    };
+
     componentDidMount() {
+        Orientation.addOrientationListener(this._onOrientationDidChange);
+    }
+
+    componentWillUnmount() {
+        Orientation.removeOrientationListener(this._onOrientationDidChange);
     }
 
     prePage = () => {
@@ -101,25 +120,28 @@ export default class PDFExample extends React.Component {
                     </TouchableHighlight>
 
                 </View>
-                <Pdf ref={(pdf) => {
-                    this.pdf = pdf;
-                }}
-                     source={source}
-                     page={this.state.page}
-                     scale={this.state.scale}
-                     horizontal={this.state.horizontal}
-                     onLoadComplete={(numberOfPages, filePath) => {
-                         this.state.numberOfPages = numberOfPages; //do not use setState, it will cause re-render
-                         console.log(`total page count: ${numberOfPages}`);
-                     }}
-                     onPageChanged={(page, numberOfPages) => {
-                         this.state.page = page; //do not use setState, it will cause re-render
-                         console.log(`current page: ${page}`);
-                     }}
-                     onError={(error) => {
-                         console.log(error);
-                     }}
-                     style={styles.pdf}/>
+                <View style={{flex:1,width: this.state.width}}>
+                    <Pdf ref={(pdf) => {
+                        this.pdf = pdf;
+                    }}
+                         source={source}
+                         page={this.state.page}
+                         scale={this.state.scale}
+                         horizontal={this.state.horizontal}
+                         onLoadComplete={(numberOfPages, filePath) => {
+                             this.state.numberOfPages = numberOfPages; //do not use setState, it will cause re-render
+                             console.log(`total page count: ${numberOfPages}`);
+                         }}
+                         onPageChanged={(page, numberOfPages) => {
+                             this.state.page = page; //do not use setState, it will cause re-render
+                             console.log(`current page: ${page}`);
+                         }}
+                         onError={(error) => {
+                             console.log(error);
+                         }}
+                         style={{flex:1}}
+                         />
+                </View>
             </View>
         )
     }
@@ -145,9 +167,5 @@ const styles = StyleSheet.create({
     btnText: {
         margin: 2,
         padding: 2,
-    },
-    pdf: {
-        flex: 1,
-        width: Dimensions.get('window').width,
     }
 });

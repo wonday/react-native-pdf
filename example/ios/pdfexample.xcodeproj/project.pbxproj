@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -26,6 +25,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		DD42E9F749CE42BAB000AF5A /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B12E69AF021D41A689FE6B11 /* libRCTActionSheet.a */; };
 		DE9D947C5ECD487F8E7B3FA8 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0382A6932AA43AFBF149E7A /* libRNFetchBlob.a */; };
+		FF353817E5734AC3B4B0EC93 /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C192314A3A48452284B02AA4 /* libRCTOrientation.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -276,6 +276,8 @@
 		B0382A6932AA43AFBF149E7A /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		B12E69AF021D41A689FE6B11 /* libRCTActionSheet.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTActionSheet.a; sourceTree = "<group>"; };
 		BF7349D712034EF6AAEF5CAE /* libRCTPdf.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTPdf.a; sourceTree = "<group>"; };
+		CA796F6772E643C9882204D2 /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; name = "RCTOrientation.xcodeproj"; path = "../node_modules/react-native-orientation-locker/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		C192314A3A48452284B02AA4 /* libRCTOrientation.a */ = {isa = PBXFileReference; name = "libRCTOrientation.a"; path = "libRCTOrientation.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -297,6 +299,7 @@
 				DD42E9F749CE42BAB000AF5A /* libRCTActionSheet.a in Frameworks */,
 				299E47364CF74630956257A4 /* libRCTPdf.a in Frameworks */,
 				DE9D947C5ECD487F8E7B3FA8 /* libRNFetchBlob.a in Frameworks */,
+				FF353817E5734AC3B4B0EC93 /* libRCTOrientation.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +477,7 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				A461D593948C469FBAF0A627 /* RCTPdf.xcodeproj */,
 				93B35886000042988F27BA13 /* RNFetchBlob.xcodeproj */,
+				CA796F6772E643C9882204D2 /* RCTOrientation.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -898,6 +902,7 @@
 					"$(SRCROOT)..\node_modules\neact-native-pdfiospdf/**",
 					"$(SRCROOT)/../node_modules/react-native-pdf/ios/RCTPdf/**",
 					"$(SRCROOT)..\node_modules\neact-native-fetch-blobios/**",
+					"$(SRCROOT)\..\node_modules\react-native-orientation-locker\iOS\RCTOrientation",
 				);
 				INFOPLIST_FILE = pdfexample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -909,6 +914,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.wonday.pdfexample;
 				PRODUCT_NAME = pdfexample;
 				VERSIONING_SYSTEM = "apple-generic";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/pdfexample\"",
+				);
 			};
 			name = Debug;
 		};
@@ -924,6 +933,7 @@
 					"$(SRCROOT)..\node_modules\neact-native-pdfiospdf/**",
 					"$(SRCROOT)/../node_modules/react-native-pdf/ios/RCTPdf/**",
 					"$(SRCROOT)..\node_modules\neact-native-fetch-blobios/**",
+					"$(SRCROOT)\..\node_modules\react-native-orientation-locker\iOS\RCTOrientation",
 				);
 				INFOPLIST_FILE = pdfexample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -935,6 +945,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.wonday.pdfexample;
 				PRODUCT_NAME = pdfexample;
 				VERSIONING_SYSTEM = "apple-generic";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/pdfexample\"",
+				);
 			};
 			name = Release;
 		};
