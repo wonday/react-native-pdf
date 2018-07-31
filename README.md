@@ -61,6 +61,15 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 
 ### ChangeLog
+
+v5.0.0 (**break change**)
+1. use iOS PDFKit to show pdf (iOS SDK>=11)
+2. use js+native to show pdf (iOS SDK<11, the same with 4.0.0)
+3. support pdf with layers (iOS SDK>=11)
+4. support pdf with links (iOS SDK>=11)
+5. fix zoom (iOS SDK>=11)
+
+
 v4.0.0 (**break change**)
 1. replace dependence lib ```react-native-fetch-blob``` with ```rn-fetch-blob```
 if you upgrade from an old version, you should 
