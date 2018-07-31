@@ -94,6 +94,7 @@ export default class Pdf extends Component {
             path: '',
             isDownloaded: false,
             progress: 0,
+            isSupportPDFKit: false
         };
 
         this.lastRNBFTask = null;
@@ -119,6 +120,12 @@ export default class Pdf extends Component {
     }
 
     componentDidMount() {
+        if (Platform.OS === "ios") {
+            const PdfViewManagerNative = require('react-native').NativeModules.PdfViewManager;
+            PdfViewManagerNative.supportPDFKit((isSupportPDFKit)=>{
+                this.setState({isSupportPDFKit:isSupportPDFKit});
+            });
+        }
         this._loadFromSource(this.props.source);
     }
 
@@ -374,18 +381,30 @@ export default class Pdf extends Component {
                     />
                 );
             } else if (Platform.OS === "ios") {
+                if (this.state.isSupportPDFKit) {
                 return (
-                    <PdfView
+                    <PdfCustom
+                        ref={component => (this._root = component)}
                         {...this.props}
                         style={[{backgroundColor: '#EEE'}, this.props.style]}
                         path={this.state.path}
-                        onLoadComplete={this.props.onLoadComplete}
-                        onPageChanged={this.props.onPageChanged}
-                        onError={this._onError}
-                        onPageSingleTap={this.props.onPageSingleTap}
-                        onScaleChanged={this.props.onScaleChanged}
+                        onChange={this._onChange}
                     />
-                );
+                  );
+                } else {
+                    return (
+                        <PdfView
+                            {...this.props}
+                            style={[{backgroundColor: '#EEE'}, this.props.style]}
+                            path={this.state.path}
+                            onLoadComplete={this.props.onLoadComplete}
+                            onPageChanged={this.props.onPageChanged}
+                            onError={this._onError}
+                            onPageSingleTap={this.props.onPageSingleTap}
+                            onScaleChanged={this.props.onScaleChanged}
+                        />
+                    );
+                }
             } else {
                 return (null);
             }
@@ -399,7 +418,12 @@ if (Platform.OS === "android") {
     var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
         nativeOnly: {path: true, onChange: true},
     })
+} else if (Platform.OS === "ios") {
+    var PdfCustom = requireNativeComponent('RCTPdfView', Pdf, {
+        nativeOnly: {path: true, onChange: true},
+    })
 }
+
 
 const styles = StyleSheet.create({
     progressContainer: {
