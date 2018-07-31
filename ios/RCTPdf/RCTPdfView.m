@@ -134,12 +134,12 @@
                 
                 if (_fitPolicy == 0) {
                     _fixScaleFactor = _pdfView.frame.size.width/pageRect.size.width;
-                    _pdfView.minScaleFactor = _fixScaleFactor/2;
+                    _pdfView.minScaleFactor = _fixScaleFactor;
                     _pdfView.maxScaleFactor = _fixScaleFactor*3;
                     _pdfView.scaleFactor = _fixScaleFactor;
                 } else if (_fitPolicy == 1) {
                     _fixScaleFactor = _pdfView.frame.size.height/pageRect.size.height;
-                    _pdfView.minScaleFactor = _fixScaleFactor/2;
+                    _pdfView.minScaleFactor = _fixScaleFactor;
                     _pdfView.maxScaleFactor = _fixScaleFactor*3;
                     _pdfView.scaleFactor = _fixScaleFactor;
                 } else {
@@ -147,7 +147,7 @@
                     float reactViewAspect = self.frame.size.width/self.frame.size.height;
                     if (reactViewAspect>pageAspect) {
                         _fixScaleFactor = self.frame.size.height/pageRect.size.height;
-                        _pdfView.minScaleFactor = _fixScaleFactor/2;
+                        _pdfView.minScaleFactor = _fixScaleFactor;
                         _pdfView.maxScaleFactor = _fixScaleFactor*3;
                         _pdfView.scaleFactor = _fixScaleFactor;
                     } else {
@@ -198,12 +198,12 @@
     
     if (_fitPolicy == 0) {
         _fixScaleFactor = frame.size.width/pageRect.size.width;
-        _pdfView.minScaleFactor = _fixScaleFactor/2;
+        _pdfView.minScaleFactor = _fixScaleFactor;
         _pdfView.maxScaleFactor = _fixScaleFactor*3;
         _pdfView.scaleFactor = _fixScaleFactor;
     } else if (_fitPolicy == 1) {
         _fixScaleFactor = frame.size.height/pageRect.size.height;
-        _pdfView.minScaleFactor = _fixScaleFactor/2;
+        _pdfView.minScaleFactor = _fixScaleFactor;
         _pdfView.maxScaleFactor = _fixScaleFactor*3;
         _pdfView.scaleFactor = _fixScaleFactor;
     } else {
@@ -211,12 +211,12 @@
         float reactViewAspect = frame.size.width/frame.size.height;
         if (reactViewAspect>pageAspect) {
             _fixScaleFactor = frame.size.height/pageRect.size.height;
-            _pdfView.minScaleFactor = _fixScaleFactor/2;
+            _pdfView.minScaleFactor = _fixScaleFactor;
             _pdfView.maxScaleFactor = _fixScaleFactor*3;
             _pdfView.scaleFactor = _fixScaleFactor;
         } else {
             _fixScaleFactor = frame.size.width/pageRect.size.width;
-            _pdfView.minScaleFactor = _fixScaleFactor/2;
+            _pdfView.minScaleFactor = _fixScaleFactor;
             _pdfView.maxScaleFactor = _fixScaleFactor*3;
             _pdfView.scaleFactor = _fixScaleFactor;
         }
