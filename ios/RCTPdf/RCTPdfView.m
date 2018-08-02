@@ -34,13 +34,16 @@
 // output log both debug and release
 #define RLog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
 
+const float MAX_SCALE = 3.0f;
+const float MIN_SCALE = 1.0f;
+
 @implementation RCTPdfView
 {
     PDFDocument *_pdfDocument;
     PDFView *_pdfView;
     float _fixScaleFactor;
-    float _lastScale;
     bool _initialed;
+    NSArray<NSString *> *_changedProps;
     
 }
 
@@ -48,7 +51,7 @@
 {
     self = [super init];
     if (self) {
-        
+
         // init and config PDFView
         _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
         _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
@@ -58,8 +61,8 @@
         _pdfView.backgroundColor = [UIColor colorWithRed:0.875 green:0.875 blue:0.875 alpha:1.0]; //#EEE
         
         _fixScaleFactor = -1.0f;
-        _lastScale = -1.0;
         _initialed = NO;
+        _changedProps = NULL;
         
         [self addSubview:_pdfView];
         
@@ -78,10 +81,14 @@
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
 {
-    long int count = [changedProps count];
-    for (int i = 0 ; i < count; i++) {
-        if ([[changedProps objectAtIndex:i] isEqualToString:@"path"]) {
-            
+    if (!_initialed) {
+
+        _changedProps = changedProps;
+
+    } else {
+
+        if ([changedProps containsObject:@"path"]) {
+
             NSURL *fileURL = [NSURL fileURLWithPath:_path];
             
             if (_pdfDocument != Nil) {
@@ -99,8 +106,6 @@
                     _onChange(@{ @"message": @"error|Password required or incorrect password."});
                     
                     _pdfDocument = Nil;
-                    [_pdfView goToPage:[_pdfDocument pageAtIndex:_page-1]];
-                    
                     return;
                 }
                 
@@ -114,11 +119,7 @@
             }
         }
         
-        if (_pdfDocument && ([[changedProps objectAtIndex:i] isEqualToString:@"path"] || [[changedProps objectAtIndex:i] isEqualToString:@"page"])) {
-            [_pdfView goToPage:[_pdfDocument pageAtIndex:_page-1]];
-        }
-        
-        if (_pdfDocument && ([[changedProps objectAtIndex:i] isEqualToString:@"path"] || [[changedProps objectAtIndex:i] isEqualToString:@"spacing"])) {
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"spacing"])) {
             if (_horizontal) {
                 _pdfView.pageBreakMargins = UIEdgeInsetsMake(0,_spacing,0,0);
             } else {
@@ -126,48 +127,55 @@
             }
         }
         
-        if (_pdfDocument && ([[changedProps objectAtIndex:i] isEqualToString:@"path"] || [[changedProps objectAtIndex:i] isEqualToString:@"fitPolicy"])) {
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enableRTL"])) {
+            _pdfView.displaysRTL = _enableRTL;
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"fitPolicy"])) {
             
-            if (_initialed) {
-                PDFPage *page = [_pdfDocument pageAtIndex:0];
-                CGRect pageRect = [page boundsForBox:kPDFDisplayBoxMediaBox];
-                
-                if (_fitPolicy == 0) {
-                    _fixScaleFactor = _pdfView.frame.size.width/pageRect.size.width;
-                    _pdfView.minScaleFactor = _fixScaleFactor;
-                    _pdfView.maxScaleFactor = _fixScaleFactor*3;
-                    _pdfView.scaleFactor = _fixScaleFactor;
-                } else if (_fitPolicy == 1) {
-                    _fixScaleFactor = _pdfView.frame.size.height/pageRect.size.height;
-                    _pdfView.minScaleFactor = _fixScaleFactor;
-                    _pdfView.maxScaleFactor = _fixScaleFactor*3;
-                    _pdfView.scaleFactor = _fixScaleFactor;
+            PDFPage *pdfPage = [_pdfDocument pageAtIndex:0];
+            CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
+            
+            // some pdf with rotation, then adjust it
+            if (pdfPage.rotation == 90 || pdfPage.rotation == 270) {
+                pdfPageRect = CGRectMake(0, 0, pdfPageRect.size.height, pdfPageRect.size.width);
+            }
+            
+            if (_fitPolicy == 0) {
+                _fixScaleFactor = self.frame.size.width/pdfPageRect.size.width;
+                _pdfView.scaleFactor = _scale * _fixScaleFactor;
+                _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
+                _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
+            } else if (_fitPolicy == 1) {
+                _fixScaleFactor = self.frame.size.height/pdfPageRect.size.height;
+                _pdfView.scaleFactor = _scale * _fixScaleFactor;
+                _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
+                _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
+            } else {
+                float pageAspect = pdfPageRect.size.width/pdfPageRect.size.height;
+                float reactViewAspect = self.frame.size.width/self.frame.size.height;
+                if (reactViewAspect>pageAspect) {
+                    _fixScaleFactor = self.frame.size.height/pdfPageRect.size.height;
+                    _pdfView.scaleFactor = _scale * _fixScaleFactor;
+                    _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
+                    _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
                 } else {
-                    float pageAspect = pageRect.size.width/pageRect.size.height;
-                    float reactViewAspect = self.frame.size.width/self.frame.size.height;
-                    if (reactViewAspect>pageAspect) {
-                        _fixScaleFactor = self.frame.size.height/pageRect.size.height;
-                        _pdfView.minScaleFactor = _fixScaleFactor;
-                        _pdfView.maxScaleFactor = _fixScaleFactor*3;
-                        _pdfView.scaleFactor = _fixScaleFactor;
-                    } else {
-                        _fixScaleFactor = self.frame.size.width/pageRect.size.width;
-                        _pdfView.minScaleFactor = _fixScaleFactor;
-                        _pdfView.maxScaleFactor = _fixScaleFactor*3;
-                        _pdfView.scaleFactor = _fixScaleFactor;
-                    }
+                    _fixScaleFactor = self.frame.size.width/pdfPageRect.size.width;
+                    _pdfView.scaleFactor = _scale * _fixScaleFactor;
+                    _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
+                    _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
                 }
             }
-            
+
         }
         
-        if (_pdfDocument && ([[changedProps objectAtIndex:i] isEqualToString:@"path"] || [[changedProps objectAtIndex:i] isEqualToString:@"scale"])) {
-            if (_fixScaleFactor > 0.0f) {
-                _pdfView.scaleFactor = _scale * _fixScaleFactor;
-            }
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"scale"])) {
+            _pdfView.scaleFactor = _scale * _fixScaleFactor;
+            if (_pdfView.scaleFactor>_pdfView.maxScaleFactor) _pdfView.scaleFactor = _pdfView.maxScaleFactor;
+            if (_pdfView.scaleFactor<_pdfView.minScaleFactor) _pdfView.scaleFactor = _pdfView.minScaleFactor;
         }
         
-        if (_pdfDocument && ([[changedProps objectAtIndex:i] isEqualToString:@"path"] || [[changedProps objectAtIndex:i] isEqualToString:@"horizontal"])) {
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"horizontal"])) {
             if (_horizontal) {
                 _pdfView.displayDirection = kPDFDisplayDirectionHorizontal;
                 _pdfView.pageBreakMargins = UIEdgeInsetsMake(0,_spacing,0,0);
@@ -176,56 +184,48 @@
                 _pdfView.pageBreakMargins = UIEdgeInsetsMake(0,0,_spacing,0);
             }
         }
+        
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"])) {
+            if (_enablePaging) {
+                [_pdfView usePageViewController:YES withViewOptions:@{UIPageViewControllerOptionSpineLocationKey:@(UIPageViewControllerSpineLocationMin),UIPageViewControllerOptionInterPageSpacingKey:@(_spacing)}];
+            } else {
+                [_pdfView usePageViewController:NO withViewOptions:Nil];
+            }
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"horizontal"] || [changedProps containsObject:@"page"])) {
+            
+            PDFPage *pdfPage = [_pdfDocument pageAtIndex:_page-1];
+            if (pdfPage) {
+                CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
+                
+                // some pdf with rotation, then adjust it
+                if (pdfPage.rotation == 90 || pdfPage.rotation == 270) {
+                    pdfPageRect = CGRectMake(0, 0, pdfPageRect.size.height, pdfPageRect.size.width);
+                }
+                
+                CGPoint pointLeftTop = CGPointMake(0, pdfPageRect.size.height);
+                PDFDestination *pdfDest = [[PDFDestination alloc] initWithPage:pdfPage atPoint:pointLeftTop];
+                [_pdfView goToDestination:pdfDest];
+                _pdfView.scaleFactor = _fixScaleFactor*_scale;
+            }
+        }
+
+        
+        [_pdfView layoutDocumentView];
+        [self setNeedsDisplay];
     }
-    
-    [_pdfView.layer setNeedsDisplay];
-    [self setNeedsDisplay];
 }
 
 
 - (void)reactSetFrame:(CGRect)frame
 {
     [super reactSetFrame:frame];
-    
-    
-    PDFPage *page = [_pdfDocument pageAtIndex:0];
-    CGRect pageRect = [page boundsForBox:kPDFDisplayBoxMediaBox];
-    
-    // some pdf with rotation, then adjust it
-    if (page.rotation == 90 || page.rotation == 270) {
-        pageRect = CGRectMake(0, 0, pageRect.size.height, pageRect.size.width);
-    }
-    
-    if (_fitPolicy == 0) {
-        _fixScaleFactor = frame.size.width/pageRect.size.width;
-        _pdfView.minScaleFactor = _fixScaleFactor;
-        _pdfView.maxScaleFactor = _fixScaleFactor*3;
-        _pdfView.scaleFactor = _fixScaleFactor;
-    } else if (_fitPolicy == 1) {
-        _fixScaleFactor = frame.size.height/pageRect.size.height;
-        _pdfView.minScaleFactor = _fixScaleFactor;
-        _pdfView.maxScaleFactor = _fixScaleFactor*3;
-        _pdfView.scaleFactor = _fixScaleFactor;
-    } else {
-        float pageAspect = pageRect.size.width/pageRect.size.height;
-        float reactViewAspect = frame.size.width/frame.size.height;
-        if (reactViewAspect>pageAspect) {
-            _fixScaleFactor = frame.size.height/pageRect.size.height;
-            _pdfView.minScaleFactor = _fixScaleFactor;
-            _pdfView.maxScaleFactor = _fixScaleFactor*3;
-            _pdfView.scaleFactor = _fixScaleFactor;
-        } else {
-            _fixScaleFactor = frame.size.width/pageRect.size.width;
-            _pdfView.minScaleFactor = _fixScaleFactor;
-            _pdfView.maxScaleFactor = _fixScaleFactor*3;
-            _pdfView.scaleFactor = _fixScaleFactor;
-        }
-    }
-    
     _pdfView.frame = frame;
-    [_pdfView goToPage:[_pdfDocument pageAtIndex:_page-1]];
     
     _initialed = YES;
+    
+    [self didSetProps:_changedProps];
 }
 
 - (void)dealloc{
@@ -269,10 +269,10 @@
 - (void)onScaleChanged:(NSNotification *)noti
 {
 
-    if (_initialed) {
-        if (_lastScale != _pdfView.scaleFactor/_fixScaleFactor) {
-            _lastScale = _pdfView.scaleFactor/_fixScaleFactor;
-            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"scaleChanged|%f", _lastScale]]});
+    if (_initialed && _fixScaleFactor>0) {
+        if (_scale != _pdfView.scaleFactor/_fixScaleFactor) {
+            _scale = _pdfView.scaleFactor/_fixScaleFactor;
+            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"scaleChanged|%f", _scale]]});
         }
     }
 }
@@ -289,13 +289,13 @@
 {
     
     // one tap add scale 1.2 times
-    CGFloat scale = _pdfView.scaleFactor*1.2;
+    _scale = _scale*1.2;
     
-    if (scale>_pdfView.maxScaleFactor){
-        scale = _fixScaleFactor;
+    if (_scale>_pdfView.maxScaleFactor/_fixScaleFactor){
+        _scale = _pdfView.minScaleFactor/_fixScaleFactor;
     }
     
-    _pdfView.scaleFactor = scale;
+    _pdfView.scaleFactor = _scale*_fixScaleFactor;
     
     [self setNeedsDisplay];
     
@@ -309,18 +309,18 @@
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)sender
 {
+
+    _scale = _pdfView.minScaleFactor/_fixScaleFactor;
+    _pdfView.scaleFactor = _pdfView.minScaleFactor;
     
-    if (_pdfView.scaleFactor>1*_fixScaleFactor) {
-        _pdfView.scaleFactor = 1.0*_fixScaleFactor;
-        [self setNeedsDisplay];
-    } else {
-        CGPoint point = [sender locationInView:self];
-        PDFPage *pdfPage = [_pdfView pageForPoint:point nearest:NO];
-        if (pdfPage) {
-            unsigned long page = [_pdfDocument indexForPage:pdfPage];
-            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu", page+1]]});
-        }
+    CGPoint point = [sender locationInView:self];
+    PDFPage *pdfPage = [_pdfView pageForPoint:point nearest:NO];
+    if (pdfPage) {
+        unsigned long page = [_pdfDocument indexForPage:pdfPage];
+        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu", page+1]]});
     }
+    
+    [self setNeedsDisplay];
     
 }
 

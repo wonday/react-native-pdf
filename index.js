@@ -48,6 +48,8 @@ export default class Pdf extends Component {
         activityIndicator: PropTypes.any,
         activityIndicatorProps: PropTypes.any,
         enableAntialiasing: PropTypes.bool,
+        enablePaging: PropTypes.bool,
+        enableRTL: PropTypes.bool,
         fitPolicy: PropTypes.number,
         onLoadComplete: PropTypes.func,
         onPageChanged: PropTypes.func,
@@ -72,6 +74,8 @@ export default class Pdf extends Component {
         fitPolicy: 2, //fit both
         horizontal: false,
         page: 1,
+        enablePaging: false,
+        enableRTL: false,
         activityIndicatorProps: {color: '#009900', progressTintColor: '#009900'},
         onLoadProgress: (percent) => {
         },
