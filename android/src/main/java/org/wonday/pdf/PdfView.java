@@ -58,9 +58,13 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
+    private boolean enablePaging = false;
+    private boolean autoSpacing = false;
+    private boolean pageFling = false;
+    private boolean pageSnap = false;
     private FitPolicy fitPolicy = FitPolicy.WIDTH;
+
     private static PdfView instance = null;
-    private boolean isMove = false;
 
     private float lastPageWidth = 0;
     private float lastPageHeight = 0;
@@ -169,8 +173,6 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         if (this.path != null){
             this.fromUri(getURI(this.path))
                 .defaultPage(this.page-1)
-                //.showMinimap(false)
-                //.enableSwipe(true)
                 .swipeHorizontal(this.horizontal)
                 .onPageChange(this)
                 .onLoad(this)
@@ -181,18 +183,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .password(this.password)
                 .enableAntialiasing(this.enableAntialiasing)
                 .pageFitPolicy(this.fitPolicy)
-/*
-                .onRender(new OnRenderListener() {
-                                @Override
-                                public void onInitiallyRendered(int nbPages, float pageWidth, float pageHeight) {
-                                    if (fitWidth) {
-                                        instance.fitToWidth(page-1);
-                                    }
-                                }
-                            })
-*/
+                .pageSnap(this.pageSnap)
+                .autoSpacing(this.autoSpacing)
+                .pageFling(this.pageFling)
                 .load();
-
 
         }
     }
@@ -224,6 +218,19 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setEnableAntialiasing(boolean enableAntialiasing) {
         this.enableAntialiasing = enableAntialiasing;
+    }
+
+    public void setEnablePaging(boolean enablePaging) {
+        this.enablePaging = enablePaging;
+        if (this.enablePaging) {
+            this.autoSpacing = true;
+            this.pageFling = true;
+            this.pageSnap = true;
+        } else {
+            this.autoSpacing = false;
+            this.pageFling = false;
+            this.pageSnap = false;
+        }
     }
 
     public void setFitPolicy(int fitPolicy) {

@@ -95,6 +95,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setEnableAntialiasing(enableAntialiasing);
     }
 
+    @ReactProp(name = "enablePaging")
+    public void setEnablePaging(PdfView pdfView, boolean enablePaging) {
+        pdfView.setEnablePaging(enablePaging);
+    }
+
     @ReactProp(name = "fitPolicy")
     public void setFitPolycy(PdfView pdfView, int fitPolicy) {
         pdfView.setFitPolicy(fitPolicy);
