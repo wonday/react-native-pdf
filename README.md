@@ -164,6 +164,8 @@ const styles = StyleSheet.create({
 | activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | <3.0 |
 | activityIndicatorProps  | object      | {color:'#009900',progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | 3.1 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
+| enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | 5.0.1 |
+| enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
 | onLoadComplete      | function(numberOfPages, path, {width, height}) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
 | onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
