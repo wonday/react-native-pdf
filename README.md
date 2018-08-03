@@ -62,6 +62,11 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.1
+1. add paging support (ios and android)
+2. add RTL support (ios)
+3. fix position when set page (ios)
+
 v5.0.0 (**break change**)
 1. use iOS PDFKit to show pdf (iOS SDK>=11)
 2. use js+native to show pdf (iOS SDK<11, the same with 4.0.0)
@@ -80,86 +85,6 @@ npm uninstall react-native-fetch-blob
 npm install rn-fetch-blob --save
 react-native link rn-fetch-blob
 ```
-
-v3.0.17
-1. update android build tool to v26.0.3
-2. update AndroidPdfViewer to v3.1.0.beta1
-3. add {width,height} to onLoadComplete
-
-v3.0.16
-1. onPageChanged not fired in Landscape (IOS)
-2. draw the page with diffrent size to center
-3. support the page with rotation
-
-v3.0.15
-1. fix iPad scale offset problem
-2. add code protection to avoid crashes
-
-v3.0.14
-1. fix in iPad can not zoom problem(offset still has problem, but zoom works)
-
-v3.0.13
-1. fix in iPad layout not center problem
-
-v3.0.12
-1. fix source.expiration check
-
-v3.0.11
-1. improve iOS zoom, can zoom from pinch center
-2. fix call setState on an unmounted component
-
-v3.0.10
-1. fix source.expiration check [`#163`](https://github.com/wonday/react-native-pdf/issues/163)
-
-v3.0.9
-1. use CATiledLayer to improve iOS render performance
-
-v3.0.8
-1. use await to unlink file
-2. fix podspec
-3. do not count a scrolling gesture as a tap
-
-v3.0.6
-1. add cache file expiration
-2. enhanced file download stability
-
-v3.0.5
-1. OnError return Error() object
-2. fix cache overwrite error
-3. add Android content:// support
-4. fix type error
-5. refactor view.propTypes to ViewPropTypes.
-
-v3.0.4
-
-1. fix 'virtualizedCell.cellKey' warning [`#125`](https://github.com/wonday/react-native-pdf/issues/125)
-2. fix android crashed because of missing props [`#127`](https://github.com/wonday/react-native-pdf/issues/127)
-3. use pure component to render pdf pages [`#129`](https://github.com/wonday/react-native-pdf/issues/129)
-4. add requiresMainQueueSetup to cure RN v0.52 warning [`#130`](https://github.com/wonday/react-native-pdf/issues/130)
-
-v3.0.3
-
-1. when cache failed, can re-load at next time
-
-v3.0.2
-
-1. add activityIndicatorProps to support ActivityIndicator customize
-2. fix not trigger onPageChanged() at last screen when screen has more then one pages
-3. fix set initial page and scale no action error
-
-v3.0.1
-deprecated
-
-v3.0.0
-
-1. rewrite all iOS codes， improve scroll performance/Smoothness, fix scale/onPageChanged...  
-2. add onPageSigleTap(), onScaleChanged()
-3. update android dependent lib AndroidPdfViewer to 3.0.0.alpha.5
-4. android support link in pdf
-5. delete cache file when error happened
-
-Known issues  
-1. iOS zooming can not scroll to pinch center 
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
