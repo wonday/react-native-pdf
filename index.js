@@ -98,7 +98,7 @@ export default class Pdf extends Component {
             path: '',
             isDownloaded: false,
             progress: 0,
-            isSupportPDFKit: false
+            isSupportPDFKit: -1
         };
 
         this.lastRNBFTask = null;
@@ -127,7 +127,7 @@ export default class Pdf extends Component {
         if (Platform.OS === "ios") {
             const PdfViewManagerNative = require('react-native').NativeModules.PdfViewManager;
             PdfViewManagerNative.supportPDFKit((isSupportPDFKit)=>{
-                this.setState({isSupportPDFKit:isSupportPDFKit});
+                this.setState({isSupportPDFKit:isSupportPDFKit?1:0});
             });
         }
         this._loadFromSource(this.props.source);
@@ -385,7 +385,7 @@ export default class Pdf extends Component {
                     />
                 );
             } else if (Platform.OS === "ios") {
-                if (this.state.isSupportPDFKit) {
+                if (this.state.isSupportPDFKit===1) {
                 return (
                     <PdfCustom
                         ref={component => (this._root = component)}
@@ -395,7 +395,7 @@ export default class Pdf extends Component {
                         onChange={this._onChange}
                     />
                   );
-                } else {
+                } else if(this.state.isSupportPDFKit===0){
                     return (
                         <PdfView
                             {...this.props}
@@ -408,6 +408,8 @@ export default class Pdf extends Component {
                             onScaleChanged={this.props.onScaleChanged}
                         />
                     );
+                } else {
+                    return (null);
                 }
             } else {
                 return (null);
