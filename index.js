@@ -27,7 +27,6 @@ import PdfView from './PdfView';
 
 export default class Pdf extends Component {
 
-
     static propTypes = {
         ...ViewPropTypes,
         source: PropTypes.oneOfType([
@@ -126,8 +125,8 @@ export default class Pdf extends Component {
     componentDidMount() {
         if (Platform.OS === "ios") {
             const PdfViewManagerNative = require('react-native').NativeModules.PdfViewManager;
-            PdfViewManagerNative.supportPDFKit((isSupportPDFKit)=>{
-                this.setState({isSupportPDFKit:isSupportPDFKit?1:0});
+            PdfViewManagerNative.supportPDFKit((isSupportPDFKit) => {
+                this.setState({isSupportPDFKit: isSupportPDFKit ? 1 : 0});
             });
         }
         this._loadFromSource(this.props.source);
@@ -188,14 +187,14 @@ export default class Pdf extends Component {
 
                 // delete old cache file
                 this._unlinkFile(cacheFile);
-                
+
                 if (isNetwork) {
                     this._downloadFile(source, cacheFile);
                 } else if (isAsset) {
                     RNFetchBlob.fs
                         .cp(uri, cacheFile)
                         .then(() => {
-                            this.setState({path: cacheFile, isDownloaded: true});
+                            this.setState({path: cacheFile, isDownloaded: true, progress: 1});
                         })
                         .catch(async (error) => {
                             this._unlinkFile(cacheFile);
@@ -206,15 +205,13 @@ export default class Pdf extends Component {
                     RNFetchBlob.fs
                         .writeFile(cacheFile, data, 'base64')
                         .then(() => {
-                            //__DEV__ && console.log("write base64 to file:" + cacheFile);
-                            this.setState({path: cacheFile, isDownloaded: true});
+                            this.setState({path: cacheFile, isDownloaded: true, progress: 1});
                         })
                         .catch(async (error) => {
                             this._unlinkFile(cacheFile);
                             this._onError(error)
                         });
                 } else {
-                    //__DEV__ && console.log("default source type as file");
                     this.setState({
                         path: uri.replace(/file:\/\//i, ''),
                         isDownloaded: true,
@@ -259,47 +256,39 @@ export default class Pdf extends Component {
 
         this.lastRNBFTask
             .then(async (res) => {
-                let {status} = res.respInfo;
+
                 this.lastRNBFTask = null;
 
-                switch (status) {
-                    case 200: /* OK */
-                    case 204: /* No content */
-                    case 304: /* Not modified */
-                    {
-                        RNFetchBlob.fs.unlink(cacheFile)
-                            .then(() => {
-                                RNFetchBlob.fs
-                                    .cp(tempCacheFile, cacheFile)
-                                    .then(() => {
-                                        this.setState({path: cacheFile, isDownloaded: true, progress: 1});
-                                    })
-                                    .catch(async (error) => {
-                                        RNFetchBlob.fs.unlink(tempCacheFile);
-                                        RNFetchBlob.fs.unlink(cacheFile);
-                                        this._onError(error)
-                                    })
-                            })
-                            .catch(async (error) => {
-                                RNFetchBlob.fs
-                                    .cp(tempCacheFile, cacheFile)
-                                    .then(() => {
-                                        this.setState({path: cacheFile, isDownloaded: true, progress: 1});
-                                    })
-                                    .catch(async (error) => {
-                                        RNFetchBlob.fs.unlink(tempCacheFile);
-                                        RNFetchBlob.fs.unlink(cacheFile);
-                                        this._onError(error)
-                                    })
-                            });
-                        break;
+                if (res && res.respInfo && res.respInfo.headers && res.respInfo.headers["Content-Length"]) {
+                    const expectedContentLength = res.respInfo.headers["Content-Length"];
+                    let actualContentLength;
+
+                    try {
+                        const fileStats = await RNFetchBlob.fs.stat(res.path());
+
+                        if (!fileStats || !fileStats.size) {
+                            throw new Error("FileNotFound:" + url);
+                        }
+
+                        actualContentLength = fileStats.size;
+                    } catch (error) {
+                        throw new Error("DownloadFailed:" + url);
                     }
-                    default:
-                        this._unlinkFile(tempCacheFile);
-                        this._unlinkFile(cacheFile);
-                        this._onError(new Error(`load pdf failed with code ${status}`));
-                        break;
+
+                    if (expectedContentLength != actualContentLength) {
+                        throw new Error("DownloadFailed:" + url);
+                    }
                 }
+
+                this._unlinkFile(cacheFile);
+                RNFetchBlob.fs
+                    .cp(tempCacheFile, cacheFile)
+                    .then(() => {
+                        this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                    })
+                    .catch(async (error) => {
+                        throw error;
+                    });
             })
             .catch(async (error) => {
                 this._unlinkFile(tempCacheFile);
@@ -312,7 +301,7 @@ export default class Pdf extends Component {
     _unlinkFile = async (file) => {
         try {
             await RNFetchBlob.fs.unlink(file);
-        }catch (e) {
+        } catch (e) {
 
         }
     }
@@ -329,7 +318,10 @@ export default class Pdf extends Component {
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
             if (message[0] === 'loadComplete') {
-                this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path, {width:Number(message[2]),height:Number(message[3])});
+                this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path, {
+                    width: Number(message[2]),
+                    height: Number(message[3])
+                });
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {
@@ -385,17 +377,17 @@ export default class Pdf extends Component {
                     />
                 );
             } else if (Platform.OS === "ios") {
-                if (this.state.isSupportPDFKit===1) {
-                return (
-                    <PdfCustom
-                        ref={component => (this._root = component)}
-                        {...this.props}
-                        style={[{backgroundColor: '#EEE'}, this.props.style]}
-                        path={this.state.path}
-                        onChange={this._onChange}
-                    />
-                  );
-                } else if(this.state.isSupportPDFKit===0){
+                if (this.state.isSupportPDFKit === 1) {
+                    return (
+                        <PdfCustom
+                            ref={component => (this._root = component)}
+                            {...this.props}
+                            style={[{backgroundColor: '#EEE'}, this.props.style]}
+                            path={this.state.path}
+                            onChange={this._onChange}
+                        />
+                    );
+                } else if (this.state.isSupportPDFKit === 0) {
                     return (
                         <PdfView
                             {...this.props}
