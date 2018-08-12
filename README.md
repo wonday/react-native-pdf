@@ -62,6 +62,9 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.2
+1. fix file successfully download check
+
 v5.0.1
 1. add paging support (ios and android)
 2. add RTL support (ios)
