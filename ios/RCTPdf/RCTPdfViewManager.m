@@ -18,7 +18,8 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-    if (@available(iOS 11.0, *)) {
+    if([[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] == NSOrderedDescending
+       || [[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] == NSOrderedSame) {
         return [[RCTPdfView alloc] init];
     } else {
         return NULL;
@@ -39,7 +40,8 @@ RCT_EXPORT_VIEW_PROPERTY(onChange, RCTBubblingEventBlock);
 
 RCT_EXPORT_METHOD(supportPDFKit:(RCTResponseSenderBlock)callback)
 {
-    if (@available(iOS 11.0, *)) {
+    if([[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] == NSOrderedDescending
+       || [[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] == NSOrderedSame) {
         callback(@[@YES]);
     } else {
         callback(@[@NO]);
