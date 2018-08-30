@@ -58,6 +58,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
+    private boolean enableAnnotationRendering = true;
+
     private boolean enablePaging = false;
     private boolean autoSpacing = false;
     private boolean pageFling = false;
@@ -186,6 +188,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .pageSnap(this.pageSnap)
                 .autoSpacing(this.autoSpacing)
                 .pageFling(this.pageFling)
+                .enableAnnotationRendering(this.enableAnnotationRendering)
                 .load();
 
         }
@@ -218,6 +221,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setEnableAntialiasing(boolean enableAntialiasing) {
         this.enableAntialiasing = enableAntialiasing;
+    }
+
+    public void setEnableAnnotationRendering(boolean enableAnnotationRendering) {
+        this.enableAnnotationRendering = enableAnnotationRendering;
     }
 
     public void setEnablePaging(boolean enablePaging) {

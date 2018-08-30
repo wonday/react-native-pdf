@@ -95,6 +95,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setEnableAntialiasing(enableAntialiasing);
     }
 
+    @ReactProp(name = "enableAnnotationRendering")
+    public void setEnableAnnotationRendering(PdfView pdfView, boolean enableAnnotationRendering) {
+        pdfView.setEnableAnnotationRendering(enableAnnotationRendering);
+    }
+
     @ReactProp(name = "enablePaging")
     public void setEnablePaging(PdfView pdfView, boolean enablePaging) {
         pdfView.setEnablePaging(enablePaging);
