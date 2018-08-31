@@ -47,6 +47,7 @@ export default class Pdf extends Component {
         activityIndicator: PropTypes.any,
         activityIndicatorProps: PropTypes.any,
         enableAntialiasing: PropTypes.bool,
+        enableAnnotationRendering: PropTypes.bool,
         enablePaging: PropTypes.bool,
         enableRTL: PropTypes.bool,
         fitPolicy: PropTypes.number,
