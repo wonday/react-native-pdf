@@ -52,6 +52,15 @@ const float MIN_SCALE = 1.0f;
     self = [super init];
     if (self) {
 
+        _page = 1;
+        _scale = 1;
+        _horizontal = NO;
+        _enablePaging = NO;
+        _enableRTL = NO;
+        _enableAnnotationRendering = NO;
+        _fitPolicy = 2;
+        _spacing = 10;
+
         // init and config PDFView
         _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
         _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
@@ -129,6 +138,14 @@ const float MIN_SCALE = 1.0f;
         
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enableRTL"])) {
             _pdfView.displaysRTL = _enableRTL;
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enableAnnotationRendering"])) {
+            int pageCount = _pdfDocument.pageCount;
+            for (int i=0; i<pageCount; i++) {
+                PDFPage *pdfPage = [_pdfDocument pageAtIndex:i];
+                pdfPage.displaysAnnotations = _enableAnnotationRendering;
+            }
         }
 
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"fitPolicy"])) {

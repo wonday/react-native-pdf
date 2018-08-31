@@ -28,6 +28,7 @@
 @property(nonatomic) BOOL horizontal;
 @property(nonatomic) BOOL enablePaging;
 @property(nonatomic) BOOL enableRTL;
+@property(nonatomic) BOOL enableAnnotationRendering;
 @property(nonatomic) int fitPolicy;
 @property(nonatomic) int spacing;
 @property(nonatomic, strong) NSString *password;

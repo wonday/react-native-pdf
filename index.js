@@ -74,6 +74,8 @@ export default class Pdf extends Component {
         fitPolicy: 2, //fit both
         horizontal: false,
         page: 1,
+        enableAntialiasing: true,
+        enableAnnotationRendering: false,
         enablePaging: false,
         enableRTL: false,
         activityIndicatorProps: {color: '#009900', progressTintColor: '#009900'},
