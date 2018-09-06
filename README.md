@@ -64,6 +64,7 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 v5.0.3
 1. add enableAnnotationRendering property support, default enableAnnotationRendering=true
+2. android build.gradle can reference root project sdk and buildTool setting
 
 v5.0.2
 1. fix file successfully download check
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
 | enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | 5.0.1 |
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
-| enableAnnotationRendering  | bool            | true        | enable rendering annotation  | ✔ | ✔ | 5.0.3 |
+| enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | 5.0.3 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
 | onLoadComplete      | function(numberOfPages, path, {width, height}) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
 | onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
