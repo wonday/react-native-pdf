@@ -57,7 +57,7 @@ const float MIN_SCALE = 1.0f;
         _horizontal = NO;
         _enablePaging = NO;
         _enableRTL = NO;
-        _enableAnnotationRendering = NO;
+        _enableAnnotationRendering = YES;
         _fitPolicy = 2;
         _spacing = 10;
 
@@ -141,10 +141,14 @@ const float MIN_SCALE = 1.0f;
         }
 
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enableAnnotationRendering"])) {
-            int pageCount = _pdfDocument.pageCount;
-            for (int i=0; i<pageCount; i++) {
-                PDFPage *pdfPage = [_pdfDocument pageAtIndex:i];
-                pdfPage.displaysAnnotations = _enableAnnotationRendering;
+            if (!_enableAnnotationRendering) {
+                for (unsigned long i=0; i<_pdfView.document.pageCount; i++) {
+                    PDFPage *pdfPage = [_pdfView.document pageAtIndex:i];
+                    for (unsigned long j=0; j<pdfPage.annotations.count; j++) {
+                        [pdfPage removeAnnotation:pdfPage.annotations[j]];
+                        //pdfPage.annotations[j].shouldDisplay = _enableAnnotationRendering;
+                    }
+                }
             }
         }
 
