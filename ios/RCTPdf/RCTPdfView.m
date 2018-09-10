@@ -241,7 +241,7 @@ const float MIN_SCALE = 1.0f;
 - (void)reactSetFrame:(CGRect)frame
 {
     [super reactSetFrame:frame];
-    _pdfView.frame = frame;
+    _pdfView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
     
     _initialed = YES;
     
