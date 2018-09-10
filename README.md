@@ -62,9 +62,14 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.4
+1. fix ios background not work
+2. fix can not show two pdf in in one page
+
 v5.0.3
 1. add enableAnnotationRendering property support, default enableAnnotationRendering=true
 2. android build.gradle can reference root project sdk and buildTool setting
+3. fix ios progressbar not work
 
 v5.0.2
 1. fix file successfully download check
