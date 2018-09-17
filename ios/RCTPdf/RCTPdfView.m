@@ -66,7 +66,7 @@ const float MIN_SCALE = 1.0f;
         _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
         _pdfView.autoScales = YES;
         _pdfView.displaysPageBreaks = YES;
-        _pdfView.displayBox = kPDFDisplayBoxMediaBox;
+        _pdfView.displayBox = kPDFDisplayBoxCropBox;
         
         _fixScaleFactor = -1.0f;
         _initialed = NO;
