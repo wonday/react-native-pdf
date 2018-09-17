@@ -262,7 +262,7 @@ export default class Pdf extends Component {
 
                 this.lastRNBFTask = null;
 
-                if (res && res.respInfo && res.respInfo.headers && res.respInfo.headers["Content-Length"]) {
+                if (res && res.respInfo && res.respInfo.headers && !res.respInfo.headers["Content-Encoding"] && !res.respInfo.headers["Transfer-Encoding"] && res.respInfo.headers["Content-Length"]) {
                     const expectedContentLength = res.respInfo.headers["Content-Length"];
                     let actualContentLength;
 
