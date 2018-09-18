@@ -18,7 +18,9 @@ import DoubleTapView from './DoubleTapView';
 import PinchZoomView from './PinchZoomView';
 import PdfViewFlatList from './PdfViewFlatList';
 
+const MIN_SCALE = 1;
 const MAX_SCALE = 3;
+
 const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false};
 
 export default class PdfView extends Component {
@@ -28,6 +30,8 @@ export default class PdfView extends Component {
         path: PropTypes.string,
         password: PropTypes.string,
         scale: PropTypes.number,
+        minScale: PropTypes.number,
+        maxScale: PropTypes.number,
         spacing: PropTypes.number,
         fitPolicy: PropTypes.number,
         horizontal: PropTypes.bool,
@@ -41,6 +45,8 @@ export default class PdfView extends Component {
         path: "",
         password: "",
         scale: 1,
+        minScale: MIN_SCALE,
+        maxScale: MAX_SCALE,
         spacing: 10,
         style: {},
         fitPolicy: 2,
@@ -222,7 +228,7 @@ export default class PdfView extends Component {
 
     _onItemDoubleTap = (index) => {
 
-        if (this.state.scale >= MAX_SCALE) {
+        if (this.state.scale >= this.props.maxScale) {
             this._onScaleChanged({
                 scale: 1 / this.state.scale,
                 pageX: this.state.contentContainerSize.width / 2,
@@ -241,8 +247,8 @@ export default class PdfView extends Component {
     _onScaleChanged = (pinchInfo) => {
 
         let newScale = pinchInfo.scale * this.state.scale;
-        newScale = newScale > MAX_SCALE ? MAX_SCALE : newScale;
-        newScale = newScale < 1 ? 1 : newScale;
+        newScale = newScale > this.props.maxScale ? this.props.maxScale : newScale;
+        newScale = newScale < this.props.minScale ? this.props.minScale : newScale;
         let newContentOffset = {
             x: (this.state.contentOffset.x + pinchInfo.pageX) * (newScale / this.state.scale) - pinchInfo.pageX,
             y: (this.state.contentOffset.y + pinchInfo.pageY) * (newScale / this.state.scale) - pinchInfo.pageY

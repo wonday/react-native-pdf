@@ -14,6 +14,8 @@ interface Props {
     source: object,
     page?: number,
     scale?: number,
+    minScale?: number,
+    maxScale?: number,
     horizontal?: boolean,
     spacing?: number,
     password?: string,

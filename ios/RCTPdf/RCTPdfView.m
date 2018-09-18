@@ -54,6 +54,8 @@ const float MIN_SCALE = 1.0f;
 
         _page = 1;
         _scale = 1;
+        _minScale = MIN_SCALE;
+        _maxScale = MAX_SCALE;
         _horizontal = NO;
         _enablePaging = NO;
         _enableRTL = NO;
@@ -151,10 +153,10 @@ const float MIN_SCALE = 1.0f;
             }
         }
 
-        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"fitPolicy"])) {
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"fitPolicy"] || [changedProps containsObject:@"minScale"] || [changedProps containsObject:@"maxScale"])) {
             
-            PDFPage *pdfPage = [_pdfDocument pageAtIndex:0];
-            CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
+            PDFPage *pdfPage = [_pdfDocument pageAtIndex:_pdfDocument.pageCount-1];
+            CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxCropBox];
             
             // some pdf with rotation, then adjust it
             if (pdfPage.rotation == 90 || pdfPage.rotation == 270) {
@@ -164,26 +166,26 @@ const float MIN_SCALE = 1.0f;
             if (_fitPolicy == 0) {
                 _fixScaleFactor = self.frame.size.width/pdfPageRect.size.width;
                 _pdfView.scaleFactor = _scale * _fixScaleFactor;
-                _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
-                _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
+                _pdfView.minScaleFactor = _fixScaleFactor*_minScale;
+                _pdfView.maxScaleFactor = _fixScaleFactor*_maxScale;
             } else if (_fitPolicy == 1) {
                 _fixScaleFactor = self.frame.size.height/pdfPageRect.size.height;
                 _pdfView.scaleFactor = _scale * _fixScaleFactor;
-                _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
-                _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
+                _pdfView.minScaleFactor = _fixScaleFactor*_minScale;
+                _pdfView.maxScaleFactor = _fixScaleFactor*_maxScale;
             } else {
                 float pageAspect = pdfPageRect.size.width/pdfPageRect.size.height;
                 float reactViewAspect = self.frame.size.width/self.frame.size.height;
                 if (reactViewAspect>pageAspect) {
                     _fixScaleFactor = self.frame.size.height/pdfPageRect.size.height;
                     _pdfView.scaleFactor = _scale * _fixScaleFactor;
-                    _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
-                    _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
+                    _pdfView.minScaleFactor = _fixScaleFactor*_minScale;
+                    _pdfView.maxScaleFactor = _fixScaleFactor*_maxScale;
                 } else {
                     _fixScaleFactor = self.frame.size.width/pdfPageRect.size.width;
                     _pdfView.scaleFactor = _scale * _fixScaleFactor;
-                    _pdfView.minScaleFactor = _fixScaleFactor*MIN_SCALE;
-                    _pdfView.maxScaleFactor = _fixScaleFactor*MAX_SCALE;
+                    _pdfView.minScaleFactor = _fixScaleFactor*_minScale;
+                    _pdfView.maxScaleFactor = _fixScaleFactor*_maxScale;
                 }
             }
 
@@ -217,7 +219,7 @@ const float MIN_SCALE = 1.0f;
             
             PDFPage *pdfPage = [_pdfDocument pageAtIndex:_page-1];
             if (pdfPage) {
-                CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
+                CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxCropBox];
                 
                 // some pdf with rotation, then adjust it
                 if (pdfPage.rotation == 90 || pdfPage.rotation == 270) {
@@ -266,7 +268,7 @@ const float MIN_SCALE = 1.0f;
     
     if (_pdfDocument) {
         unsigned long numberOfPages = _pdfDocument.pageCount;
-        PDFPage *page = [_pdfDocument pageAtIndex:0];
+        PDFPage *page = [_pdfDocument pageAtIndex:_pdfDocument.pageCount-1];
         CGSize pageSize = [_pdfView rowSizeForPage:page];
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%lu|%f|%f", numberOfPages, pageSize.width, pageSize.height]]});
     }

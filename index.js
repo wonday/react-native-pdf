@@ -40,6 +40,8 @@ export default class Pdf extends Component {
         ]).isRequired,
         page: PropTypes.number,
         scale: PropTypes.number,
+        minScale: PropTypes.number,
+        maxScale: PropTypes.number,
         horizontal: PropTypes.bool,
         spacing: PropTypes.number,
         password: PropTypes.string,
@@ -70,6 +72,8 @@ export default class Pdf extends Component {
     static defaultProps = {
         password: "",
         scale: 1,
+        minScale: 1,
+        maxScale: 3,
         spacing: 10,
         fitPolicy: 2, //fit both
         horizontal: false,

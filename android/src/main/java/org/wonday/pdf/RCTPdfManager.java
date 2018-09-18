@@ -75,6 +75,16 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setScale(scale);
     }
 
+    @ReactProp(name = "minScale")
+    public void setMinScale(PdfView pdfView, float minScale) {
+        pdfView.setMinScale(minScale);
+    }
+
+    @ReactProp(name = "maxScale")
+    public void setMaxScale(PdfView pdfView, float maxScale) {
+        pdfView.setMaxScale(maxScale);
+    }
+
     @ReactProp(name = "horizontal")
     public void setHorizontal(PdfView pdfView, boolean horizontal) {
         pdfView.setHorizontal(horizontal);
