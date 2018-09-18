@@ -270,6 +270,7 @@ export default class PdfView extends Component {
                            }}
             >
                 <PdfPageView
+                    accessible={true}
                     key={item.id}
                     fileNo={this.state.fileNo}
                     page={item.key + 1}
