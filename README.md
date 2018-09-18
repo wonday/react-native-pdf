@@ -62,6 +62,11 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.5
+1. add minScale, maxScale props
+2. fix pdf display box
+3. fix Content-length check
+
 v5.0.4
 1. fix ios background not work
 2. fix can not show two pdf in in one page
@@ -166,7 +171,9 @@ const styles = StyleSheet.create({
 | ------------- |:-------------:|:----------------:| ------------------- | ------| ------- | ------------ |
 | source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | <3.0 |
 | page          | number        | 1                | initial page index          | ✔   | ✔ | <3.0 |
-| scale         | number        | 1.0              | zoom scale, 1<=scale<=3| ✔   | ✔ | <3.0 |
+| scale         | number        | 1.0              | should minScale<=scale<=maxScale| ✔   | ✔ | <3.0 |
+| minScale         | number        | 1.0              | max scale| ✔   | ✔ | 5.0.5 |
+| maxScale         | number        | 3.0              | min scale| ✔   | ✔ | 5.0.5 |
 | horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | <3.0 |
 | fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | <3.0, abandoned from 3.0 |
 | fitPolicy     | number        | 2                | 0:fit width, 1:fit height, 2:fit both(default)| ✔   | ✔ | 3.0 |
