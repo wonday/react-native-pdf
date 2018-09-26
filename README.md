@@ -62,6 +62,10 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.6
+1. add accessible to PdfPageView
+2. restore podspec
+
 v5.0.5
 1. add minScale, maxScale props
 2. fix pdf display box
