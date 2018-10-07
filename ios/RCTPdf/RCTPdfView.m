@@ -279,11 +279,10 @@ const float MIN_SCALE = 1.0f;
         
         NSString *jsonString = [self getTableContents_pdfURL:fileURL];
         
-        NSLog(@"%@", jsonString);
-        
+        //NSLog(@"%@", jsonString);
         
         CGSize pageSize = [_pdfView rowSizeForPage:page];
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%lu|%f|%f", numberOfPages, pageSize.width, pageSize.height]]});
+        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%lu|%f|%f|%@", numberOfPages, pageSize.width, pageSize.height,jsonString]]});
     }
     
 }
