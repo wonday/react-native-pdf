@@ -49,6 +49,9 @@ import com.facebook.react.common.ReactConstants;
 import static java.lang.String.format;
 import java.lang.ClassCastException;
 
+import com.shockwave.pdfium.PdfDocument;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener {
     private ThemedReactContext context;
@@ -104,17 +107,22 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
         float width = this.getWidth();
         float height = this.getHeight();
-
+        
         this.zoomTo(this.scale);
-
         WritableMap event = Arguments.createMap();
-        event.putString("message", "loadComplete|"+numberOfPages+"|"+width+"|"+height);
+        
+        //create a new jason Object for the TableofContents
+        Gson gson = new Gson();
+        event.putString("message", "loadComplete|"+numberOfPages+"|"+width+"|"+height+"|"+gson.toJson(this.getTableOfContents()));
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
             this.getId(),
             "topChange",
             event
          );
+        
+        //Log.e("ReactNative", gson.toJson(this.getTableOfContents()));
+
     }
 
     @Override
