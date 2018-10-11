@@ -292,6 +292,7 @@ export default class Pdf extends Component {
                     .cp(tempCacheFile, cacheFile)
                     .then(() => {
                         this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                        this._unlinkFile(tempCacheFile);
                     })
                     .catch(async (error) => {
                         throw error;
