@@ -330,7 +330,7 @@ export default class Pdf extends Component {
                     width: Number(message[2]),
                     height: Number(message[3]),
                 },
-                message[4]&&JSON.stringify(JSON.parse(message[4])));
+                message[4]&&JSON.parse(message[4]));
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {
