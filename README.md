@@ -62,6 +62,9 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.8
+1. fix podspec
+
 v5.0.7
 1. onLoadComplete return table of contents
 2. delete tmp file after downloaded
