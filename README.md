@@ -62,6 +62,12 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.9
+1. fix podspec
+2. NS_CLASS_AVAILABLE_IOS(11_0) to PDFKit related codes
+3. Fix pdfs when pipe appears in table content json
+4. modify build.gradle for RN 0.57
+
 v5.0.8
 1. fix podspec
 
@@ -102,17 +108,6 @@ v5.0.0 (**break change**)
 4. support pdf with links (iOS SDK>=11)
 5. fix zoom (iOS SDK>=11)
 
-
-v4.0.0 (**break change**)
-1. replace dependence lib ```react-native-fetch-blob``` with ```rn-fetch-blob```
-if you upgrade from an old version, you should 
-```
-react-native unlink react-native-fetch-blob
-npm uninstall react-native-fetch-blob
-
-npm install rn-fetch-blob --save
-react-native link rn-fetch-blob
-```
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
