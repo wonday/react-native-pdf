@@ -11,7 +11,7 @@ A react native PDF view component (cross-platform support)
 * double tap for zoom
 * support password protected pdf
 
-### Supported versions - React Native / Firebase
+### Supported versions - React Native / react-native-pdf
 
 > The table below shows the supported versions of React Native for different versions of `react-native-pdf`.
 
