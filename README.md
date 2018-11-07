@@ -11,6 +11,14 @@ A react native PDF view component (cross-platform support)
 * double tap for zoom
 * support password protected pdf
 
+### Supported versions - React Native / Firebase
+
+> The table below shows the supported versions of React Native for different versions of `react-native-pdf`.
+
+| react-native-pdf          |  4.x.x - 5.0.x   |      5.0.9+      |
+| ------------------------- | :------: | :-------------: |
+| React Native              | 0.47 - 0.56  |  ^0.57  |
+
 ### Installation
 We use [`react-native-fetch-blob`](https://github.com/wkh237/react-native-fetch-blob#installation) to handle file system access in this package,
 So you should install react-native-pdf and react-native-fetch-blob
