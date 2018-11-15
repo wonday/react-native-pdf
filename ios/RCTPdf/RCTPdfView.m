@@ -450,6 +450,15 @@ const float MIN_SCALE = 1.0f;
 }
 
 /**
+ *  Do nothing on long Press
+ *
+ *
+ */
+- (void)handleLongPress:(UILongPressGestureRecognizer *)sender{
+    
+}
+
+/**
  *  Bind tap
  *
  *
@@ -477,6 +486,15 @@ const float MIN_SCALE = 1.0f;
                                                                                           action:@selector(handlePinch:)];
     [self addGestureRecognizer:pinchRecognizer];
     pinchRecognizer.delegate = self;
+    
+    UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
+                                                                                            action:@selector(handleLongPress:)];
+    // Making sure the allowable movement isn not too narrow
+    longPressRecognizer.allowableMovement=100;
+    // Important: The duration must be long enough to allow taps but not longer than the period in which view opens the magnifying glass
+    longPressRecognizer.minimumPressDuration=0.3;
+    
+    [self addGestureRecognizer:longPressRecognizer];
     
 }
 
