@@ -274,22 +274,16 @@ const float MIN_SCALE = 1.0f;
         
         unsigned long numberOfPages = _pdfDocument.pageCount;
         PDFPage *page = [_pdfDocument pageAtIndex:_pdfDocument.pageCount-1];
-        
-        NSURL *fileURL = [NSURL fileURLWithPath:_path];
-        
-        NSString *jsonString = [self getTableContents_pdfURL:fileURL];
-        
-        //NSLog(@"%@", jsonString);
-        
         CGSize pageSize = [_pdfView rowSizeForPage:page];
+        NSString *jsonString = [self getTableContents];
+        
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%lu|%f|%f|%@", numberOfPages, pageSize.width, pageSize.height,jsonString]]});
     }
     
 }
 
--(NSString *) getTableContents_pdfURL :(NSURL * ) urlPdf{
-    
-    _pdfDocument = [[PDFDocument alloc] initWithURL:urlPdf];
+-(NSString *) getTableContents
+{
     
     NSMutableArray<PDFOutline *> *arrTableOfContents = [[NSMutableArray alloc] init];
     
@@ -337,7 +331,7 @@ const float MIN_SCALE = 1.0f;
             
             [DXParentsContent setObject:[[NSMutableArray alloc] init] forKey:@"children"];
             [DXParentsContent setObject:@"" forKey:@"mNativePtr"];
-            [DXParentsContent setObject:currentOutline.destination.page.label forKey:@"pageIdx"];
+            [DXParentsContent setObject:[NSString stringWithFormat:@"%lu", [_pdfDocument indexForPage:currentOutline.destination.page]] forKey:@"pageIdx"];
             [DXParentsContent setObject:currentOutline.label forKey:@"title"];
             
             //currentOutlin
@@ -358,7 +352,7 @@ const float MIN_SCALE = 1.0f;
             NSMutableDictionary *DXChildContent = [[NSMutableDictionary alloc] init];
             [DXChildContent setObject:[[NSMutableArray alloc] init] forKey:@"children"];
             [DXChildContent setObject:@"" forKey:@"mNativePtr"];
-            [DXChildContent setObject:currentOutline.destination.page.label forKey:@"pageIdx"];
+            [DXChildContent setObject:[NSString stringWithFormat:@"%lu", [_pdfDocument indexForPage:currentOutline.destination.page]] forKey:@"pageIdx"];
             [DXChildContent setObject:currentOutline.label forKey:@"title"];
             [arrChildren addObject:DXChildContent];
             
@@ -381,7 +375,7 @@ const float MIN_SCALE = 1.0f;
         PDFPage *currentPage = _pdfView.currentPage;
         unsigned long page = [_pdfDocument indexForPage:currentPage];
         unsigned long numberOfPages = _pdfDocument.pageCount;
-        
+
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%lu|%lu", page+1, numberOfPages]]});
     }
     
@@ -483,7 +477,6 @@ const float MIN_SCALE = 1.0f;
                                                                                           action:@selector(handlePinch:)];
     [self addGestureRecognizer:pinchRecognizer];
     pinchRecognizer.delegate = self;
-    
     
 }
 

@@ -11,6 +11,14 @@ A react native PDF view component (cross-platform support)
 * double tap for zoom
 * support password protected pdf
 
+### Supported versions - React Native / react-native-pdf
+
+> The table below shows the supported versions of React Native for different versions of `react-native-pdf`.
+
+| react-native-pdf          |  4.x.x - 5.0.x   |      5.0.9+      |
+| ------------------------- | :------: | :-------------: |
+| React Native              | 0.47 - 0.56  |  ^0.57  |
+
 ### Installation
 We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
 So you should install react-native-pdf and rn-fetch-blob
@@ -62,6 +70,19 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.9
+1. fix podspec
+2. NS_CLASS_AVAILABLE_IOS(11_0) to PDFKit related codes
+3. Fix pdfs when pipe appears in table content json
+4. modify build.gradle for RN 0.57
+
+v5.0.8
+1. fix podspec
+
+v5.0.7
+1. onLoadComplete return table of contents
+2. delete tmp file after downloaded
+
 v5.0.6
 1. add accessible to PdfPageView
 2. restore podspec
@@ -95,17 +116,6 @@ v5.0.0 (**break change**)
 4. support pdf with links (iOS SDK>=11)
 5. fix zoom (iOS SDK>=11)
 
-
-v4.0.0 (**break change**)
-1. replace dependence lib ```react-native-fetch-blob``` with ```rn-fetch-blob```
-if you upgrade from an old version, you should 
-```
-react-native unlink react-native-fetch-blob
-npm uninstall react-native-fetch-blob
-
-npm install rn-fetch-blob --save
-react-native link rn-fetch-blob
-```
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
@@ -191,7 +201,7 @@ const styles = StyleSheet.create({
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
 | enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | 5.0.3 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
-| onLoadComplete      | function(numberOfPages, path, {width, height}) | null        | callback when pdf load completed, return total page count and pdf local/cache path | ✔   | ✔ | <3.0 |
+| onLoadComplete      | function(numberOfPages, path, {width, height}, tableContents) | null        | callback when pdf load completed, return total page count, pdf local/cache path, {width,height} and table of contents | ✔   | ✔ | <3.0 |
 | onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
 | onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
 | onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | 3.0 |
