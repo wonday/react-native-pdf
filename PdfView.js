@@ -331,7 +331,7 @@ export default class PdfView extends Component {
             <PdfViewFlatList
                 ref={this._getRef}
                 style={[styles.container, this.props.style]}
-                pagingEnabled=this.props.enablePaging
+                pagingEnabled={this.props.enablePaging}
                 contentContainerStyle={[{
                     justifyContent: 'center',
                     alignItems: 'center'
