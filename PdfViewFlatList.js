@@ -26,7 +26,6 @@ export default class PdfViewFlatList extends FlatList {
      */
     scrollToXY = (x, y) => {
         this._listRef._scrollRef.scrollTo({x: x, y: y, animated: false});
-        console.log(x, y);
     }
 
 }
