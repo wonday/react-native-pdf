@@ -54,6 +54,7 @@ export default class PdfView extends Component {
         centerContent: false,
         page: 1,
         currentPage: -1,
+        enablePaging: false,
         onPageSingleTap: (page) => {
         },
         onScaleChanged: (scale) => {
@@ -330,6 +331,7 @@ export default class PdfView extends Component {
             <PdfViewFlatList
                 ref={this._getRef}
                 style={[styles.container, this.props.style]}
+                pagingEnabled=this.props.enablePaging,
                 contentContainerStyle={[{
                     justifyContent: 'center',
                     alignItems: 'center'
