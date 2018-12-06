@@ -402,18 +402,21 @@ const float MIN_SCALE = 1.0f;
  */
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer
 {
-    
-    // one tap add scale 1.2 times
-    _scale = _scale*1.2;
-    
-    if (_scale>_pdfView.maxScaleFactor/_fixScaleFactor){
-        _scale = _pdfView.minScaleFactor/_fixScaleFactor;
+    // Cycle through min/mid/max scale factors to be consistent with Android
+    float min = _pdfView.minScaleFactor/_fixScaleFactor;
+    float max = _pdfView.maxScaleFactor/_fixScaleFactor;
+    float mid = (max - min) / 2 + min;
+    if (_scale < mid) {
+        _scale = mid;
+    } else if (_scale < max) {
+        _scale = max;
+    } else {
+        _scale = min;
     }
-    
+
     _pdfView.scaleFactor = _scale*_fixScaleFactor;
-    
-    [self setNeedsDisplay];
-    
+
+    [self setNeedsDisplay];    
 }
 
 /**
