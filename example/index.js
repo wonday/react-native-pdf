@@ -1,5 +1,7 @@
-import React from 'react';
-import { AppRegistry } from 'react-native';
-import PDFExample from './PDFExample';
+/** @format */
 
-AppRegistry.registerComponent('pdfexample', () => PDFExample);
+import {AppRegistry} from 'react-native';
+import PDFExample from "./PDFExample";
+import {name as appName} from './app.json';
+
+AppRegistry.registerComponent(appName, () => PDFExample);

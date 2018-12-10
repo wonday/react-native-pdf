@@ -1,9 +1,14 @@
 {
-  "name": "pdfexample",
-  "version": "1.0.0",
+  "name": "PDFExample",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "clean": "yarn clean_native_builds && yarn clean_react_native && yarn clean_node_modules",
+    "clean_native_builds": "rm -rf ios/build && rm -rf android/build/* && rm -rf android/app/build/* && rm -rf ios/Build",
+    "clean_react_native": "rm -rf $TMPDIR/react-* && rm -rf $TMPDIR/metro-* && rm -rf $TMPDIR/haste-* && watchman watch-del-all && lsof -n -i4TCP:8081 | sed '1 d' | awk '{print $2}' | xargs kill -9",
+    "clean_node_modules": "rm -rf node_modules/ && yarn cache clean && yarn",
+    "test": "jest"
   },
   "author": {
     "name": "Wonday",
@@ -14,17 +19,17 @@
     "url": "https://github.com/wonday/react-native-pdf/issues"
   },
   "dependencies": {
-    "react": "16.3.1",
-    "react-native": "0.55.4",
-    "react-native-orientation-locker": "^1.0.12",
+    "react": "16.6.1",
+    "react-native": "0.57.7",
+    "react-native-orientation-locker": "1.0.22",
     "react-native-pdf": "github:wonday/react-native-pdf#master",
-    "rn-fetch-blob": "^0.10.12"
+    "rn-fetch-blob": "0.10.13"
   },
   "devDependencies": {
-    "babel-jest": "19.0.0",
-    "babel-preset-react-native": "1.9.1",
-    "jest": "19.0.2",
-    "react-test-renderer": "15.4.2"
+    "babel-jest": "23.6.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.50.0",
+    "react-test-renderer": "16.6.1"
   },
   "jest": {
     "preset": "react-native"
