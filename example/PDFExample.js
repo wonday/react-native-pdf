@@ -37,9 +37,10 @@ export default class PDFExample extends React.Component {
 
     _onOrientationDidChange = (orientation) => {
         if (orientation == 'LANDSCAPE-LEFT'||orientation == 'LANDSCAPE-RIGHT') {
-          this.setState({width:WIN_HEIGHT,horizontal:true});
+          this.setState({width:WIN_HEIGHT>WIN_HEIGHT?WIN_HEIGHT:WIN_WIDTH,horizontal:true});
         } else {
-          this.setState({width:WIN_WIDTH,horizontal:false});
+          this.setState({width:WIN_HEIGHT>WIN_HEIGHT?WIN_HEIGHT:WIN_WIDTH,horizontal:false});
+        }
         }
     };
 
