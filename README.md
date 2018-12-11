@@ -73,6 +73,8 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 v5.0.10
 1. support enablePaging for ios<11.0
 2. disable long press on ios (the same with android)
+3. make iOS singleTap scale the same action with android
+4. recreate sample with RN 0.57
 
 v5.0.9
 1. fix podspec
