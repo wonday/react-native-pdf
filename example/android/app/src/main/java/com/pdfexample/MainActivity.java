@@ -1,4 +1,4 @@
-package org.wonday.pdfexample;
+package com.pdfexample;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "pdfexample";
+        return "PDFExample";
     }
 }
