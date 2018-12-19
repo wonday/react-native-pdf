@@ -41,7 +41,6 @@ export default class PDFExample extends React.Component {
         } else {
           this.setState({width:WIN_HEIGHT>WIN_HEIGHT?WIN_HEIGHT:WIN_WIDTH,horizontal:false});
         }
-        }
     };
 
     componentDidMount() {
