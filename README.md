@@ -22,6 +22,7 @@ A react native PDF view component (cross-platform support)
 ### Installation
 We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
 So you should install react-native-pdf and rn-fetch-blob
+*Notice: rn-fetch-blob v0.10.14 has a bug, please use v0.10.13*
 
 ```bash
 npm install rn-fetch-blob --save
