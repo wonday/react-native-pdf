@@ -21,7 +21,7 @@
   "dependencies": {
     "react": "16.6.1",
     "react-native": "0.57.7",
-    "react-native-orientation-locker": "1.0.22",
+    "react-native-orientation-locker": "*",
     "react-native-pdf": "github:wonday/react-native-pdf#master",
     "rn-fetch-blob": "0.10.13"
   },
