@@ -71,6 +71,9 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.11
+1. fix sample codes
+
 v5.0.10
 1. support enablePaging for ios<11.0
 2. disable long press on ios (the same with android)
