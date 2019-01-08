@@ -52,6 +52,7 @@ export default class Pdf extends Component {
         enableAnnotationRendering: PropTypes.bool,
         enablePaging: PropTypes.bool,
         enableRTL: PropTypes.bool,
+        singlePageMode: PropTypes.bool,
         fitPolicy: PropTypes.number,
         onLoadComplete: PropTypes.func,
         onPageChanged: PropTypes.func,
@@ -81,6 +82,7 @@ export default class Pdf extends Component {
         enableAntialiasing: true,
         enableAnnotationRendering: true,
         enablePaging: false,
+        singlePageMode: false,
         enableRTL: false,
         activityIndicatorProps: {color: '#009900', progressTintColor: '#009900'},
         onLoadProgress: (percent) => {

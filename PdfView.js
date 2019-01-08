@@ -55,6 +55,7 @@ export default class PdfView extends Component {
         page: 1,
         currentPage: -1,
         enablePaging: false,
+        singlePageMode: false,
         onPageSingleTap: (page) => {
         },
         onScaleChanged: (scale) => {

@@ -68,6 +68,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private boolean enableAnnotationRendering = true;
 
     private boolean enablePaging = false;
+    private boolean singlePageMode = false;
     private boolean autoSpacing = false;
     private boolean pageFling = false;
     private boolean pageSnap = false;
@@ -228,6 +229,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .autoSpacing(this.autoSpacing)
                 .pageFling(this.pageFling)
                 .enableAnnotationRendering(this.enableAnnotationRendering)
+                .enableSwipe(!this.singlePageMode)
                 .load();
 
         }
@@ -285,6 +287,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             this.pageFling = false;
             this.pageSnap = false;
         }
+    }
+
+    public void setSinglePageMode(boolean singlePageMode) {
+        this.singlePageMode = singlePageMode;
     }
 
     public void setFitPolicy(int fitPolicy) {

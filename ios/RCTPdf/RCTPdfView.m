@@ -59,6 +59,7 @@ const float MIN_SCALE = 1.0f;
         _maxScale = MAX_SCALE;
         _horizontal = NO;
         _enablePaging = NO;
+        _singlePageMode = NO;
         _enableRTL = NO;
         _enableAnnotationRendering = YES;
         _fitPolicy = 2;
@@ -218,6 +219,15 @@ const float MIN_SCALE = 1.0f;
                 [_pdfView usePageViewController:NO withViewOptions:Nil];
             }
         }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"singlePageMode"])) {
+            if (_singlePageMode) {
+                _pdfView.displayMode = kPDFDisplaySinglePage;
+            } else {
+                _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
+            }
+        }
+
         
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"horizontal"] || [changedProps containsObject:@"page"])) {
             

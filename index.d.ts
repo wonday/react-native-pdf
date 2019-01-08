@@ -22,6 +22,7 @@ interface Props {
     activityIndicator?: any,
     enableAntialiasing?: boolean,
     enablePaging?: boolean,
+    singlePageMode?: boolean,
     enableRTL?: boolean,
     enableAnnotationRendering?: boolean,
     fitPolicy?: number,

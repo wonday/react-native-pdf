@@ -29,6 +29,7 @@ NS_CLASS_AVAILABLE_IOS(11_0) @interface RCTPdfView : UIView <UIGestureRecognizer
 @property(nonatomic) float maxScale;
 @property(nonatomic) BOOL horizontal;
 @property(nonatomic) BOOL enablePaging;
+@property(nonatomic) BOOL singlePageMode;
 @property(nonatomic) BOOL enableRTL;
 @property(nonatomic) BOOL enableAnnotationRendering;
 @property(nonatomic) int fitPolicy;

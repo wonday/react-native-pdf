@@ -115,6 +115,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setEnablePaging(enablePaging);
     }
 
+    @ReactProp(name = "singlePageMode")
+    public void setSinglePageMode(PdfView pdfView, boolean singlePageMode) {
+        pdfView.setSinglePageMode(singlePageMode);
+    }
+
     @ReactProp(name = "fitPolicy")
     public void setFitPolycy(PdfView pdfView, int fitPolicy) {
         pdfView.setFitPolicy(fitPolicy);
