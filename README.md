@@ -17,7 +17,7 @@ A react native PDF view component (cross-platform support)
 
 | react-native-pdf          |  4.x.x - 5.0.x   |      5.0.9+      |
 | ------------------------- | :------: | :-------------: |
-| React Native              | 0.47 - 0.56  |  ^0.57  |
+| React Native              | 0.4x - 0.56  |  ^0.57  |
 
 ### Installation
 We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
