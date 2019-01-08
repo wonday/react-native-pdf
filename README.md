@@ -10,6 +10,24 @@ A react native PDF view component (cross-platform support)
 * drag and zoom
 * double tap for zoom
 * support password protected pdf
+### Note for single page mode
+
+#### iOS support PDFKit and Android
+```js
+<Pdf
+  ...
+  enablePaging={false}
+  singlePageMode={true}
+  ...
+/>
+
+```
+#### Single page mode bug on Android
+
+When you zoom in, you can drag document page with one or two fingers and in some case
+you will see a part of another page. Or pdfView will move to another page.
+
+Double tap at near border of pdfView many time let you see apart and move to another page too.
 
 ### Supported versions - React Native / react-native-pdf
 
@@ -70,6 +88,9 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 
 ### ChangeLog
+
+v.5.0.12
+1. add singlePageMode
 
 v5.0.11
 1. fix sample codes
@@ -208,6 +229,7 @@ const styles = StyleSheet.create({
 | activityIndicatorProps  | object      | {color:'#009900',progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | 3.1 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
 | enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | 5.0.1 |
+| singlePageMode  | bool            | false        | show one page, prevent scrolling, swiping   | ✔ | ✔ | 5.0.12 |
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
 | enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | 5.0.3 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
