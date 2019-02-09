@@ -1,0 +1,59 @@
+/**
+ * @flow strict
+ */
+
+import { Component } from 'react';
+
+import type { Node } from 'react';
+import type { FormField, Methods } from 'rn-fetch-blob';
+import type { ViewStyleProp } from 'StyleSheet';
+
+export type AssetId = number;
+
+export type FitWidth = 0;
+export type FitHeight = 1;
+export type FitBoth = 2;
+
+export type Source = {
+  body?: string | FormField[],
+  cache?: boolean,
+  expiration?: number,
+  headers?: { [key: string]: string },
+  method?: Methods,
+  uri: string
+};
+
+export type TableContent = {
+  children: TableContent[],
+  mNativePtr: number,
+  pageIdx: number,
+  title: string,
+};
+
+export type Props = {
+  activityIndicator?: Node,
+  activityIndicatorProps?: { [prop: string]: mixed },
+  enableAnnotationRendering?: boolean,
+  enableAntialiasing?: boolean,
+  enablePaging?: boolean,
+  enableRTL?: boolean,
+  fitPolicy?: FitWidth | FitHeight | FitBoth,
+  horizontal?: boolean,
+  maxScale?: number,
+  minScale?: number,
+  onError?: (error: Error) => void,
+  onLoadComplete?: (numberOfPages: number, path: string, size: { height: number, width: number }, tableContents: ?TableContent[]) => void,
+  onLoadProgress?: (percent: number) => void,
+  onPageChanged?: (page: number, numberOfPages: number) => void,
+  onPageSingleTap?: (page: number) => void,
+  onScaleChanged?: (scale: number) => void,
+  page?: number,
+  password?: string,
+  scale?: number,
+  source: AssetId | Source,
+  spacing?: number,
+  style?: ViewStyleProp,
+  testID?: string
+};
+
+declare export default class Pdf extends Component<Props> {}
