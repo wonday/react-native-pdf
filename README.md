@@ -196,8 +196,8 @@ const styles = StyleSheet.create({
 | source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | <3.0 |
 | page          | number        | 1                | initial page index          | ✔   | ✔ | <3.0 |
 | scale         | number        | 1.0              | should minScale<=scale<=maxScale| ✔   | ✔ | <3.0 |
-| minScale         | number        | 1.0              | max scale| ✔   | ✔ | 5.0.5 |
-| maxScale         | number        | 3.0              | min scale| ✔   | ✔ | 5.0.5 |
+| minScale         | number        | 1.0              | min scale| ✔   | ✔ | 5.0.5 |
+| maxScale         | number        | 3.0              | max scale| ✔   | ✔ | 5.0.5 |
 | horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | <3.0 |
 | fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | <3.0, abandoned from 3.0 |
 | fitPolicy     | number        | 2                | 0:fit width, 1:fit height, 2:fit both(default)| ✔   | ✔ | 3.0 |
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | <3.0 |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | <3.0 |
 | activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | <3.0 |
-| activityIndicatorProps  | object      | {color:'#009900',progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | 3.1 |
+| activityIndicatorProps  | object      | {color:'#009900', progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | 3.1 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
 | enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | 5.0.1 |
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
