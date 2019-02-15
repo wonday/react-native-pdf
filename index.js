@@ -251,7 +251,7 @@ export default class Pdf extends Component {
         })
             .fetch(
                 source.method ? source.method : 'GET',
-                source.uri,
+                encodeURI(source.uri),
                 source.headers ? source.headers : {},
                 source.body ? source.body : ""
             )
@@ -315,8 +315,9 @@ export default class Pdf extends Component {
     }
 
     setNativeProps = nativeProps => {
-
-        this._root.setNativeProps(nativeProps);
+        if (this._root){
+            this._root.setNativeProps(nativeProps);
+        }
 
     };
 
