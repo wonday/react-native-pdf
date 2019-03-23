@@ -248,6 +248,7 @@ export default class Pdf extends Component {
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
             path: tempCacheFile,
+            trusty: true,
         })
             .fetch(
                 source.method ? source.method : 'GET',
