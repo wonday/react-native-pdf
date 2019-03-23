@@ -71,6 +71,11 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.0.12
+1. fix some codes for code safe
+2. add flow typings
+3. update style prop type
+
 v5.0.11
 1. fix sample codes
 
