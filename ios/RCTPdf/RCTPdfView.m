@@ -150,8 +150,7 @@ const float MIN_SCALE = 1.0f;
                 for (unsigned long i=0; i<_pdfView.document.pageCount; i++) {
                     PDFPage *pdfPage = [_pdfView.document pageAtIndex:i];
                     for (unsigned long j=0; j<pdfPage.annotations.count; j++) {
-                        [pdfPage removeAnnotation:pdfPage.annotations[j]];
-                        //pdfPage.annotations[j].shouldDisplay = _enableAnnotationRendering;
+                        pdfPage.annotations[j].shouldDisplay = _enableAnnotationRendering;
                     }
                 }
             }
