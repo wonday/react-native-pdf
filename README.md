@@ -32,7 +32,7 @@ react-native link rn-fetch-blob
 react-native link react-native-pdf
 ```
 
-**if you use RN 0.59.0+, please add following to your app/build.gradle**
+**if you use RN 0.59.0+, please add following to your android/app/build.gradle**
 ```diff
 android {
 
