@@ -32,6 +32,22 @@ react-native link rn-fetch-blob
 react-native link react-native-pdf
 ```
 
+**if you use RN 0.59.0+, please add following to your app/build.gradle**
+```diff
+android {
+
++    packagingOptions {
++       pickFirst 'lib/x86/libc++_shared.so'
++       pickFirst 'lib/x86_64/libjsc.so'
++       pickFirst 'lib/arm64-v8a/libjsc.so'
++       pickFirst 'lib/arm64-v8a/libc++_shared.so'
++       pickFirst 'lib/x86_64/libc++_shared.so'
++       pickFirst 'lib/armeabi-v7a/libc++_shared.so'
++     }
+
+   }
+```
+
 ### FAQ
 
 Q1. After installation and running, I can not see the pdf file.  
@@ -68,8 +84,12 @@ A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to
 Q4. why doesn't it work with react native expo?.  
 A4. Expo does not support native module. you can read more expo caveats [`here`](https://facebook.github.io/react-native/docs/getting-started.html#caveats)
 
-
 ### ChangeLog
+
+v5.1.0
+1. remove encodeURI(), **Degrade Notice: If you use Chinese/Japanese/Korean path, please encodeURI() yourself**
+2. fix enableAnnotationRendering in iOS
+3. Trusting certificates for api http redirection
 
 v5.0.12
 1. fix some codes for code safe
