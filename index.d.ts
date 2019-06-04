@@ -20,6 +20,7 @@ interface Props {
     spacing?: number,
     password?: string,
     activityIndicator?: any,
+    activityIndicatorProps?: object,
     enableAntialiasing?: boolean,
     enablePaging?: boolean,
     enableRTL?: boolean,
