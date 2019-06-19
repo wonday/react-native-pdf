@@ -415,7 +415,8 @@ const float MIN_SCALE = 1.0f;
 
     _pdfView.scaleFactor = _scale*_fixScaleFactor;
 
-    [self setNeedsDisplay];    
+    [self setNeedsDisplay];
+    [self onScaleChanged:Nil];
 }
 
 /**
@@ -438,6 +439,7 @@ const float MIN_SCALE = 1.0f;
     }
     
     [self setNeedsDisplay];
+    [self onScaleChanged:Nil];
     
 }
 
