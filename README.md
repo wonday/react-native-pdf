@@ -86,6 +86,12 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.1.1
+1. call onScaleChanged when tapped in iOS
+2. fix overflow when zoom
+3. add packagingOptions for Detox e2e tests build and androidTest target
+4. add activityIndicatorProps to index.d.ts
+
 v5.1.0
 1. remove encodeURI(), **Degrade Notice: If you use Chinese/Japanese/Korean path, please encodeURI() yourself**
 2. fix enableAnnotationRendering in iOS
