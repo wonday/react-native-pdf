@@ -405,16 +405,17 @@ const float MIN_SCALE = 1.0f;
     float min = _pdfView.minScaleFactor/_fixScaleFactor;
     float max = _pdfView.maxScaleFactor/_fixScaleFactor;
     float mid = (max - min) / 2 + min;
+    float scale = _scale;
     if (_scale < mid) {
-        _scale = mid;
+        scale = mid;
     } else if (_scale < max) {
-        _scale = max;
+        scale = max;
     } else {
-        _scale = min;
+        scale = min;
     }
-
-    _pdfView.scaleFactor = _scale*_fixScaleFactor;
-
+    
+    _pdfView.scaleFactor = scale*_fixScaleFactor;
+    
     [self setNeedsDisplay];
     [self onScaleChanged:Nil];
 }
@@ -427,8 +428,6 @@ const float MIN_SCALE = 1.0f;
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)sender
 {
-    
-    _scale = _pdfView.minScaleFactor/_fixScaleFactor;
     _pdfView.scaleFactor = _pdfView.minScaleFactor;
     
     CGPoint point = [sender locationInView:self];
