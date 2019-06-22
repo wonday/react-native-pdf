@@ -385,7 +385,7 @@ export default class Pdf extends Component {
                     <PdfCustom
                         ref={component => (this._root = component)}
                         {...this.props}
-                        style={[{backgroundColor: '#EEE'}, this.props.style]}
+                        style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
                         path={this.state.path}
                         onChange={this._onChange}
                     />
@@ -396,7 +396,7 @@ export default class Pdf extends Component {
                         <PdfCustom
                             ref={component => (this._root = component)}
                             {...this.props}
-                            style={[{backgroundColor: '#EEE'}, this.props.style]}
+                            style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
                             path={this.state.path}
                             onChange={this._onChange}
                         />
@@ -405,7 +405,7 @@ export default class Pdf extends Component {
                     return (
                         <PdfView
                             {...this.props}
-                            style={[{backgroundColor: '#EEE'}, this.props.style]}
+                            style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
                             path={this.state.path}
                             onLoadComplete={this.props.onLoadComplete}
                             onPageChanged={this.props.onPageChanged}
