@@ -357,70 +357,63 @@ export default class Pdf extends Component {
 
     render() {
 
-        if (!this.state.isDownloaded) {
-            return (
-                <View
-                    style={styles.progressContainer}
-                >
-                    {this.props.activityIndicator
-                        ? this.props.activityIndicator
-                        : Platform.OS === 'android'
-                            ? <ProgressBarAndroid
-                                progress={this.state.progress}
-                                indeterminate={false}
-                                styleAttr="Horizontal"
-                                style={styles.progressBar}
-                                {...this.props.activityIndicatorProps}
-                            />
-                            : <ProgressViewIOS
-                                progress={this.state.progress}
-                                style={styles.progressBar}
-                                {...this.props.activityIndicatorProps}
-                            />}
-                </View>
-            )
-        } else {
-            if (Platform.OS === "android") {
+        if (Platform.OS === "android" || Platform.OS === "ios") {
                 return (
-                    <PdfCustom
-                        ref={component => (this._root = component)}
-                        {...this.props}
-                        style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
-                        path={this.state.path}
-                        onChange={this._onChange}
-                    />
-                );
-            } else if (Platform.OS === "ios") {
-                if (this.state.isSupportPDFKit === 1) {
-                    return (
-                        <PdfCustom
-                            ref={component => (this._root = component)}
-                            {...this.props}
-                            style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
-                            path={this.state.path}
-                            onChange={this._onChange}
-                        />
-                    );
-                } else if (this.state.isSupportPDFKit === 0) {
-                    return (
-                        <PdfView
-                            {...this.props}
-                            style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
-                            path={this.state.path}
-                            onLoadComplete={this.props.onLoadComplete}
-                            onPageChanged={this.props.onPageChanged}
-                            onError={this._onError}
-                            onPageSingleTap={this.props.onPageSingleTap}
-                            onScaleChanged={this.props.onScaleChanged}
-                        />
-                    );
-                } else {
-                    return (null);
-                }
-            } else {
-                return (null);
-            }
+                    <View style={[this.props.style,{overflow: 'hidden'}]}>
+                        {!this.state.isDownloaded?
+                            (<View
+                                style={styles.progressContainer}
+                            >
+                                {this.props.activityIndicator
+                                    ? this.props.activityIndicator
+                                    : Platform.OS === 'android'
+                                        ? <ProgressBarAndroid
+                                            progress={this.state.progress}
+                                            indeterminate={false}
+                                            styleAttr="Horizontal"
+                                            style={styles.progressBar}
+                                            {...this.props.activityIndicatorProps}
+                                        />
+                                        : <ProgressViewIOS
+                                            progress={this.state.progress}
+                                            style={styles.progressBar}
+                                            {...this.props.activityIndicatorProps}
+                                        />}
+                            </View>):(
+                                Platform.OS === "android"?(
+                                        <PdfCustom
+                                            ref={component => (this._root = component)}
+                                            {...this.props}
+                                            style={[{flex:1,backgroundColor: '#EEE'}, this.props.style]}
+                                            path={this.state.path}
+                                            onChange={this._onChange}
+                                        />
+                                    ):(
+                                        this.state.isSupportPDFKit === 1?(
+                                                <PdfCustom
+                                                    ref={component => (this._root = component)}
+                                                    {...this.props}
+                                                    style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
+                                                    path={this.state.path}
+                                                    onChange={this._onChange}
+                                                />
+                                            ):(<PdfView
+                                                {...this.props}
+                                                style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
+                                                path={this.state.path}
+                                                onLoadComplete={this.props.onLoadComplete}
+                                                onPageChanged={this.props.onPageChanged}
+                                                onError={this._onError}
+                                                onPageSingleTap={this.props.onPageSingleTap}
+                                                onScaleChanged={this.props.onScaleChanged}
+                                            />)
+                                    )
+                                )}
+                    </View>);
+        } else {
+            return (null);
         }
+
 
     }
 }
