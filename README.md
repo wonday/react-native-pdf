@@ -86,6 +86,9 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.1.3
+1. remove singleTap action from iOS, make the same with Android.
+
 v5.1.2
 1. fix overflow when zoom on Android
 
