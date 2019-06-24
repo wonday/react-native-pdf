@@ -428,6 +428,7 @@ const float MIN_SCALE = 1.0f;
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)sender
 {
+	/*
     _pdfView.scaleFactor = _pdfView.minScaleFactor;
     
     CGPoint point = [sender locationInView:self];
@@ -439,6 +440,7 @@ const float MIN_SCALE = 1.0f;
     
     [self setNeedsDisplay];
     [self onScaleChanged:Nil];
+    */
     
 }
 
