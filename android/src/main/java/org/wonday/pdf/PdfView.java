@@ -198,6 +198,12 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (this.isRecycled())
+            this.drawPdf();
+    }
 
     public void drawPdf() {
         showLog(format("drawPdf path:%s %s", this.path, this.page));
