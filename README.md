@@ -86,6 +86,11 @@ A4. Expo does not support native module. you can read more expo caveats [`here`]
 
 ### ChangeLog
 
+v5.1.4
+1. Update example project to RN 0.60.4
+2. fix blank view after native module got recycled in onDetachedFromWindow event
+3. restore singleTap, only callback, do not change scale
+
 v5.1.3
 1. remove singleTap action from iOS, make the same with Android.
 
