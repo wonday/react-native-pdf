@@ -155,8 +155,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     public boolean onTap(MotionEvent e){
 
         // maybe change by other instance, restore zoom setting
-        Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-        Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
+        //Constants.Pinch.MINIMUM_ZOOM = this.minScale;
+        //Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
         WritableMap event = Arguments.createMap();
         event.putString("message", "pageSingleTap|"+page);

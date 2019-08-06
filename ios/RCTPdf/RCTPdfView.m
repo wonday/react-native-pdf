@@ -428,8 +428,8 @@ const float MIN_SCALE = 1.0f;
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)sender
 {
-	/*
-    _pdfView.scaleFactor = _pdfView.minScaleFactor;
+	
+    //_pdfView.scaleFactor = _pdfView.minScaleFactor;
     
     CGPoint point = [sender locationInView:self];
     PDFPage *pdfPage = [_pdfView pageForPoint:point nearest:NO];
@@ -438,9 +438,9 @@ const float MIN_SCALE = 1.0f;
         _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu", page+1]]});
     }
     
-    [self setNeedsDisplay];
-    [self onScaleChanged:Nil];
-    */
+    //[self setNeedsDisplay];
+    //[self onScaleChanged:Nil];
+    
     
 }
 
