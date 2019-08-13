@@ -319,8 +319,16 @@ export default class Pdf extends Component {
         if (this._root){
             this._root.setNativeProps(nativeProps);
         }
-
     };
+
+    setPage( pageNumber ) {
+        if ( (pageNumber === null) || (isNaN(pageNumber)) ) {
+            throw new Error('Specified pageNumber is not a number');
+        }
+        this.setNativeProps({
+            page: pageNumber
+        });
+    }
 
     _onChange = (event) => {
 
