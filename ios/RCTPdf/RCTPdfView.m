@@ -136,8 +136,26 @@ const float MIN_SCALE = 1.0f;
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"spacing"])) {
             if (_horizontal) {
                 _pdfView.pageBreakMargins = UIEdgeInsetsMake(0,_spacing,0,0);
+                if (_spacing==0) {
+                    if (@available(iOS 12.0, *)) {
+                        _pdfView.pageShadowsEnabled = NO;
+                    }
+                } else {
+                    if (@available(iOS 12.0, *)) {
+                        _pdfView.pageShadowsEnabled = YES;
+                    }
+                }
             } else {
                 _pdfView.pageBreakMargins = UIEdgeInsetsMake(0,0,_spacing,0);
+                if (_spacing==0) {
+                    if (@available(iOS 12.0, *)) {
+                        _pdfView.pageShadowsEnabled = NO;
+                    }
+                } else {
+                    if (@available(iOS 12.0, *)) {
+                        _pdfView.pageShadowsEnabled = YES;
+                    }
+                }
             }
         }
         
