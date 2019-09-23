@@ -58,8 +58,10 @@ You can add it manually. For detail you can see the issue [`#24`](https://github
 Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```  
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
-Q3. When I run the example app I get a white screen / the loading bar isn't progressing on IOS.  
-A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to add an exception for the server hosting the pdf in the ios `info.plist`. Here is an example :  
+Q3. When I run the example app I get a white/gray screen / the loading bar isn't progressing .  
+A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to do the following:
+*iOS*
+add an exception for the server hosting the pdf in the ios `info.plist`. Here is an example :  
 
 ```
 <key>NSAppTransportSecurity</key>
@@ -81,6 +83,9 @@ A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to
   </dict>
 </dict>
 ```
+
+*Android*
+[`see here`](https://stackoverflow.com/questions/54818098/cleartext-http-traffic-not-permitted)
 
 Q4. why doesn't it work with react native expo?.  
 A4. Expo does not support native module. you can read more expo caveats [`here`](https://facebook.github.io/react-native/docs/getting-started.html#caveats)
