@@ -10,6 +10,7 @@ A react native PDF view component (cross-platform support)
 * drag and zoom
 * double tap for zoom
 * support password protected pdf
+* jump to a specific page in the pdf
 
 ### Supported versions - React Native / react-native-pdf
 
@@ -83,6 +84,17 @@ A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to
 
 Q4. why doesn't it work with react native expo?.  
 A4. Expo does not support native module. you can read more expo caveats [`here`](https://facebook.github.io/react-native/docs/getting-started.html#caveats)
+
+Q5. Why can't I run the iOS example? `'Failed to build iOS project. We ran "xcodebuild" command but it exited with error code 65.'`
+A5. Run the following commands in the project folder (e.g. `react-native-pdf/example`) to ensure that all dependencies are available:
+```
+yarn install (or npm install)
+cd ios
+pod install
+cd ..
+react-native run-ios
+```
+
 
 ### ChangeLog
 
@@ -225,6 +237,7 @@ const styles = StyleSheet.create({
     pdf: {
         flex:1,
         width:Dimensions.get('window').width,
+        height:Dimensions.get('window').height,
     }
 });
 
@@ -279,3 +292,28 @@ const styles = StyleSheet.create({
 | `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ |
 | `{uri:"base64data"}` | load pdf from base64 string | ✔   | ✔ |
 | `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ |
+
+
+### Methods
+* [setPage](#setPage)
+
+Methods operate on a ref to the PDF element. You can get a ref with the following code:
+```
+return (
+  <Pdf
+    ref={(pdf) => { this.pdf = pdf; }}
+    source={source}
+    ...
+  />
+);
+```
+
+#### setPage()
+`setPage(pageNumber)`
+
+Set the current page of the PDF component. pageNumber is a positive integer. If pageNumber > numberOfPages, current page is not changed.
+
+Example:
+```
+this.pdf.setPage(42); // Display the answer to the Ultimate Question of Life, the Universe, and Everything
+```
