@@ -61,7 +61,7 @@ A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also 
 Q3. When I run the example app I get a white/gray screen / the loading bar isn't progressing .  
 A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to do the following:
 
-**iOS**
+**iOS:**
 add an exception for the server hosting the pdf in the ios `info.plist`. Here is an example :  
 
 ```
@@ -85,7 +85,7 @@ add an exception for the server hosting the pdf in the ios `info.plist`. Here is
 </dict>
 ```
 
-**Android**
+**Android:**
 [`see here`](https://stackoverflow.com/questions/54818098/cleartext-http-traffic-not-permitted)
 
 Q4. why doesn't it work with react native expo?.  
