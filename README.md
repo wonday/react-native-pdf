@@ -104,6 +104,11 @@ react-native run-ios
 
 ### ChangeLog
 
+v5.1.5
+1. add setPage() method
+2. upgrade to AndroidPdfViewer to 3.2.0-beta.1
+3. fix some codes ,readme and sample
+
 v5.1.4
 1. Update example project to RN 0.60.4
 2. fix blank view after native module got recycled in onDetachedFromWindow event
@@ -145,47 +150,6 @@ v5.0.9
 2. NS_CLASS_AVAILABLE_IOS(11_0) to PDFKit related codes
 3. Fix pdfs when pipe appears in table content json
 4. modify build.gradle for RN 0.57
-
-v5.0.8
-1. fix podspec
-
-v5.0.7
-1. onLoadComplete return table of contents
-2. delete tmp file after downloaded
-
-v5.0.6
-1. add accessible to PdfPageView
-2. restore podspec
-
-v5.0.5
-1. add minScale, maxScale props
-2. fix pdf display box
-3. fix Content-length check
-
-v5.0.4
-1. fix ios background not work
-2. fix can not show two pdf in in one page
-
-v5.0.3
-1. add enableAnnotationRendering property support, default enableAnnotationRendering=true
-2. android build.gradle can reference root project sdk and buildTool setting
-3. fix ios progressbar not work
-
-v5.0.2
-1. fix file successfully download check
-
-v5.0.1
-1. add paging support (ios and android)
-2. add RTL support (ios)
-3. fix position when set page (ios)
-
-v5.0.0 (**break change**)
-1. use iOS PDFKit to show pdf (iOS SDK>=11)
-2. use js+native to show pdf (iOS SDK<11, the same with 4.0.0)
-3. support pdf with layers (iOS SDK>=11)
-4. support pdf with links (iOS SDK>=11)
-5. fix zoom (iOS SDK>=11)
-
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
