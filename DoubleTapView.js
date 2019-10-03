@@ -37,7 +37,15 @@ export default class DoubleTapView extends Component {
     constructor() {
         super();
 
-        this.gestureHandlers = {};
+        this.gestureHandlers = PanResponder.create({
+            onStartShouldSetPanResponder: (evt, gestureState) => (gestureState.numberActiveTouches === 1),
+            onStartShouldSetResponderCapture: (evt, gestureState) => (gestureState.numberActiveTouches === 1),
+            onMoveShouldSetPanResponder: (evt, gestureState) => (false),
+            onMoveShouldSetResponderCapture: (evt, gestureState) => (false),
+            onPanResponderTerminationRequest: (evt, gestureState) => false,
+            onPanResponderRelease: this.handlePanResponderRelease,
+
+        });
 
         this.prevTouchInfo = {
             prevTouchX: 0,
@@ -49,17 +57,6 @@ export default class DoubleTapView extends Component {
 
     }
 
-    componentWillMount() {
-        this.gestureHandlers = PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => (gestureState.numberActiveTouches === 1),
-            onStartShouldSetResponderCapture: (evt, gestureState) => (gestureState.numberActiveTouches === 1),
-            onMoveShouldSetPanResponder: (evt, gestureState) => (false),
-            onMoveShouldSetResponderCapture: (evt, gestureState) => (false),
-            onPanResponderTerminationRequest: (evt, gestureState) => false,
-            onPanResponderRelease: this.handlePanResponderRelease,
-
-        });
-    }
 
     distance = (x0, y0, x1, y1) => {
         return Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)).toFixed(1);
