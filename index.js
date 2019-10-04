@@ -111,20 +111,20 @@ export default class Pdf extends Component {
 
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
 
-        const nextSource = resolveAssetSource(nextProps.source);
-        const curSource = resolveAssetSource(this.props.source);
+        const nextSource = resolveAssetSource(this.props.source);
+        const curSource = resolveAssetSource(prevProps.source);
 
         if ((nextSource.uri !== curSource.uri)) {
             // if has download task, then cancel it.
             if (this.lastRNBFTask) {
                 this.lastRNBFTask.cancel(err => {
-                    this._loadFromSource(nextProps.source);
+                    this._loadFromSource(this.props.source);
                 });
                 this.lastRNBFTask = null;
             } else {
-                this._loadFromSource(nextProps.source);
+                this._loadFromSource(this.props.source);
             }
         }
     }
