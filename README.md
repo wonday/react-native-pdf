@@ -104,6 +104,9 @@ react-native run-ios
 
 ### ChangeLog
 
+v5.1.6
+1. fix componentWillReceiveProps and componentWillMount warnings
+
 v5.1.5
 1. add setPage() method
 2. upgrade to AndroidPdfViewer to 3.2.0-beta.1
@@ -130,26 +133,6 @@ v5.1.0
 1. remove encodeURI(), **Degrade Notice: If you use Chinese/Japanese/Korean path, please encodeURI() yourself**
 2. fix enableAnnotationRendering on iOS
 3. Trusting certificates for api http redirection
-
-v5.0.12
-1. fix some codes for code safe
-2. add flow typings
-3. update style prop type
-
-v5.0.11
-1. fix sample codes
-
-v5.0.10
-1. support enablePaging for ios<11.0
-2. disable long press on ios (the same with android)
-3. make iOS singleTap scale the same action with android
-4. recreate sample with RN 0.57
-
-v5.0.9
-1. fix podspec
-2. NS_CLASS_AVAILABLE_IOS(11_0) to PDFKit related codes
-3. Fix pdfs when pipe appears in table content json
-4. modify build.gradle for RN 0.57
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
