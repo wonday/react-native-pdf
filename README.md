@@ -104,6 +104,9 @@ react-native run-ios
 
 ### ChangeLog
 
+v5.1.7
+1. downgrade to AndroidPdfViewer 3.1.0-beta.1
+
 v5.1.6
 1. fix componentWillReceiveProps and componentWillMount warnings
 
