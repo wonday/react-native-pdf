@@ -51,18 +51,18 @@ android {
 
 ### FAQ
 
-Q1. After installation and running, I can not see the pdf file.  
+Q1. After installation and running, I can not see the pdf file.
 A1: maybe you forgot to excute ```react-native link``` or it does not run correctly.
 You can add it manually. For detail you can see the issue [`#24`](https://github.com/wonday/react-native-pdf/issues/24) and [`#2`](https://github.com/wonday/react-native-pdf/issues/2)
 
-Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```  
+Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
-Q3. When I run the example app I get a white/gray screen / the loading bar isn't progressing .  
+Q3. When I run the example app I get a white/gray screen / the loading bar isn't progressing .
 A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to do the following:
 
 **iOS:**
-add an exception for the server hosting the pdf in the ios `info.plist`. Here is an example :  
+add an exception for the server hosting the pdf in the ios `info.plist`. Here is an example :
 
 ```
 <key>NSAppTransportSecurity</key>
@@ -88,7 +88,7 @@ add an exception for the server hosting the pdf in the ios `info.plist`. Here is
 **Android:**
 [`see here`](https://stackoverflow.com/questions/54818098/cleartext-http-traffic-not-permitted)
 
-Q4. why doesn't it work with react native expo?.  
+Q4. why doesn't it work with react native expo?.
 A4. Expo does not support native module. you can read more expo caveats [`here`](https://facebook.github.io/react-native/docs/getting-started.html#caveats)
 
 Q5. Why can't I run the iOS example? `'Failed to build iOS project. We ran "xcodebuild" command but it exited with error code 65.'`
@@ -177,6 +177,9 @@ export default class PDFExample extends React.Component {
                     onError={(error)=>{
                         console.log(error);
                     }}
+                    onPressLink={(uri)=>{
+                        console.log(`Link presse: ${uri}`)
+                    }}
                     style={styles.pdf}/>
             </View>
         )
@@ -227,6 +230,7 @@ const styles = StyleSheet.create({
 | onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
 | onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | 3.0 |
 | onScaleChanged    | function(scale) | null        | callback when scale page | ✔ | ✔ | 3.0 |
+| onPressLink       | function(uri)   | null        | callback when link tapped | ✔ | ✔ | 5.1.? |
 
 #### parameters of source
 

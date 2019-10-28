@@ -45,7 +45,6 @@ const float MIN_SCALE = 1.0f;
     float _fixScaleFactor;
     bool _initialed;
     NSArray<NSString *> *_changedProps;
-    
 }
 
 - (instancetype)init
@@ -85,12 +84,22 @@ const float MIN_SCALE = 1.0f;
         [center addObserver:self selector:@selector(onScaleChanged:) name:PDFViewScaleChangedNotification object:_pdfView];
         
         [[_pdfView document] setDelegate: self];
+        [_pdfView setDelegate: self];
         
         
         [self bindTap];
     }
     
     return self;
+}
+
+- (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)url
+{
+    NSString *_url = url.absoluteString;
+    _onChange(@{ @"message":
+                     [[NSString alloc] initWithString:
+                      [NSString stringWithFormat:
+                       @"linkPressed|%s", _url.UTF8String]] });
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
