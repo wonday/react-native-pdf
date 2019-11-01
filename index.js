@@ -133,17 +133,20 @@ export default class Pdf extends Component {
     }
 
     componentDidMount() {
+        this._mounted = true;
         if (Platform.OS === "ios") {
             const PdfViewManagerNative = require('react-native').NativeModules.PdfViewManager;
             PdfViewManagerNative.supportPDFKit((isSupportPDFKit) => {
-                this.setState({isSupportPDFKit: isSupportPDFKit ? 1 : 0});
+                if (this._mounted) {
+                    this.setState({isSupportPDFKit: isSupportPDFKit ? 1 : 0});
+                }
             });
         }
         this._loadFromSource(this.props.source);
     }
 
     componentWillUnmount() {
-
+        this._mounted = false;
         if (this.lastRNBFTask) {
             this.lastRNBFTask.cancel(err => {
             });
@@ -159,7 +162,9 @@ export default class Pdf extends Component {
         let uri = source.uri || '';
 
         // first set to initial state
-        this.setState({isDownloaded: false, path: '', progress: 0});
+        if (this._mounted) {
+            this.setState({isDownloaded: false, path: '', progress: 0});
+        }
 
         const cacheFile = RNFetchBlob.fs.dirs.CacheDir + '/' + SHA1(uri) + '.pdf';
 
@@ -168,7 +173,9 @@ export default class Pdf extends Component {
                 .stat(cacheFile)
                 .then(stats => {
                     if (!Boolean(source.expiration) || (source.expiration * 1000 + stats.lastModified) > (new Date().getTime())) {
-                        this.setState({path: cacheFile, isDownloaded: true});
+                        if (this._mounted) {
+                            this.setState({path: cacheFile, isDownloaded: true});
+                        }
                     } else {
                         // cache expirated then reload it
                         this._prepareFile(source);
@@ -204,7 +211,9 @@ export default class Pdf extends Component {
                     RNFetchBlob.fs
                         .cp(uri, cacheFile)
                         .then(() => {
-                            this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                            if (this._mounted) {
+                                this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                            }
                         })
                         .catch(async (error) => {
                             this._unlinkFile(cacheFile);
@@ -215,17 +224,21 @@ export default class Pdf extends Component {
                     RNFetchBlob.fs
                         .writeFile(cacheFile, data, 'base64')
                         .then(() => {
-                            this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                            if (this._mounted) {
+                                this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                            }
                         })
                         .catch(async (error) => {
                             this._unlinkFile(cacheFile);
                             this._onError(error)
                         });
                 } else {
-                    this.setState({
-                        path: uri.replace(/file:\/\//i, ''),
-                        isDownloaded: true,
-                    });
+                    if (this._mounted) {
+                       this.setState({
+                            path: uri.replace(/file:\/\//i, ''),
+                            isDownloaded: true,
+                        });
+                    }
                 }
             } else {
                 this._onError(new Error('no pdf source!'));
@@ -262,7 +275,9 @@ export default class Pdf extends Component {
             // listen to download progress event
             .progress((received, total) => {
                 this.props.onLoadProgress && this.props.onLoadProgress(received / total);
-                this.setState({progress: received / total});
+                if (this._mounted) {
+                    this.setState({progress: received / total});
+                }
             });
 
         this.lastRNBFTask
@@ -295,7 +310,9 @@ export default class Pdf extends Component {
                 RNFetchBlob.fs
                     .cp(tempCacheFile, cacheFile)
                     .then(() => {
-                        this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                        if (this._mounted) {
+                            this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                        }
                         this._unlinkFile(tempCacheFile);
                     })
                     .catch(async (error) => {
