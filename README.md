@@ -12,28 +12,61 @@ A react native PDF view component (cross-platform support)
 * support password protected pdf
 * jump to a specific page in the pdf
 
-### Supported versions - React Native / react-native-pdf
-
-> The table below shows the supported versions of React Native for different versions of `react-native-pdf`.
-
-| react-native-pdf          |  4.x.x - 5.0.x   |      5.0.9+      |
-| ------------------------- | :------: | :-------------: |
-| React Native              | 0.4x - 0.56  |  ^0.57  |
-
-### Installation
+### Supported versions
 We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
 So you should install react-native-pdf and rn-fetch-blob
-*Notice: rn-fetch-blob v0.10.14 has a bug, please use v0.10.13*
 
+> The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
+
+| React Native              | 0.4x - 0.56     | 0.57    | 0.60+    |
+| ------------------------- | :-------------: | :----:  | :------: |
+| react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   |
+| ------------------------- | :-------------: | :----:  | :------: |
+| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  |
+
+### Installation
+
+*Using npm:
 ```bash
 npm install rn-fetch-blob --save
 npm install react-native-pdf --save
+```
 
+*or using yarn:
+```bash
+yarn add rn-fetch-blob
+yarn add react-native-pdf
+```
+
+Then follow the instructions for your platform to link react-native-pdf into your project:
+
+### iOS installation
+<details>
+  <summary>iOS details</summary>
+
+**React Native 0.60 and above**
+
+Run `pod install` in the `ios` directory. Linking is not required in React Native 0.60 and above.
+
+**React Native 0.59 and below**
+
+```bash
+react-native link rn-fetch-blob
+react-native link react-native-pdf
+```
+</details>
+
+### Android installation
+<details>
+  <summary>Android details</summary>
+
+**React Native 0.59 and below**
+```bash
 react-native link rn-fetch-blob
 react-native link react-native-pdf
 ```
 
-**if you use RN 0.59.0+, please add following to your android/app/build.gradle**
+**If you use RN 0.59.0+, please add following to your android/app/build.gradle**
 ```diff
 android {
 
@@ -48,6 +81,8 @@ android {
 
    }
 ```
+
+</details>
 
 ### FAQ
 
@@ -104,38 +139,29 @@ react-native run-ios
 
 ### ChangeLog
 
+v6.0.0
+1. Add JS callback onPressLink for pdf link press listener
+2. Fix calling setState while unmounted
+
 v5.1.7
-1. downgrade to AndroidPdfViewer 3.1.0-beta.1
+1. Downgrade to AndroidPdfViewer 3.1.0-beta.1
 
 v5.1.6
-1. fix componentWillReceiveProps and componentWillMount warnings
+1. Fix componentWillReceiveProps and componentWillMount warnings
 
 v5.1.5
-1. add setPage() method
-2. upgrade to AndroidPdfViewer to 3.2.0-beta.1
-3. fix some codes ,readme and sample
+1. Add setPage() method
+2. Upgrade to AndroidPdfViewer to 3.2.0-beta.1
+3. Fix some codes ,readme and sample
 
 v5.1.4
 1. Update example project to RN 0.60.4
-2. fix blank view after native module got recycled in onDetachedFromWindow event
-3. restore singleTap, only callback, do not change scale
+2. Fix blank view after native module got recycled in onDetachedFromWindow event
+3. Restore singleTap, only callback, do not change scale
 
 v5.1.3
-1. remove singleTap action from iOS, make the same with Android.
+1. Remove singleTap action from iOS, make the same with Android.
 
-v5.1.2
-1. fix overflow when zoom on Android
-
-v5.1.1
-1. call onScaleChanged when tapped on iOS
-2. fix overflow when zoom
-3. add packagingOptions for Detox e2e tests build and androidTest target
-4. add activityIndicatorProps to index.d.ts
-
-v5.1.0
-1. remove encodeURI(), **Degrade Notice: If you use Chinese/Japanese/Korean path, please encodeURI() yourself**
-2. fix enableAnnotationRendering on iOS
-3. Trusting certificates for api http redirection
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
