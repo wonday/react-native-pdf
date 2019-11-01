@@ -19,6 +19,7 @@ So you should install react-native-pdf and rn-fetch-blob
 > The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
 
 | React Native              | 0.4x - 0.56     | 0.57    | 0.60+    |
+| ------------------------- | --------------- | ------- | -------- |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   |
 | rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  |
 
