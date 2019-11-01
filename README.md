@@ -19,9 +19,7 @@ So you should install react-native-pdf and rn-fetch-blob
 > The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
 
 | React Native              | 0.4x - 0.56     | 0.57    | 0.60+    |
-| ------------------------- | :-------------: | :----:  | :------: |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   |
-| ------------------------- | :-------------: | :----:  | :------: |
 | rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  |
 
 ### Installation
@@ -60,13 +58,7 @@ react-native link react-native-pdf
 <details>
   <summary>Android details</summary>
 
-**React Native 0.59 and below**
-```bash
-react-native link rn-fetch-blob
-react-native link react-native-pdf
-```
-
-**If you use RN 0.59.0+, please add following to your android/app/build.gradle**
+**If you use RN 0.59.0 and above**, please add following to your android/app/build.gradle**
 ```diff
 android {
 
@@ -82,9 +74,18 @@ android {
    }
 ```
 
+**React Native 0.59.0 and below**
+```bash
+react-native link rn-fetch-blob
+react-native link react-native-pdf
+```
+
+
 </details>
 
 ### FAQ
+<details>
+  <summary>FAQ details</summary>
 
 Q1. After installation and running, I can not see the pdf file.
 A1: maybe you forgot to excute ```react-native link``` or it does not run correctly.
@@ -135,9 +136,11 @@ pod install
 cd ..
 react-native run-ios
 ```
-
+</details>
 
 ### ChangeLog
+<details>
+  <summary>ChangeLog details</summary>
 
 v6.0.0
 1. Add JS callback onPressLink for pdf link press listener
@@ -164,6 +167,8 @@ v5.1.3
 
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
+
+</details>
 
 ### Example
 
