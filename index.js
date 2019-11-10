@@ -53,6 +53,7 @@ export default class Pdf extends Component {
         enablePaging: PropTypes.bool,
         enableRTL: PropTypes.bool,
         fitPolicy: PropTypes.number,
+        trustAllCerts: PropTypes.bool,
         onLoadComplete: PropTypes.func,
         onPageChanged: PropTypes.func,
         onError: PropTypes.func,
@@ -84,6 +85,7 @@ export default class Pdf extends Component {
         enablePaging: false,
         enableRTL: false,
         activityIndicatorProps: {color: '#009900', progressTintColor: '#009900'},
+        trustAllCerts: true,
         onLoadProgress: (percent) => {
         },
         onLoadComplete: (numberOfPages, path) => {
@@ -264,7 +266,7 @@ export default class Pdf extends Component {
         this.lastRNBFTask = RNFetchBlob.config({
             // response data will be saved to this path if it has access right.
             path: tempCacheFile,
-            trusty: true,
+            trusty: this.props.trustAllCerts,
         })
             .fetch(
                 source.method ? source.method : 'GET',
