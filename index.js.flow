@@ -6,7 +6,7 @@ import { Component } from 'react';
 
 import type { Node } from 'react';
 import type { FormField, Methods } from 'rn-fetch-blob';
-import { StyleSheet } from 'react-native';
+import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet'
 
 export type AssetId = number;
 
@@ -53,7 +53,7 @@ export type Props = {
   scale?: number,
   source: AssetId | Source,
   spacing?: number,
-  style?: StyleSheet.Styles,
+  style?: ViewStyleProp,
   testID?: string
 };
 
