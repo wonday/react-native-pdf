@@ -143,6 +143,10 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.0.1
+1. Expose prop to trust self-signed SSL certs
+2. Use ViewStyleProp in index.js.flow, not deprecated StyleSheet.Styles
+
 v6.0.0
 1. Add JS callback onPressLink for pdf link press listener
 2. Fix calling setState while unmounted
@@ -194,7 +198,7 @@ export default class PDFExample extends React.Component {
         //const source = {uri:'bundle-assets://test.pdf'};
 
         //const source = {uri:'file:///sdcard/test.pdf'};
-        //const source = {uri:"data:application/pdf;base64,..."};
+        //const source = {uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."};
 
         return (
             <View style={styles.container}>
@@ -283,7 +287,7 @@ const styles = StyleSheet.create({
 | `{require("./test.pdf")}` | load pdf relate to js file (do not need add by xcode) | ✔ | ✖ |
 | `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ |
 | `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ |
-| `{uri:"base64data"}` | load pdf from base64 string | ✔   | ✔ |
+| `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ |
 | `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ |
 
 
