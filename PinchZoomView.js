@@ -38,7 +38,7 @@ export default class PinchZoomView extends Component {
 
     }
 
-    componentWillMount() {
+    componentDidMount() {
 
         this.gestureHandlers = PanResponder.create({
             onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,

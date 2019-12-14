@@ -85,9 +85,6 @@ export default class PdfView extends Component {
 
     }
 
-    componentWillMount() {
-    }
-
     componentDidMount() {
         this._mounted = true;
         PdfManager.loadFile(this.props.path, this.props.password)
