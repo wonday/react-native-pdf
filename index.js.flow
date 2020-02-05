@@ -45,7 +45,7 @@ export type Props = {
   onLoadComplete?: (numberOfPages: number, path: string, size: { height: number, width: number }, tableContents: ?TableContent[]) => void,
   onLoadProgress?: (percent: number) => void,
   onPageChanged?: (page: number, numberOfPages: number) => void,
-  onPageSingleTap?: (page: number) => void,
+  onPageSingleTap?: (page: number, x: number, y: number) => void,
   onScaleChanged?: (scale: number) => void,
   onPressLink?: (url: string) => void,
   page?: number,
