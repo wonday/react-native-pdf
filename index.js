@@ -94,7 +94,7 @@ export default class Pdf extends Component {
         },
         onError: (error) => {
         },
-        onPageSingleTap: (page) => {
+        onPageSingleTap: (page, x, y) => {
         },
         onScaleChanged: (scale) => {
         },
@@ -371,7 +371,7 @@ export default class Pdf extends Component {
             } else if (message[0] === 'error') {
                 this._onError(new Error(message[1]));
             } else if (message[0] === 'pageSingleTap') {
-                this.props.onPageSingleTap && this.props.onPageSingleTap(message[1]);
+                this.props.onPageSingleTap && this.props.onPageSingleTap(message[1], message[2], message[3]);
             } else if (message[0] === 'scaleChanged') {
                 this.props.onScaleChanged && this.props.onScaleChanged(message[1]);
             } else if (message[0] === 'linkPressed') {
@@ -388,7 +388,6 @@ export default class Pdf extends Component {
     };
 
     render() {
-
         if (Platform.OS === "android" || Platform.OS === "ios") {
                 return (
                     <View style={[this.props.style,{overflow: 'hidden'}]}>
@@ -421,7 +420,7 @@ export default class Pdf extends Component {
                                             onChange={this._onChange}
                                         />
                                     ):(
-                                        this.state.isSupportPDFKit === 1?(
+                                        this.props.usePDFKit && this.state.isSupportPDFKit === 1?(
                                                 <PdfCustom
                                                     ref={component => (this._root = component)}
                                                     {...this.props}
