@@ -502,6 +502,7 @@ const float MIN_SCALE = 1.0f;
     //trigger by one finger and double touch
     doubleTapRecognizer.numberOfTapsRequired = 2;
     doubleTapRecognizer.numberOfTouchesRequired = 1;
+    doubleTapRecognizer.delegate = self;
     
     [self addGestureRecognizer:doubleTapRecognizer];
     
@@ -510,6 +511,7 @@ const float MIN_SCALE = 1.0f;
     //trigger by one finger and one touch
     singleTapRecognizer.numberOfTapsRequired = 1;
     singleTapRecognizer.numberOfTouchesRequired = 1;
+    singleTapRecognizer.delegate = self;
     
     [self addGestureRecognizer:singleTapRecognizer];
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
