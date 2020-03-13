@@ -462,7 +462,7 @@ const float MIN_SCALE = 1.0f;
     PDFPage *pdfPage = [_pdfView pageForPoint:point nearest:NO];
     if (pdfPage) {
         unsigned long page = [_pdfDocument indexForPage:pdfPage];
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu", page+1]]});
+        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu|%f|%f", page+1, point.x, point.y]]});
     }
     
     //[self setNeedsDisplay];

@@ -25,16 +25,12 @@ So you should install react-native-pdf and rn-fetch-blob
 
 ### Installation
 
-*Using npm:
 ```bash
-npm install rn-fetch-blob --save
-npm install react-native-pdf --save
-```
+# Using npm
+npm install react-native-pdf rn-fetch-blob --save
 
-*or using yarn:
-```bash
-yarn add rn-fetch-blob
-yarn add react-native-pdf
+# or using yarn:
+yarn add react-native-pdf rn-fetch-blob
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
