@@ -69,7 +69,8 @@ const float MIN_SCALE = 1.0f;
         _pdfView.autoScales = YES;
         _pdfView.displaysPageBreaks = YES;
         _pdfView.displayBox = kPDFDisplayBoxCropBox;
-        
+        _pdfView.backgroundColor = [UIColor clearColor];
+
         _fixScaleFactor = -1.0f;
         _initialed = NO;
         _changedProps = NULL;
