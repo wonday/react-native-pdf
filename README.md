@@ -139,6 +139,11 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.1.0
+1. fix react-native warning on `componentWill*`
+2. fix onPageSingleTap
+3. Set the PDF View background color to be transparent On iOS
+
 v6.0.1
 1. Expose prop to trust self-signed SSL certs
 2. Use ViewStyleProp in index.js.flow, not deprecated StyleSheet.Styles
