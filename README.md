@@ -139,6 +139,9 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.1.1
+1. fix undefined is not an object, crashing on ios
+
 v6.1.0
 1. fix react-native warning on `componentWill*`
 2. fix onPageSingleTap
