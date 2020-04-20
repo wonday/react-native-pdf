@@ -430,22 +430,36 @@ const float MIN_SCALE = 1.0f;
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer
 {
     // Cycle through min/mid/max scale factors to be consistent with Android
-    float min = _pdfView.minScaleFactor/_fixScaleFactor;
-    float max = _pdfView.maxScaleFactor/_fixScaleFactor;
+    float min = self->_pdfView.minScaleFactor/self->_fixScaleFactor;
+    float max = self->_pdfView.maxScaleFactor/self->_fixScaleFactor;
     float mid = (max - min) / 2 + min;
-    float scale = _scale;
-    if (_scale < mid) {
+    float scale = self->_scale;
+    if (self->_scale < mid) {
         scale = mid;
-    } else if (_scale < max) {
+    } else if (self->_scale < max) {
         scale = max;
     } else {
         scale = min;
     }
     
-    _pdfView.scaleFactor = scale*_fixScaleFactor;
+    CGFloat newScale = scale * self->_fixScaleFactor;
+    CGPoint tapPoint = [recognizer locationInView:self->_pdfView];
+    tapPoint = [self->_pdfView convertPoint:tapPoint toPage:self->_pdfView.currentPage];
+    CGRect zoomRect = CGRectZero;
+    zoomRect.size.width = self->_pdfView.frame.size.width * newScale;
+    zoomRect.size.height = self->_pdfView.frame.size.height * newScale;
+    zoomRect.origin.x = tapPoint.x - zoomRect.size.width / 2;
+    zoomRect.origin.y = tapPoint.y - zoomRect.size.height / 2;
     
-    [self setNeedsDisplay];
-    [self onScaleChanged:Nil];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [UIView animateWithDuration:0.3 animations:^{
+            [self->_pdfView setScaleFactor:newScale];
+            [self->_pdfView goToRect:zoomRect onPage:self->_pdfView.currentPage];
+            
+            [self setNeedsDisplay];
+            [self onScaleChanged:Nil];
+        }];
+    });
 }
 
 /**
