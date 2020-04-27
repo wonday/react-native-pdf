@@ -11,7 +11,7 @@ import {
     StyleSheet,
     TouchableHighlight,
     Dimensions,
-    SafeAreaView
+    SafeAreaView,
     View,
     Text
 } from 'react-native';
@@ -38,9 +38,9 @@ export default class PDFExample extends React.Component {
 
     _onOrientationDidChange = (orientation) => {
         if (orientation == 'LANDSCAPE-LEFT'||orientation == 'LANDSCAPE-RIGHT') {
-          this.setState({width:WIN_HEIGHT>WIN_HEIGHT?WIN_HEIGHT:WIN_WIDTH,horizontal:true});
+          this.setState({width:WIN_HEIGHT>WIN_WIDTH?WIN_HEIGHT:WIN_WIDTH,horizontal:true});
         } else {
-          this.setState({width:WIN_HEIGHT>WIN_HEIGHT?WIN_HEIGHT:WIN_WIDTH,horizontal:false});
+          this.setState({width:WIN_HEIGHT>WIN_WIDTH?WIN_HEIGHT:WIN_WIDTH,horizontal:false});
         }
     };
 
