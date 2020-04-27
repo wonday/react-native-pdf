@@ -139,12 +139,17 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.1.2
+1. Fixed wrong scale returned from onScaleChanged()
+2. Fixed iOS Double Tap zoom
+3. Fixed Some critical typo fixes
+
 v6.1.1
-1. fix undefined is not an object, crashing on ios
+1. Fixed undefined is not an object, crashing on ios
 
 v6.1.0
-1. fix react-native warning on `componentWill*`
-2. fix onPageSingleTap
+1. Fixed react-native warning on `componentWill*`
+2. Fixed onPageSingleTap
 3. Set the PDF View background color to be transparent On iOS
 
 v6.0.1
@@ -156,23 +161,23 @@ v6.0.0
 2. Fix calling setState while unmounted
 
 v5.1.7
-1. Downgrade to AndroidPdfViewer 3.1.0-beta.1
+1. Downgraded to AndroidPdfViewer 3.1.0-beta.1
 
 v5.1.6
-1. Fix componentWillReceiveProps and componentWillMount warnings
+1. Fixed componentWillReceiveProps and componentWillMount warnings
 
 v5.1.5
-1. Add setPage() method
-2. Upgrade to AndroidPdfViewer to 3.2.0-beta.1
-3. Fix some codes ,readme and sample
+1. Added setPage() method
+2. Upgraded to AndroidPdfViewer to 3.2.0-beta.1
+3. Fixed some codes ,readme and sample
 
 v5.1.4
-1. Update example project to RN 0.60.4
-2. Fix blank view after native module got recycled in onDetachedFromWindow event
+1. Updated example project to RN 0.60.4
+2. Fixed blank view after native module got recycled in onDetachedFromWindow event
 3. Restore singleTap, only callback, do not change scale
 
 v5.1.3
-1. Remove singleTap action from iOS, make the same with Android.
+1. Removed singleTap action from iOS, make the same with Android.
 
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
