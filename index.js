@@ -296,16 +296,16 @@ export default class Pdf extends Component {
                         const fileStats = await RNFetchBlob.fs.stat(res.path());
 
                         if (!fileStats || !fileStats.size) {
-                            throw new Error("FileNotFound:" + url);
+                            throw new Error("FileNotFound:" + source.uri);
                         }
 
                         actualContentLength = fileStats.size;
                     } catch (error) {
-                        throw new Error("DownloadFailed:" + url);
+                        throw new Error("DownloadFailed:" + source.uri);
                     }
 
                     if (expectedContentLength != actualContentLength) {
-                        throw new Error("DownloadFailed:" + url);
+                        throw new Error("DownloadFailed:" + source.uri);
                     }
                 }
 
