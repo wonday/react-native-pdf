@@ -18,8 +18,8 @@ import {
     Image
 } from 'react-native';
 
-import { ProgressBarAndroid } from '@react-native-community/progress-bar-android'
-import { ProgressViewIOS } from '@react-native-community/progress-view'
+import { ProgressBar } from '@react-native-community/progress-bar-android'
+import { ProgressView } from '@react-native-community/progress-view'
 
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -400,14 +400,14 @@ export default class Pdf extends Component {
                                 {this.props.activityIndicator
                                     ? this.props.activityIndicator
                                     : Platform.OS === 'android'
-                                        ? <ProgressBarAndroid
+                                        ? <ProgressBar
                                             progress={this.state.progress}
                                             indeterminate={false}
                                             styleAttr="Horizontal"
                                             style={styles.progressBar}
                                             {...this.props.activityIndicatorProps}
                                         />
-                                        : <ProgressViewIOS
+                                        : <ProgressView
                                             progress={this.state.progress}
                                             style={styles.progressBar}
                                             {...this.props.activityIndicatorProps}
