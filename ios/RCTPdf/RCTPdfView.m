@@ -62,6 +62,7 @@ const float MIN_SCALE = 1.0f;
         _enableAnnotationRendering = YES;
         _fitPolicy = 2;
         _spacing = 10;
+        _singlePage = NO;
         
         // init and config PDFView
         _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
@@ -243,6 +244,16 @@ const float MIN_SCALE = 1.0f;
                 [_pdfView usePageViewController:YES withViewOptions:@{UIPageViewControllerOptionSpineLocationKey:@(UIPageViewControllerSpineLocationMin),UIPageViewControllerOptionInterPageSpacingKey:@(_spacing)}];
             } else {
                 [_pdfView usePageViewController:NO withViewOptions:Nil];
+            }
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"singlePage"])) {
+            if (_singlePage) {
+                _pdfView.displayMode = kPDFDisplaySinglePage;
+                _pdfView.userInteractionEnabled = NO;
+            } else {
+                _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
+                _pdfView.userInteractionEnabled = YES;
             }
         }
         
@@ -470,7 +481,6 @@ const float MIN_SCALE = 1.0f;
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)sender
 {
-	
     //_pdfView.scaleFactor = _pdfView.minScaleFactor;
     
     CGPoint point = [sender locationInView:self];
@@ -550,12 +560,12 @@ const float MIN_SCALE = 1.0f;
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 
 {
-    return YES;
+    return !_singlePage;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    return YES;
+    return !_singlePage;
 }
 
 

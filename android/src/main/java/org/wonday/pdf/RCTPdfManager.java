@@ -120,6 +120,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setFitPolicy(fitPolicy);
     }
 
+    @ReactProp(name = "singlePage")
+    public void setSinglePage(PdfView pdfView, boolean singlePage) {
+        pdfView.setSinglePage(singlePage);
+    }
+
     @Override
     public void onAfterUpdateTransaction(PdfView pdfView) {
         super.onAfterUpdateTransaction(pdfView);

@@ -27,6 +27,7 @@ interface Props {
     enableAnnotationRendering?: boolean,
     fitPolicy?: number,
     trustAllCerts?: boolean,
+    singlePage?: boolean,
     onLoadProgress?: (percent: number,) => void,
     onLoadComplete?: (numberOfPages: number, path: string) => void,
     onPageChanged?: (page: number, numberOfPages: number) => void,

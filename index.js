@@ -54,6 +54,7 @@ export default class Pdf extends Component {
         enableRTL: PropTypes.bool,
         fitPolicy: PropTypes.number,
         trustAllCerts: PropTypes.bool,
+        singlePage: PropTypes.bool,
         onLoadComplete: PropTypes.func,
         onPageChanged: PropTypes.func,
         onError: PropTypes.func,
@@ -87,6 +88,7 @@ export default class Pdf extends Component {
         activityIndicatorProps: {color: '#009900', progressTintColor: '#009900'},
         trustAllCerts: true,
         usePDFKit: true,
+        singlePage: false,
         onLoadProgress: (percent) => {
         },
         onLoadComplete: (numberOfPages, path) => {
