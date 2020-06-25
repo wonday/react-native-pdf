@@ -18,10 +18,10 @@ So you should install react-native-pdf and rn-fetch-blob
 
 > The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
 
-| React Native              | 0.4x - 0.56     | 0.57    | 0.60+    |
-| ------------------------- | --------------- | ------- | -------- |
-| react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   |
-| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  |
+| React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    |
+| ------------------------- | --------------- | ------- | -------- | -------- |
+| react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
+| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
 
 ### Installation
 
@@ -138,6 +138,10 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
+
+v6.2.0
+1. Fixed ReferenceError, url should be source.uri
+2. Dependency bump to support React-Native >= 0.62
 
 v6.1.2
 1. Fixed wrong scale returned from onScaleChanged()
