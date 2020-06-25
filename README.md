@@ -27,10 +27,10 @@ So you should install react-native-pdf and rn-fetch-blob
 
 ```bash
 # Using npm
-npm install react-native-pdf rn-fetch-blob --save
+npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view --save
 
 # or using yarn:
-yarn add react-native-pdf rn-fetch-blob
+yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
@@ -47,6 +47,8 @@ Run `pod install` in the `ios` directory. Linking is not required in React Nativ
 
 ```bash
 react-native link rn-fetch-blob
+react-native link @react-native-community/progress-bar-android
+react-native link @react-native-community/progress-view
 react-native link react-native-pdf
 ```
 </details>
@@ -74,6 +76,8 @@ android {
 **React Native 0.59.0 and below**
 ```bash
 react-native link rn-fetch-blob
+react-native link @react-native-community/progress-bar-android
+react-native link @react-native-community/progress-view
 react-native link react-native-pdf
 ```
 
