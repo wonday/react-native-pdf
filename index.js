@@ -13,7 +13,6 @@ import {
     requireNativeComponent,
     View,
     Platform,
-    ProgressBarAndroid,
     ProgressViewIOS,
     ViewPropTypes,
     StyleSheet,
@@ -399,13 +398,7 @@ export default class Pdf extends Component {
                                 {this.props.activityIndicator
                                     ? this.props.activityIndicator
                                     : Platform.OS === 'android'
-                                        ? <ProgressBarAndroid
-                                            progress={this.state.progress}
-                                            indeterminate={false}
-                                            styleAttr="Horizontal"
-                                            style={styles.progressBar}
-                                            {...this.props.activityIndicatorProps}
-                                        />
+                                        ? null
                                         : <ProgressViewIOS
                                             progress={this.state.progress}
                                             style={styles.progressBar}
