@@ -139,6 +139,9 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.1.3
+1. Remove ProgressBarAndroid because it causes issue on RN 0.60.5
+
 v6.1.2
 1. Fixed wrong scale returned from onScaleChanged()
 2. Fixed iOS Double Tap zoom
