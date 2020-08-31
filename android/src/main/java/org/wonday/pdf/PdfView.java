@@ -54,6 +54,7 @@ import java.lang.ClassCastException;
 import com.shockwave.pdfium.PdfDocument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.shockwave.pdfium.util.SizeF;
 
 public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler {
     private ThemedReactContext context;
@@ -106,14 +107,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     @Override
     public void loadComplete(int numberOfPages) {
-
-        float width = this.getWidth();
-        float height = this.getHeight();
+        SizeF pageSize = getPageSize(0);
+        float width = pageSize.getWidth();
+        float height = pageSize.getHeight();
 
         this.zoomTo(this.scale);
         WritableMap event = Arguments.createMap();
 
-        //create a new jason Object for the TableofContents
+        //create a new json Object for the TableOfContents
         Gson gson = new Gson();
         event.putString("message", "loadComplete|"+numberOfPages+"|"+width+"|"+height+"|"+gson.toJson(this.getTableOfContents()));
         ReactContext reactContext = (ReactContext)this.getContext();
