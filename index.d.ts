@@ -9,6 +9,13 @@
 import * as React from 'react';
 import * as ReactNative from 'react-native';
 
+export type TableContent = {
+    children: TableContent[],
+    mNativePtr: number,
+    pageIdx: number,
+    title: string,
+};
+
 interface Props {
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>,
     source: object,
@@ -28,7 +35,7 @@ interface Props {
     fitPolicy?: number,
     trustAllCerts?: boolean,
     onLoadProgress?: (percent: number,) => void,
-    onLoadComplete?: (numberOfPages: number, path: string) => void,
+    onLoadComplete?: (numberOfPages: number, path: string, size: {height: number, width: number}, tableContents?: TableContent[]) => void,
     onPageChanged?: (page: number, numberOfPages: number) => void,
     onError?: (error: object) => void,
     onPageSingleTap?: (page: number, x: number, y: number) => void,
