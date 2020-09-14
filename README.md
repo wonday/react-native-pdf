@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
 | enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | 5.0.3 |
 | trustAllCerts  | bool            | true        | Allow connections to servers with self-signed certification  | ✔ | ✔ | 6.0.? |
+| singlePage  | bool  | false | Only show first page, useful for thumbnail views | ✔ | ✔ | 6.1.2 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
 | onLoadComplete      | function(numberOfPages, path, {width, height}, tableContents) | null        | callback when pdf load completed, return total page count, pdf local/cache path, {width,height} and table of contents | ✔   | ✔ | <3.0 |
 | onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
