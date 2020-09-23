@@ -58,4 +58,6 @@ export type Props = {
   testID?: string
 };
 
-declare export default class Pdf extends Component<Props> {}
+declare export default class Pdf extends Component<Props> {
+  setPage: (pageNumber: number) => void;
+}
