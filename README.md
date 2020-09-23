@@ -145,6 +145,11 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.2.1
+1. Fix typescript `onLoadComplete()` definition
+2. Switched the AndroidPdfViewer dependency from Barteksc repo to TalbotGooday
+3. Add singlePage property
+
 v6.2.0
 1. Fixed ReferenceError, url should be source.uri
 2. Dependency bump to support React-Native >= 0.62
