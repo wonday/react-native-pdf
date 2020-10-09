@@ -145,8 +145,13 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.2.2
+1. Fixed incorrect type of onPageSingleTap and onScaleChanged argument
+2. Fixed included missing setPage method in TypeScript and Flow types
+3. fixed Xcode 12 compatibility
+
 v6.2.1
-1. Fix typescript `onLoadComplete()` definition
+1. Fixed typescript `onLoadComplete()` definition
 2. Switched the AndroidPdfViewer dependency from Barteksc repo to TalbotGooday
 3. Add singlePage property
 

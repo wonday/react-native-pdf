@@ -48,3 +48,4 @@ yarn-error.log
 .gitignore
 .git
 .watchmanconfig
+.history
