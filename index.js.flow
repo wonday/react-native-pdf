@@ -41,7 +41,7 @@ export type Props = {
   horizontal?: boolean,
   maxScale?: number,
   minScale?: number,
-  singlePage: boolean,
+  singlePage?: boolean,
   onError?: (error: Error) => void,
   onLoadComplete?: (numberOfPages: number, path: string, size: { height: number, width: number }, tableContents: ?TableContent[]) => void,
   onLoadProgress?: (percent: number) => void,
