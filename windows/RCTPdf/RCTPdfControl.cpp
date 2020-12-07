@@ -173,7 +173,7 @@ namespace winrt::RCTPdf::implementation
       else if (propertyName == "singlePage" && propertyValue != nullptr) {
         singlePage = propertyValue.AsBoolean();
       }
-      else if (propertyName == "background" && propertyValue != nullptr) {
+      else if (propertyName == "backgroundColor" && propertyValue != nullptr) {
         auto color = propertyValue.AsInt32();
         winrt::Windows::UI::Color brushColor;
         brushColor.A = (color >> 24) & 0xff;

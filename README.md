@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
 | fitPolicy     | number        | 2                | 0:fit width, 1:fit height, 2:fit both(default)| ✔   | ✔ | ✔ | 3.0 |
 | spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | ✔ | <3.0 |
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | ✔ | <3.0 |
-| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | ✖ | <3.0 |
+| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | ✔ | <3.0 |
 | activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | ✖ | <3.0 |
 | activityIndicatorProps  | object      | {color:'#009900', progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | ✖ | 3.1 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | ✖ | <3.0 |
