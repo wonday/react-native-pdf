@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
 | `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ | ✖ |
 | `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ | ✖ |
 | `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ | ✖ |
-| `{uri: 'ms-appx:///xxx.pdf'}} | load pdf bundled with UWP app |  ✖ | ✖ | ✔ |
+| `{uri:"ms-appx:///xxx.pdf"}}` | load pdf bundled with UWP app |  ✖ | ✖ | ✔ |
 
 
 ### Methods
