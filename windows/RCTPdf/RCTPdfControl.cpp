@@ -428,10 +428,18 @@ namespace winrt::RCTPdf::implementation
 
   winrt::fire_and_forget RCTPdfControl::LoadPDF(std::unique_lock<std::shared_mutex> lock, int fitPolicy, bool singlePage) {
     auto lifetime = get_strong();
-    auto uri = Uri(winrt::to_hstring(m_pdfURI));
+    auto pdfURI = m_pdfURI;
+    auto uri = Uri(winrt::to_hstring(pdfURI));
+    auto scheme = uri.SchemeName();
+    if (scheme == L"file") {
+      // backslashes only on Windows
+      std::replace(begin(pdfURI), end(pdfURI), '/', '\\');
+    }
     PdfDocument document = nullptr;
     try {
-      auto file = co_await StorageFile::GetFileFromApplicationUriAsync(uri);
+      auto file = scheme == L"file"
+                  ? co_await StorageFile::GetFileFromPathAsync(winrt::to_hstring(pdfURI))
+                  : co_await StorageFile::GetFileFromApplicationUriAsync(uri);
       document = co_await PdfDocument::LoadFromFileAsync(file, winrt::to_hstring(m_pdfPassword));
     }
     catch (winrt::hresult_error const& ex) {
@@ -446,6 +454,10 @@ namespace winrt::RCTPdf::implementation
         SignalError(winrt::to_string(ex.message()));
         co_return;
       }
+    }
+    if (!document) {
+      SignalError("Could not load PDF.");
+      co_return;
     }
     auto items = Pages().Items();
     items.Clear();
