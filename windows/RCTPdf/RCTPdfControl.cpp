@@ -346,14 +346,18 @@ namespace winrt::RCTPdf::implementation
       page = m_currentPage;
     }
     SignalPageTapped(page, (int)position.X, (int)position.Y);
+    PagesContainer().Focus(FocusState::Pointer);
+    args.Handled(true);
   }
 
 
-  void RCTPdfControl::PagesContainer_DoubleTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs const&)
+  void RCTPdfControl::PagesContainer_DoubleTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& args)
   {
     std::shared_lock lock(m_rwlock);
     double newScale = (std::min)(m_scale * m_zoomMultiplier, m_maxScale);
     Rescale(newScale, m_margins, true);
+    PagesContainer().Focus(FocusState::Pointer);
+    args.Handled(true);
   }
 
   void RCTPdfControl::ChangeScroll(double targetHorizontalOffset, double targetVerticalOffset) {
@@ -415,8 +419,6 @@ namespace winrt::RCTPdf::implementation
         co_await m_pages[page].render();
       }(page);
       Pages().Items().ReplaceAll({ &m_pages[page].image, &m_pages[page].image + 1 });
-      //Pages().Items().Clear();
-      //Pages().Items().Append(m_pages[page].image);
     } else {
       auto neededOffset = m_horizontal ? m_pages[page].scaledLeftOffset : m_pages[page].scaledTopOffset;
       double horizontalOffset = m_horizontal ? neededOffset : PagesContainer().HorizontalOffset();
@@ -493,6 +495,7 @@ namespace winrt::RCTPdf::implementation
       auto dims = page.Size();
       Image pageImage;
       pageImage.HorizontalAlignment(HorizontalAlignment::Center);
+      pageImage.AllowFocusOnInteraction(false);
       m_pages.emplace_back(pageImage, page, m_scale, 0);
     }
     if (m_enablePaging) {

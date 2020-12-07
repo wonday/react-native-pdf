@@ -22,7 +22,8 @@
     ViewChanged="PagesContainer_ViewChanged"
     >
     <ItemsControl x:Name="Pages" HorizontalAlignment="Center"
-                  SizeChanged="Pages_SizeChanged">
+                  SizeChanged="Pages_SizeChanged"
+                  AllowFocusOnInteraction="False">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <StackPanel x:Name="OrientationSelector" Orientation="Vertical"/>
