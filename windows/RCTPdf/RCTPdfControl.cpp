@@ -333,12 +333,12 @@ namespace winrt::RCTPdf::implementation
     int yPosition = (int)(position.Y + PagesContainer().VerticalOffset());
     for (; page < (int)m_pages.size(); ++page) {
       if (m_horizontal) {
-        if (xPosition >= m_pages[page].scaledLeftOffset &&
-            xPosition <= m_pages[page].scaledLeftOffset + m_pages[page].scaledWidth + scaledDoubleMargin)
+        if (xPosition >= (int)m_pages[page].scaledLeftOffset &&
+            xPosition <= (int)(m_pages[page].scaledLeftOffset + m_pages[page].scaledWidth + scaledDoubleMargin))
           break;   
       } else {
-        if (yPosition >= m_pages[page].scaledTopOffset &&
-            yPosition <= m_pages[page].scaledTopOffset + m_pages[page].scaledHeight + scaledDoubleMargin)
+        if (yPosition >= (int)m_pages[page].scaledTopOffset &&
+            yPosition <= (int)(m_pages[page].scaledTopOffset + m_pages[page].scaledHeight + scaledDoubleMargin))
           break;
       }
     }
