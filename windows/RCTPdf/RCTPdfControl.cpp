@@ -324,6 +324,31 @@ namespace winrt::RCTPdf::implementation
     }
   }
 
+  void RCTPdfControl::PagesContainer_Tapped(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::Input::TappedRoutedEventArgs const& args) {
+    auto position = args.GetPosition(*this);
+    std::shared_lock lock(m_rwlock);
+    int scaledDoubleMargin = (int)(m_scale * m_margins * 2);
+    int page = 0;
+    int xPosition = (int)(position.X + PagesContainer().HorizontalOffset());
+    int yPosition = (int)(position.Y + PagesContainer().VerticalOffset());
+    for (; page < (int)m_pages.size(); ++page) {
+      if (m_horizontal) {
+        if (xPosition >= m_pages[page].scaledLeftOffset &&
+            xPosition <= m_pages[page].scaledLeftOffset + m_pages[page].scaledWidth + scaledDoubleMargin)
+          break;   
+      } else {
+        if (yPosition >= m_pages[page].scaledTopOffset &&
+            yPosition <= m_pages[page].scaledTopOffset + m_pages[page].scaledHeight + scaledDoubleMargin)
+          break;
+      }
+    }
+    if (page == (int)m_pages.size()) {
+      page = m_currentPage;
+    }
+    SignalPageTapped(page, (int)position.X, (int)position.Y);
+  }
+
+
   void RCTPdfControl::PagesContainer_DoubleTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs const&)
   {
     std::shared_lock lock(m_rwlock);
@@ -599,6 +624,22 @@ namespace winrt::RCTPdf::implementation
         eventDataWriter.WriteObjectBegin();
         {
           WriteProperty(eventDataWriter, L"message", winrt::to_hstring("scale|" + std::to_string(scale)));
+        }
+        eventDataWriter.WriteObjectEnd();
+      });
+  }
+  void RCTPdfControl::SignalPageTapped(int page, int x, int y) {
+    const std::string message = "pageSingleTap|" +
+                                std::to_string(page + 1) + "|" +
+                                std::to_string(x) + "|" +
+                                std::to_string(y);
+    m_reactContext.DispatchEvent(
+      *this,
+      L"topChange",
+      [&](winrt::Microsoft::ReactNative::IJSValueWriter const& eventDataWriter) noexcept {
+        eventDataWriter.WriteObjectBegin();
+        {
+          WriteProperty(eventDataWriter, L"message", winrt::to_hstring(message));
         }
         eventDataWriter.WriteObjectEnd();
       });
