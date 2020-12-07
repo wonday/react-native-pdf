@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
 | activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | ✖ | <3.0 |
 | activityIndicatorProps  | object      | {color:'#009900', progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | ✖ | 3.1 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | ✖ | <3.0 |
-| enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | ✖ | 5.0.1 |
+| enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | ✔ | 5.0.1 |
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | ✔ | 5.0.1 |
 | enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | ✖ | 5.0.3 |
 | trustAllCerts  | bool            | true        | Allow connections to servers with self-signed certification  | ✔ | ✔ | ✖ | 6.0.? |

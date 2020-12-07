@@ -74,6 +74,8 @@ namespace winrt::RCTPdf::implementation
         bool m_horizontal = false;
         // Render the pages in reverse order
         bool m_reverse = false;
+        // Is in "enablePaging" mode
+        bool m_enablePaging = false;
 
         // When we rescale or change the margins, we can jump to the new position in the view
         // only after the ScrollViewer has updated. We store the target offsets here, and go

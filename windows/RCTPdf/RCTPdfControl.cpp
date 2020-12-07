@@ -111,7 +111,7 @@ namespace winrt::RCTPdf::implementation
     nativeProps.Insert(L"spacing", ViewManagerPropertyType::Number);
     nativeProps.Insert(L"password", ViewManagerPropertyType::String);
     nativeProps.Insert(L"background", ViewManagerPropertyType::Color);
-    // TODO: nativeProps.Insert(L"enablePaging", ViewManagerPropertyType::Boolean);
+    nativeProps.Insert(L"enablePaging", ViewManagerPropertyType::Boolean);
     nativeProps.Insert(L"enableRTL", ViewManagerPropertyType::Boolean);
     nativeProps.Insert(L"singlePage", ViewManagerPropertyType::Boolean);
 
@@ -130,6 +130,7 @@ namespace winrt::RCTPdf::implementation
     std::optional<int> spacing;
     std::optional<bool> reverse;
     std::optional<bool> singlePage;
+    std::optional<bool> enablePaging;
     for (auto const& pair : propertyMap) {
       auto const& propertyName = pair.first;
       auto const& propertyValue = pair.second;
@@ -153,6 +154,9 @@ namespace winrt::RCTPdf::implementation
       }
       else if (propertyName == "horizontal" && propertyValue != nullptr) {
         horizontal = propertyValue.AsBoolean();
+      }
+      else if (propertyName == "enablePaging" && propertyValue != nullptr) {
+        enablePaging = propertyValue.AsBoolean();
       }
       else if (propertyName == "fitWidth" && propertyValue != nullptr) {
         fitWidth = propertyValue.AsBoolean();
@@ -184,6 +188,7 @@ namespace winrt::RCTPdf::implementation
     if (pdfURI && *pdfURI != m_pdfURI ||
         pdfPassword && *pdfPassword != m_pdfPassword ||
         (reverse && *reverse != m_reverse) ||
+        (enablePaging && *enablePaging != m_enablePaging) ||
         (singlePage && (m_pages.empty() || *singlePage && m_pages.size() != 1 || !*singlePage && m_pages.size() == 1)) ) {
       lock.unlock();
       std::unique_lock write_lock(m_rwlock);
@@ -194,6 +199,7 @@ namespace winrt::RCTPdf::implementation
       m_minScale = minScale.value_or(m_defaultMinZoom);
       m_maxScale = maxScale.value_or(m_defaultMaxZoom);
       m_horizontal = horizontal.value_or(false);
+      m_enablePaging = enablePaging.value_or(false);
       int useFitPolicy = 2;
       if (fitWidth)
         useFitPolicy = 0;
@@ -378,10 +384,20 @@ namespace winrt::RCTPdf::implementation
     if (page < 0 || page >= (int)m_pages.size()) {
       return;
     }
-    auto neededOffset = m_horizontal ? m_pages[page].scaledLeftOffset : m_pages[page].scaledTopOffset;
-    double horizontalOffset = m_horizontal ? neededOffset : PagesContainer().HorizontalOffset();
-    double verticalOffset = m_horizontal ? PagesContainer().VerticalOffset() : neededOffset;
-    ChangeScroll(horizontalOffset, verticalOffset);
+    if (m_enablePaging) {
+      [&](int page) -> winrt::fire_and_forget {
+        auto lifetime = get_strong();
+        co_await m_pages[page].render();
+      }(page);
+      Pages().Items().ReplaceAll({ &m_pages[page].image, &m_pages[page].image + 1 });
+      //Pages().Items().Clear();
+      //Pages().Items().Append(m_pages[page].image);
+    } else {
+      auto neededOffset = m_horizontal ? m_pages[page].scaledLeftOffset : m_pages[page].scaledTopOffset;
+      double horizontalOffset = m_horizontal ? neededOffset : PagesContainer().HorizontalOffset();
+      double verticalOffset = m_horizontal ? PagesContainer().VerticalOffset() : neededOffset;
+      ChangeScroll(horizontalOffset, verticalOffset);
+    }
     SignalPageChange(page + 1, m_pages.size());
   }
 
@@ -442,13 +458,17 @@ namespace winrt::RCTPdf::implementation
       pageImage.HorizontalAlignment(HorizontalAlignment::Center);
       m_pages.emplace_back(pageImage, page, m_scale, 0);
     }
-    if (m_reverse) {
-      for (int page = m_pages.size() - 1; page >= 0; --page)
-        items.Append(m_pages[page].image);
-    }
-    else {
-      for (int page = 0; page < (int)m_pages.size(); ++page)
-        items.Append(m_pages[page].image);
+    if (m_enablePaging) {
+      items.Append(m_pages[m_currentPage].image);
+    } else {
+      if (m_reverse) {
+        for (int page = m_pages.size() - 1; page >= 0; --page)
+          items.Append(m_pages[page].image);
+      }
+      else {
+        for (int page = 0; page < (int)m_pages.size(); ++page)
+          items.Append(m_pages[page].image);
+      }
     }
     UpdatePagesInfoMarginOrScale();
     lock.unlock();
