@@ -1,0 +1,10 @@
+namespace RCTPdf
+{
+    [default_interface]
+    runtimeclass RCTPdfControl : Windows.UI.Xaml.Controls.UserControl
+    {
+        RCTPdfControl(Microsoft.ReactNative.IReactContext context);
+        void UpdateProperties(Microsoft.ReactNative.IJSValueReader reader);
+        void DispatchCommand(String commandId, Microsoft.ReactNative.IJSValueReader commandArgsReader);
+    }
+}
