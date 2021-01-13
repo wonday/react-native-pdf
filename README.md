@@ -99,8 +99,8 @@ react-native link react-native-pdf
 - Right-click main application project > Add > Reference...
   - Select `progress-view` and  in Solution Projects
   - If running 0.62, also select `RCTPdf`
-- In app `pch.h` add `#include "winrt/progress-view.h"` and `#include "winrt/RCTPdf.h"`
-- In `App.cpp` add `PackageProviders().Append(winrt::progress-view::ReactPackageProvider());` before `InitializeComponent();`
+- In app `pch.h` add `#include "winrt/progress_view.h"` and `#include "winrt/RCTPdf.h"`
+- In `App.cpp` add `PackageProviders().Append(winrt::progress_view::ReactPackageProvider());` before `InitializeComponent();`
 - If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());`
 
 #### Bundling PDFs with the app
