@@ -29,7 +29,7 @@ let RNFetchBlob = {
     }
 };
 if (Platform.OS !== 'windows') {
-    RNFetchBlob = require('rn-fetch-blob');
+    RNFetchBlob = require('rn-fetch-blob').default;
 }
 
 const SHA1 = require('crypto-js/sha1');
