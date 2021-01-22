@@ -496,6 +496,7 @@ namespace winrt::RCTPdf::implementation
       Image pageImage;
       pageImage.HorizontalAlignment(HorizontalAlignment::Center);
       pageImage.AllowFocusOnInteraction(false);
+      Automation::AutomationProperties::SetName(pageImage, winrt::to_hstring("PDF Page " + std::to_string(pageIdx + 1)));
       m_pages.emplace_back(pageImage, page, m_scale, 0);
     }
     if (m_enablePaging) {
