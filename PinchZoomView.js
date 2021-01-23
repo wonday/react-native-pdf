@@ -108,7 +108,7 @@ export default class PinchZoomView extends Component {
         return (
             <View
                 {...this.props}
-                {...this.gestureHandlers.panHandlers}
+                {...this.gestureHandlers?.panHandlers}
                 style={[styles.container, this.props.style]}>
                 {this.props.children}
             </View>
