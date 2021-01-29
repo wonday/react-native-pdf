@@ -558,7 +558,11 @@ namespace winrt::RCTPdf::implementation
 
   void RCTPdfControl::SetOrientation(bool horizontal) {
     m_horizontal = horizontal;
-    FindName(winrt::to_hstring("OrientationSelector")).try_as<StackPanel>().Orientation(m_horizontal ? Orientation::Horizontal : Orientation::Vertical);
+    StackPanel orientationSelector;
+    if (FindName(winrt::to_hstring("OrientationSelector")).try_as<StackPanel>(orientationSelector))
+    {
+      orientationSelector.Orientation(m_horizontal ? Orientation::Horizontal : Orientation::Vertical);
+    }
   }
 
   winrt::IAsyncAction RCTPdfControl::RenderVisiblePages(int page) {
