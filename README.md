@@ -25,7 +25,10 @@ So you should install react-native-pdf and rn-fetch-blob
 | progress-bar-android      |                 |         |          | 1.0.3+   |
 | progress-view             |                 |         |          | 1.0.3+   |
 
-Currently, Windows support is partial. The rn-fetch-blob module is not yet available on Windows, only loading bundled PDFs is supported.
+Currently, Windows support is partial. For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
+```
+yarn add github:joltup/rn-fetch-blob#pull/701/head
+```
 
 ### Installation
 
@@ -35,6 +38,11 @@ npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-
 
 # or using yarn:
 yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
+```
+
+For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
+```
+yarn add github:joltup/rn-fetch-blob#pull/701/head
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
@@ -96,12 +104,14 @@ react-native link react-native-pdf
 - Right-click Solution icon in Solution Explorer > Add > Existing Project...
 - Add `node_modules\@react-native-community\progress-view\windows\progress-view\progress-view.vcxproj`
 - If running RNW 0.62: add `node_modules\react-native-pdf\windows\RCTPdf\RCTPdf.vcxproj`
+- If running RNW 0.62: add `node_modules\rn-fetch-blob\windows\RNFetchBlob\RNFetchBlob.vcxproj`
 - Right-click main application project > Add > Reference...
   - Select `progress-view` and  in Solution Projects
-  - If running 0.62, also select `RCTPdf`
+  - If running 0.62, also select `RCTPdf` and `RNFetchBlob`
 - In app `pch.h` add `#include "winrt/progress_view.h"` and `#include "winrt/RCTPdf.h"`
+  - If running 0.62, also select `#include "winrt/RNFetchBlob.h"`
 - In `App.cpp` add `PackageProviders().Append(winrt::progress_view::ReactPackageProvider());` before `InitializeComponent();`
-- If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());`
+- If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::RNFetchBlob::ReactPackageProvider());`
 
 #### Bundling PDFs with the app
 To add a `test.pdf` like in the example add:
@@ -299,7 +309,7 @@ const styles = StyleSheet.create({
 
 | Property      | Type          | Default          | Description         | iOS   | Android | Windows | FirstRelease |
 | ------------- |:-------------:|:----------------:| ------------------- | ------| ------- | ------- | ------------ |
-| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | partial | <3.0 |
+| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | ✔ | <3.0 |
 | page          | number        | 1                | initial page index          | ✔   | ✔ | ✔ | <3.0 |
 | scale         | number        | 1.0              | should minScale<=scale<=maxScale| ✔   | ✔ | ✔ | <3.0 |
 | minScale         | number        | 1.0              | min scale| ✔   | ✔ | ✔ | 5.0.5 |
@@ -340,11 +350,11 @@ const styles = StyleSheet.create({
 
 | Usage        | Description | iOS | Android | Windows |
 | ------------ | ----------- | --- | ------- | ------- |
-| `{uri:"http://xxx/xxx.pdf"}` | load pdf from a url | ✔   | ✔ | ✖ |
+| `{uri:"http://xxx/xxx.pdf"}` | load pdf from a url | ✔   | ✔ | ✔ |
 | `{require("./test.pdf")}` | load pdf relate to js file (do not need add by xcode) | ✔ | ✖ | ✖ |
 | `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ | ✖ |
 | `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ | ✖ |
-| `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ | ✖ |
+| `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ | ✔ |
 | `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔  | ✔ | ✔  |
 | `{uri:"ms-appx:///xxx.pdf"}}` | load pdf bundled with UWP app |  ✖ | ✖ | ✔ |
 
