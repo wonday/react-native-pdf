@@ -161,7 +161,7 @@ namespace winrt::RCTPdf::implementation
       else if (propertyName == "fitWidth" && propertyValue != nullptr) {
         fitWidth = propertyValue.AsBoolean();
       }
-      else if (propertyName == "fitPolic" && propertyValue != nullptr) {
+      else if (propertyName == "fitPolicy" && propertyValue != nullptr) {
         fitPolicy = propertyValue.AsInt32();
       }
       else if (propertyName == "spacing" && propertyValue != nullptr) {
