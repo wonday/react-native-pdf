@@ -18,8 +18,8 @@ namespace winrt::RCTPdf::implementation
       unsigned pageVisiblePixels(bool horizontal, double viewportStart, double viewportEnd) const;
       unsigned pageSize(bool horizontal) const;
       bool needsRender() const;
-      winrt::IAsyncAction render();
-      winrt::IAsyncAction render(double useScale);
+      winrt::Windows::Foundation::IAsyncAction render();
+      winrt::Windows::Foundation::IAsyncAction render(double useScale);
       unsigned height, width;
       unsigned scaledHeight, scaledWidth;
       unsigned scaledTopOffset, scaledLeftOffset;
@@ -96,7 +96,7 @@ namespace winrt::RCTPdf::implementation
         void GoToPage(int page);
         void Rescale(double newScale, double newMargin, bool goToNewPosition);
         void SetOrientation(bool horizontal);
-        winrt::IAsyncAction RenderVisiblePages(int page);
+        winrt::Windows::Foundation::IAsyncAction RenderVisiblePages(int page);
         void SignalError(const std::string& error);
         void SignalLoadComplete(int totalPages, int width, int height);
         void SignalPageChange(int page, int totalPages);

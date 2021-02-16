@@ -68,10 +68,10 @@ namespace winrt::RCTPdf::implementation
     double currentRenderScale = renderScale;
     return currentRenderScale < imageScale || currentRenderScale > imageScale * m_downscaleTreshold;
   }
-  winrt::IAsyncAction PDFPageInfo::render() {
+  winrt::Windows::Foundation::IAsyncAction PDFPageInfo::render() {
     return render(imageScale);
   }
-  winrt::IAsyncAction PDFPageInfo::render(double useScale) {
+  winrt::Windows::Foundation::IAsyncAction PDFPageInfo::render(double useScale) {
     double currentRenderScale;
     while (true) {
       currentRenderScale = renderScale;
@@ -558,10 +558,14 @@ namespace winrt::RCTPdf::implementation
 
   void RCTPdfControl::SetOrientation(bool horizontal) {
     m_horizontal = horizontal;
-    FindName(winrt::to_hstring("OrientationSelector")).try_as<StackPanel>().Orientation(m_horizontal ? Orientation::Horizontal : Orientation::Vertical);
+    StackPanel orientationSelector;
+    if (FindName(winrt::to_hstring("OrientationSelector")).try_as<StackPanel>(orientationSelector))
+    {
+      orientationSelector.Orientation(m_horizontal ? Orientation::Horizontal : Orientation::Vertical);
+    }
   }
 
-  winrt::IAsyncAction RCTPdfControl::RenderVisiblePages(int page) {
+  winrt::Windows::Foundation::IAsyncAction RCTPdfControl::RenderVisiblePages(int page) {
     auto lifetime = get_strong();
     auto container = PagesContainer();
     auto currentHorizontalOffset = container.HorizontalOffset();

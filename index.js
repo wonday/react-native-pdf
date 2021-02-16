@@ -21,15 +21,18 @@ import {
 import { ProgressBar } from '@react-native-community/progress-bar-android'
 import { ProgressView } from '@react-native-community/progress-view'
 
-let RNFetchBlob = {
-    fs : {
-        dirs: {
-            CacheDir: ''
-        }
-    }
-};
-if (Platform.OS !== 'windows') {
+let RNFetchBlob;
+try {
     RNFetchBlob = require('rn-fetch-blob').default;
+} catch(e) {
+    // For Windows, when not using rn-fetch-blob with Windows support.
+    RNFetchBlob = {
+        fs : {
+            dirs: {
+                CacheDir: ''
+            }
+        }
+    };
 }
 
 const SHA1 = require('crypto-js/sha1');
