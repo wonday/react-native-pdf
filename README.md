@@ -145,6 +145,10 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.3.0
+1. Add windows support
+2. Fixed some bugs
+
 v6.2.2
 1. Fixed incorrect type of onPageSingleTap and onScaleChanged argument
 2. Fixed included missing setPage method in TypeScript and Flow types
