@@ -25,6 +25,11 @@ So you should install react-native-pdf and rn-fetch-blob
 | progress-bar-android      |                 |         |          | 1.0.3+   |
 | progress-view             |                 |         |          | 1.0.3+   |
 
+Currently, Windows support is partial. For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
+```
+yarn add github:joltup/rn-fetch-blob#pull/701/head
+```
+
 ### Installation
 
 ```bash
@@ -33,6 +38,11 @@ npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-
 
 # or using yarn:
 yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
+```
+
+For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
+```
+yarn add github:joltup/rn-fetch-blob#pull/701/head
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
@@ -84,6 +94,33 @@ react-native link react-native-pdf
 ```
 
 
+</details>
+
+### Windows installation
+<details>
+  <sumary>Windows details</summary>
+
+- Open your solution in Visual Studio 2019 (eg. `windows\yourapp.sln`)
+- Right-click Solution icon in Solution Explorer > Add > Existing Project...
+- Add `node_modules\@react-native-community\progress-view\windows\progress-view\progress-view.vcxproj`
+- If running RNW 0.62: add `node_modules\react-native-pdf\windows\RCTPdf\RCTPdf.vcxproj`
+- If running RNW 0.62: add `node_modules\rn-fetch-blob\windows\RNFetchBlob\RNFetchBlob.vcxproj`
+- Right-click main application project > Add > Reference...
+  - Select `progress-view` and  in Solution Projects
+  - If running 0.62, also select `RCTPdf` and `RNFetchBlob`
+- In app `pch.h` add `#include "winrt/progress_view.h"` and `#include "winrt/RCTPdf.h"`
+  - If running 0.62, also select `#include "winrt/RNFetchBlob.h"`
+- In `App.cpp` add `PackageProviders().Append(winrt::progress_view::ReactPackageProvider());` before `InitializeComponent();`
+- If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::RNFetchBlob::ReactPackageProvider());`
+
+#### Bundling PDFs with the app
+To add a `test.pdf` like in the example add:
+```
+<None Include="..\..\test.pdf">
+  <DeploymentContent>true</DeploymentContent>
+</None>
+```
+in the app `.vcxproj` file, before `<None Include="packages.config" />`.
 </details>
 
 ### FAQ
@@ -274,55 +311,56 @@ const styles = StyleSheet.create({
 
 ### Configuration
 
-| Property      | Type          | Default          | Description         | iOS   | Android | FirstRelease |
-| ------------- |:-------------:|:----------------:| ------------------- | ------| ------- | ------------ |
-| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | <3.0 |
-| page          | number        | 1                | initial page index          | ✔   | ✔ | <3.0 |
-| scale         | number        | 1.0              | should minScale<=scale<=maxScale| ✔   | ✔ | <3.0 |
-| minScale         | number        | 1.0              | min scale| ✔   | ✔ | 5.0.5 |
-| maxScale         | number        | 3.0              | max scale| ✔   | ✔ | 5.0.5 |
-| horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | <3.0 |
-| fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | <3.0, abandoned from 3.0 |
-| fitPolicy     | number        | 2                | 0:fit width, 1:fit height, 2:fit both(default)| ✔   | ✔ | 3.0 |
-| spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | <3.0 |
-| password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | <3.0 |
-| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | <3.0 |
-| activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | <3.0 |
-| activityIndicatorProps  | object      | {color:'#009900', progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | 3.1 |
-| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | <3.0 |
-| enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | 5.0.1 |
-| enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | 5.0.1 |
-| enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | 5.0.3 |
-| trustAllCerts  | bool            | true        | Allow connections to servers with self-signed certification  | ✔ | ✔ | 6.0.? |
-| singlePage  | bool  | false | Only show first page, useful for thumbnail views | ✔ | ✔ | 6.1.2 |
-| onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | <3.0 |
-| onLoadComplete      | function(numberOfPages, path, {width, height}, tableContents) | null        | callback when pdf load completed, return total page count, pdf local/cache path, {width,height} and table of contents | ✔   | ✔ | <3.0 |
-| onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | <3.0 |
-| onError       | function(error) | null        | callback when error happened | ✔   | ✔ | <3.0 |
-| onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | 3.0 |
-| onScaleChanged    | function(scale) | null        | callback when scale page | ✔ | ✔ | 3.0 |
-| onPressLink       | function(uri)   | null        | callback when link tapped | ✔ | ✔ | 6.0.0 |
+| Property      | Type          | Default          | Description         | iOS   | Android | Windows | FirstRelease |
+| ------------- |:-------------:|:----------------:| ------------------- | ------| ------- | ------- | ------------ |
+| source        | object        | not null         | PDF source like {uri:xxx, cache:false}. see the following for detail.| ✔ | ✔ | ✔ | <3.0 |
+| page          | number        | 1                | initial page index          | ✔   | ✔ | ✔ | <3.0 |
+| scale         | number        | 1.0              | should minScale<=scale<=maxScale| ✔   | ✔ | ✔ | <3.0 |
+| minScale         | number        | 1.0              | min scale| ✔   | ✔ | ✔ | 5.0.5 |
+| maxScale         | number        | 3.0              | max scale| ✔   | ✔ | ✔ | 5.0.5 |
+| horizontal    | bool          | false            | draw page direction, if you want to listen the orientation change, you can use  [[react-native-orientation-locker]](https://github.com/wonday/react-native-orientation-locker)| ✔   | ✔ | ✔ | <3.0 |
+| fitWidth      | bool          | false            | if true fit the width of view, can not use fitWidth=true together with scale| ✔   | ✔ | ✔ | <3.0, abandoned from 3.0 |
+| fitPolicy     | number        | 2                | 0:fit width, 1:fit height, 2:fit both(default)| ✔   | ✔ | ✔ | 3.0 |
+| spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | ✔ | <3.0 |
+| password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | ✔ | <3.0 |
+| style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | ✔ | <3.0 |
+| activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | ✖ | <3.0 |
+| activityIndicatorProps  | object      | {color:'#009900', progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | ✖ | 3.1 |
+| enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | ✖ | <3.0 |
+| enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | ✔ | 5.0.1 |
+| enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | ✔ | 5.0.1 |
+| enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | ✖ | 5.0.3 |
+| trustAllCerts  | bool            | true        | Allow connections to servers with self-signed certification  | ✔ | ✔ | ✖ | 6.0.? |
+| singlePage  | bool  | false | Only show first page, useful for thumbnail views | ✔ | ✔ | ✔ | 6.1.2 |
+| onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | ✖ | <3.0 |
+| onLoadComplete      | function(numberOfPages, path, {width, height}, tableContents) | null        | callback when pdf load completed, return total page count, pdf local/cache path, {width,height} and table of contents | ✔   | ✔ | ✔ but without tableContents | <3.0 |
+| onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | ✔ | <3.0 |
+| onError       | function(error) | null        | callback when error happened | ✔   | ✔ | ✔ | <3.0 |
+| onPageSingleTap   | function(page)  | null        | callback when page was single tapped | ✔ | ✔ | ✔ | 3.0 |
+| onScaleChanged    | function(scale) | null        | callback when scale page | ✔ | ✔ | ✔ | 3.0 |
+| onPressLink       | function(uri)   | null        | callback when link tapped | ✔ | ✔ | ✖ | 6.0.0 |
 
 #### parameters of source
 
-| parameter    | Description | default | iOS | Android |
-| ------------ | ----------- | ------- | --- | ------- |
-| uri          | pdf source, see the forllowing for detail.| required | ✔   | ✔ |
-| cache        | use cache or not | false | ✔ | ✔ |
-| expiration   | cache file expired seconds (0 is not expired) | 0 | ✔ | ✔ |
-| method       | request method when uri is a url | "GET" | ✔ | ✔ |
-| headers      | request headers when uri is a url | {} | ✔ | ✔ |
+| parameter    | Description | default | iOS | Android | Windows |
+| ------------ | ----------- | ------- | --- | ------- | ------- |
+| uri          | pdf source, see the forllowing for detail.| required | ✔   | ✔ | ✔ |
+| cache        | use cache or not | false | ✔ | ✔ | ✖ |
+| expiration   | cache file expired seconds (0 is not expired) | 0 | ✔ | ✔ | ✖ |
+| method       | request method when uri is a url | "GET" | ✔ | ✔ | ✖ |
+| headers      | request headers when uri is a url | {} | ✔ | ✔ | ✖ |
 
 #### types of source.uri
 
-| Usage    | Description | iOS | Android |
-| ------------ | ----------- | --- | ------- |
-| `{uri:"http://xxx/xxx.pdf"}` | load pdf from a url | ✔   | ✔ |
-| `{require("./test.pdf")}` | load pdf relate to js file (do not need add by xcode) | ✔ | ✖ |
-| `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ |
-| `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ |
-| `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ |
-| `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔   | ✔ |
+| Usage        | Description | iOS | Android | Windows |
+| ------------ | ----------- | --- | ------- | ------- |
+| `{uri:"http://xxx/xxx.pdf"}` | load pdf from a url | ✔   | ✔ | ✔ |
+| `{require("./test.pdf")}` | load pdf relate to js file (do not need add by xcode) | ✔ | ✖ | ✖ |
+| `{uri:"bundle-assets://path/to/xxx.pdf"}` | load pdf from assets, the file should be at android/app/src/main/assets/path/to/xxx.pdf | ✖ | ✔ | ✖ |
+| `{uri:"bundle-assets://xxx.pdf"}` | load pdf from assets, you must add pdf to project by xcode. this does not support folder. | ✔ | ✖ | ✖ |
+| `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ | ✔ |
+| `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔  | ✔ | ✔  |
+| `{uri:"ms-appx:///xxx.pdf"}}` | load pdf bundled with UWP app |  ✖ | ✖ | ✔ |
 
 
 ### Methods

@@ -1,0 +1,34 @@
+﻿<UserControl
+    x:Class="RCTPdf.RCTPdfControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:RCTPdf"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+  <ScrollViewer
+    x:Name="PagesContainer"
+    Background="#505050"
+    HorizontalScrollMode="Enabled"
+    HorizontalScrollBarVisibility="Visible"
+    IsTabStop="True"
+    IsTapEnabled="True"
+    AllowFocusOnInteraction="True"
+    AllowFocusWhenDisabled="True"
+    UseSystemFocusVisuals="False"
+    PointerWheelChanged="PagesContainer_PointerWheelChanged"
+    Tapped="PagesContainer_Tapped"
+    DoubleTapped="PagesContainer_DoubleTapped"
+    ViewChanged="PagesContainer_ViewChanged"
+    >
+    <ItemsControl x:Name="Pages" HorizontalAlignment="Center"
+                  SizeChanged="Pages_SizeChanged"
+                  AllowFocusOnInteraction="False">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel x:Name="OrientationSelector" Orientation="Vertical"/>
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+    </ItemsControl>
+  </ScrollViewer>
+</UserControl>
