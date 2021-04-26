@@ -49,3 +49,4 @@ yarn-error.log
 .git
 .watchmanconfig
 .history
+example/
