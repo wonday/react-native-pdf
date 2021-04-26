@@ -17,6 +17,7 @@ export type FitBoth = 2;
 export type Source = {
   body?: string | FormField[],
   cache?: boolean,
+  cacheFileName?: string,
   expiration?: number,
   headers?: { [key: string]: string },
   method?: Methods,
