@@ -15,11 +15,9 @@ import {
     Platform,
     ViewPropTypes,
     StyleSheet,
-    Image
+    Image,
+    Text
 } from 'react-native';
-
-import { ProgressBar } from '@react-native-community/progress-bar-android'
-import { ProgressView } from '@react-native-community/progress-view'
 
 let RNFetchBlob;
 try {
@@ -59,9 +57,7 @@ export default class Pdf extends Component {
         horizontal: PropTypes.bool,
         spacing: PropTypes.number,
         password: PropTypes.string,
-        progressBarColor: PropTypes.string,
-        activityIndicator: PropTypes.any,
-        activityIndicatorProps: PropTypes.any,
+        renderActivityIndicator: PropTypes.func,
         enableAntialiasing: PropTypes.bool,
         enableAnnotationRendering: PropTypes.bool,
         enablePaging: PropTypes.bool,
@@ -99,7 +95,6 @@ export default class Pdf extends Component {
         enableAnnotationRendering: true,
         enablePaging: false,
         enableRTL: false,
-        activityIndicatorProps: {color: '#009900', progressTintColor: '#009900'},
         trustAllCerts: true,
         usePDFKit: true,
         singlePage: false,
@@ -295,7 +290,7 @@ export default class Pdf extends Component {
             .progress((received, total) => {
                 this.props.onLoadProgress && this.props.onLoadProgress(received / total);
                 if (this._mounted) {
-                    this.setState({progress: received / total});
+                    this.setState({progress: Math.floor(received / total)});
                 }
             });
 
@@ -412,21 +407,9 @@ export default class Pdf extends Component {
                             (<View
                                 style={styles.progressContainer}
                             >
-                                {this.props.activityIndicator
-                                    ? this.props.activityIndicator
-                                    : Platform.OS === 'android'
-                                        ? <ProgressBar
-                                            progress={this.state.progress}
-                                            indeterminate={false}
-                                            styleAttr="Horizontal"
-                                            style={styles.progressBar}
-                                            {...this.props.activityIndicatorProps}
-                                        />
-                                        : <ProgressView
-                                            progress={this.state.progress}
-                                            style={styles.progressBar}
-                                            {...this.props.activityIndicatorProps}
-                                        />}
+                                {this.props.renderActivityIndicator
+                                    ? this.props.renderActivityIndicator(this.state.progress)
+                                    : <Text>{`Loading ${this.state.progress}%`}</Text>}
                             </View>):(
                                 Platform.OS === "android" || Platform.OS === "windows"?(
                                         <PdfCustom

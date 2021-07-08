@@ -174,11 +174,6 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\node_modules\@react-native-community\progress-view\windows\progress-view\progress-view.vcxproj">
-      <Project>{ca54a654-5e81-44dc-af3f-cf55ef5b493a}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ReactNativeWindowsTargets">
     <Import Project="$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppApp.targets" Condition="Exists('$(ReactNativeWindowsDir)\PropertySheets\External\Microsoft.ReactNative.Uwp.CppApp.targets')" />
