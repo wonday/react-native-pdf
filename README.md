@@ -5,7 +5,7 @@ A react native PDF view component (cross-platform support)
 
 ### Feature
 
-* read a PDF from url/local file/asset and can cache it.
+* read a PDF from url, blob, local file or asset and can cache it.
 * display horizontally or vertically
 * drag and zoom
 * double tap for zoom
@@ -269,6 +269,8 @@ export default class PDFExample extends React.Component {
 
         //const source = {uri:'file:///sdcard/test.pdf'};
         //const source = {uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."};
+        //const source = {uri:"content://com.example.blobs/xxxxxxxx-...?offset=0&size=xxx"};
+        //const source = {uri:"blob:xxxxxxxx-...?offset=0&size=xxx"};
 
         return (
             <View style={styles.container}>
@@ -362,8 +364,10 @@ const styles = StyleSheet.create({
 | `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ | ✔ |
 | `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔  | ✔ | ✔  |
 | `{uri:"ms-appx:///xxx.pdf"}}` | load pdf bundled with UWP app |  ✖ | ✖ | ✔ |
+| `{uri:"content://com.example.blobs/xxxxxxxx-...?offset=0&size=xxx"}` | load pdf from content URI | ✔* | ✖ | ✖ |
+| `{uri:"blob:xxxxxxxx-...?offset=0&size=xxx"}` | load pdf from blob URL | ✖ | ✔ | ✖ |
 
-
+\*) requires building React Native from source with [this patch](https://github.com/facebook/react-native/pull/31789)
 ### Methods
 * [setPage](#setPage)
 
