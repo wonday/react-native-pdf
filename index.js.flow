@@ -32,8 +32,7 @@ export type TableContent = {
 };
 
 export type Props = {
-  activityIndicator?: Node,
-  activityIndicatorProps?: { [prop: string]: mixed },
+  renderActivityIndicator?: (progress: number) => Node,
   enableAnnotationRendering?: boolean,
   enableAntialiasing?: boolean,
   enablePaging?: boolean,

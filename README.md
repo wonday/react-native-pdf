@@ -22,8 +22,6 @@ So you should install react-native-pdf and rn-fetch-blob
 | ------------------------- | --------------- | ------- | -------- | -------- |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
 | rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
-| progress-bar-android      |                 |         |          | 1.0.3+   |
-| progress-view             |                 |         |          | 1.0.3+   |
 
 Currently, Windows support is partial. For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
 ```
@@ -34,10 +32,10 @@ yarn add github:joltup/rn-fetch-blob#pull/701/head
 
 ```bash
 # Using npm
-npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view --save
+npm install react-native-pdf rn-fetch-blob --save
 
 # or using yarn:
-yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
+yarn add react-native-pdf rn-fetch-blob
 ```
 
 For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
@@ -59,8 +57,6 @@ Run `pod install` in the `ios` directory. Linking is not required in React Nativ
 
 ```bash
 react-native link rn-fetch-blob
-react-native link @react-native-community/progress-bar-android
-react-native link @react-native-community/progress-view
 react-native link react-native-pdf
 ```
 </details>
@@ -88,8 +84,6 @@ android {
 **React Native 0.59.0 and below**
 ```bash
 react-native link rn-fetch-blob
-react-native link @react-native-community/progress-bar-android
-react-native link @react-native-community/progress-view
 react-native link react-native-pdf
 ```
 
@@ -102,16 +96,13 @@ react-native link react-native-pdf
 
 - Open your solution in Visual Studio 2019 (eg. `windows\yourapp.sln`)
 - Right-click Solution icon in Solution Explorer > Add > Existing Project...
-- Add `node_modules\@react-native-community\progress-view\windows\progress-view\progress-view.vcxproj`
 - If running RNW 0.62: add `node_modules\react-native-pdf\windows\RCTPdf\RCTPdf.vcxproj`
 - If running RNW 0.62: add `node_modules\rn-fetch-blob\windows\RNFetchBlob\RNFetchBlob.vcxproj`
 - Right-click main application project > Add > Reference...
-  - Select `progress-view` and  in Solution Projects
   - If running 0.62, also select `RCTPdf` and `RNFetchBlob`
-- In app `pch.h` add `#include "winrt/progress_view.h"` and `#include "winrt/RCTPdf.h"`
+- In app `pch.h` add `#include "winrt/RCTPdf.h"`
   - If running 0.62, also select `#include "winrt/RNFetchBlob.h"`
-- In `App.cpp` add `PackageProviders().Append(winrt::progress_view::ReactPackageProvider());` before `InitializeComponent();`
-- If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::RNFetchBlob::ReactPackageProvider());`
+- If running RNW 0.62, add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::RNFetchBlob::ReactPackageProvider());` before `InitializeComponent();`
 
 #### Bundling PDFs with the app
 To add a `test.pdf` like in the example add:
@@ -324,8 +315,7 @@ const styles = StyleSheet.create({
 | spacing       | number        | 10               | the breaker size between pages| ✔   | ✔ | ✔ | <3.0 |
 | password      | string        | ""               | pdf password, if password error, will call OnError() with message "Password required or incorrect password."        | ✔   | ✔ | ✔ | <3.0 |
 | style         | object        | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color... | ✔   | ✔ | ✔ | <3.0 |
-| activityIndicator   | Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | ✖ | <3.0 |
-| activityIndicatorProps  | object      | {color:'#009900', progressTintColor:'#009900'} | activityIndicator props | ✔ | ✔ | ✖ | 3.1 |
+| renderActivityIndicator   | (progress) => Component       | <ProgressBar/> | when loading show it as an indicator, you can use your component| ✔   | ✔ | ✖ | <3.0 |
 | enableAntialiasing  | bool            | true        | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch  | ✖   | ✔ | ✖ | <3.0 |
 | enablePaging  | bool            | false        | only show one page in screen   | ✔ | ✔ | ✔ | 5.0.1 |
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | ✔ | 5.0.1 |
