@@ -21,7 +21,7 @@ So you should install react-native-pdf and react-native-blob-util
 | React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    |
 | ------------------------- | --------------- | ------- | -------- | -------- |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
-| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
+| rn-fetch-blob             | 0.10.15         | 0.10.15 |          |          |
 | react-native-blob-util    |                 |         | 0.11.1+  | 0.11.1+  |
 | progress-bar-android      |                 |         |          | 1.0.3+   |
 | progress-view             |                 |         |          | 1.0.3+   |
