@@ -13,15 +13,15 @@ A react native PDF view component (cross-platform support)
 * jump to a specific page in the pdf
 
 ### Supported versions
-We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
-So you should install react-native-pdf and rn-fetch-blob
+We use [`react-native-blob-util`](https://github.com/RonRadtke/react-native-blob-util) to handle file system access in this package,
+So you should install react-native-pdf and react-native-blob-util
 
-> The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
+> The table below shows the supported versions of React Native and react-native-blob-util for different versions of `react-native-pdf`.
 
 | React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    |
 | ------------------------- | --------------- | ------- | -------- | -------- |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
-| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
+| react-native-blob-util    | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
 | progress-bar-android      |                 |         |          | 1.0.3+   |
 | progress-view             |                 |         |          | 1.0.3+   |
 
@@ -34,10 +34,10 @@ yarn add github:joltup/rn-fetch-blob#pull/701/head
 
 ```bash
 # Using npm
-npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view --save
+npm install react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view --save
 
 # or using yarn:
-yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
+yarn add react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view
 ```
 
 For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
@@ -58,7 +58,7 @@ Run `pod install` in the `ios` directory. Linking is not required in React Nativ
 **React Native 0.59 and below**
 
 ```bash
-react-native link rn-fetch-blob
+react-native link react-native-blob-util
 react-native link @react-native-community/progress-bar-android
 react-native link @react-native-community/progress-view
 react-native link react-native-pdf
@@ -87,7 +87,7 @@ android {
 
 **React Native 0.59.0 and below**
 ```bash
-react-native link rn-fetch-blob
+react-native link react-native-blob-util
 react-native link @react-native-community/progress-bar-android
 react-native link @react-native-community/progress-view
 react-native link react-native-pdf
