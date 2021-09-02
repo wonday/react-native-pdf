@@ -13,36 +13,26 @@ A react native PDF view component (cross-platform support)
 * jump to a specific page in the pdf
 
 ### Supported versions
-We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
-So you should install react-native-pdf and rn-fetch-blob
+We use [`react-native-blob-util`](https://github.com/RonRadtke/react-native-blob-util) to handle file system access in this package,
+So you should install react-native-pdf and react-native-blob-util
 
-> The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
+> The table below shows the supported versions of React Native and react-native-blob-util for different versions of `react-native-pdf`.
 
 | React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    |
 | ------------------------- | --------------- | ------- | -------- | -------- |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
-| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
+| react-native-blob-util    |                 |         |          | 0.13.7+  |
 | progress-bar-android      |                 |         |          | 1.0.3+   |
 | progress-view             |                 |         |          | 1.0.3+   |
-
-Currently, Windows support is partial. For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
-```
-yarn add github:joltup/rn-fetch-blob#pull/701/head
-```
 
 ### Installation
 
 ```bash
 # Using npm
-npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view --save
+npm install react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view --save
 
 # or using yarn:
-yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
-```
-
-For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
-```
-yarn add github:joltup/rn-fetch-blob#pull/701/head
+yarn add react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
@@ -58,7 +48,7 @@ Run `pod install` in the `ios` directory. Linking is not required in React Nativ
 **React Native 0.59 and below**
 
 ```bash
-react-native link rn-fetch-blob
+react-native link react-native-blob-util
 react-native link @react-native-community/progress-bar-android
 react-native link @react-native-community/progress-view
 react-native link react-native-pdf
@@ -87,7 +77,7 @@ android {
 
 **React Native 0.59.0 and below**
 ```bash
-react-native link rn-fetch-blob
+react-native link react-native-blob-util
 react-native link @react-native-community/progress-bar-android
 react-native link @react-native-community/progress-view
 react-native link react-native-pdf
@@ -104,14 +94,14 @@ react-native link react-native-pdf
 - Right-click Solution icon in Solution Explorer > Add > Existing Project...
 - Add `node_modules\@react-native-community\progress-view\windows\progress-view\progress-view.vcxproj`
 - If running RNW 0.62: add `node_modules\react-native-pdf\windows\RCTPdf\RCTPdf.vcxproj`
-- If running RNW 0.62: add `node_modules\rn-fetch-blob\windows\RNFetchBlob\RNFetchBlob.vcxproj`
+- If running RNW 0.62: add `node_modules\react-native-blob-util\windows\ReactNativeBlobUtil\ReactNativeBlobUtil.vcxproj`
 - Right-click main application project > Add > Reference...
   - Select `progress-view` and  in Solution Projects
-  - If running 0.62, also select `RCTPdf` and `RNFetchBlob`
+  - If running 0.62, also select `RCTPdf` and `ReactNativeBlobUtil`
 - In app `pch.h` add `#include "winrt/progress_view.h"` and `#include "winrt/RCTPdf.h"`
-  - If running 0.62, also select `#include "winrt/RNFetchBlob.h"`
+  - If running 0.62, also select `#include "winrt/ReactNativeBlobUtil.h"`
 - In `App.cpp` add `PackageProviders().Append(winrt::progress_view::ReactPackageProvider());` before `InitializeComponent();`
-- If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::RNFetchBlob::ReactPackageProvider());`
+- If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::ReactNativeBlobUtil::ReactPackageProvider());`
 
 #### Bundling PDFs with the app
 To add a `test.pdf` like in the example add:
