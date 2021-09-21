@@ -34,10 +34,10 @@ yarn add github:joltup/rn-fetch-blob#pull/701/head
 
 ```bash
 # Using npm
-npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view --save
+npm install react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view fbjs --save
 
 # or using yarn:
-yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view
+yarn add react-native-pdf rn-fetch-blob @react-native-community/progress-bar-android @react-native-community/progress-view fbjs
 ```
 
 For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
