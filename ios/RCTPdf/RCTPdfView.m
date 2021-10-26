@@ -17,11 +17,13 @@
 #import <React/RCTEventDispatcher.h>
 #import <React/UIView+React.h>
 #import <React/RCTLog.h>
+#import <React/RCTBlobManager.h>
 #else
 #import "RCTBridgeModule.h"
 #import "RCTEventDispatcher.h"
 #import "UIView+React.h"
 #import "RCTLog.h"
+#import <RCTBlobManager.h">
 #endif
 
 #ifndef __OPTIMIZE__
@@ -39,6 +41,7 @@ const float MIN_SCALE = 1.0f;
 
 @implementation RCTPdfView
 {
+    RCTBridge *_bridge;
     PDFDocument *_pdfDocument;
     PDFView *_pdfView;
     PDFOutline *root;
@@ -47,11 +50,12 @@ const float MIN_SCALE = 1.0f;
     NSArray<NSString *> *_changedProps;
 }
 
-- (instancetype)init
+- (instancetype)initWithBridge:(RCTBridge *)bridge
 {
     self = [super init];
     if (self) {
 
+        _bridge = bridge;
         _page = 1;
         _scale = 1;
         _minScale = MIN_SCALE;
@@ -114,14 +118,23 @@ const float MIN_SCALE = 1.0f;
 
         if ([changedProps containsObject:@"path"]) {
 
-            NSURL *fileURL = [NSURL fileURLWithPath:_path];
 
             if (_pdfDocument != Nil) {
                 //Release old doc
                 _pdfDocument = Nil;
             }
-
-            _pdfDocument = [[PDFDocument alloc] initWithURL:fileURL];
+            
+            if ([_path hasPrefix:@"blob:"]) {
+                RCTBlobManager *blobManager = [_bridge moduleForName:@"BlobModule"];
+                NSURL *blobURL = [NSURL URLWithString:_path];
+                NSData *blobData = [blobManager resolveURL:blobURL];
+                if (blobData != nil) {
+                    _pdfDocument = [[PDFDocument alloc] initWithData:blobData];
+                }
+            } else {
+                NSURL *fileURL = [NSURL fileURLWithPath:_path];
+                _pdfDocument = [[PDFDocument alloc] initWithURL:fileURL];
+            }
 
             if (_pdfDocument) {
 

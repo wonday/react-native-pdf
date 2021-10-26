@@ -5,7 +5,7 @@ A react native PDF view component (cross-platform support)
 
 ### Feature
 
-* read a PDF from url/local file/asset and can cache it.
+* read a PDF from url, blob, local file or asset and can cache it.
 * display horizontally or vertically
 * drag and zoom
 * double tap for zoom
@@ -13,34 +13,24 @@ A react native PDF view component (cross-platform support)
 * jump to a specific page in the pdf
 
 ### Supported versions
-We use [`rn-fetch-blob`](https://github.com/joltup/rn-fetch-blob) to handle file system access in this package,
-So you should install react-native-pdf and rn-fetch-blob
+We use [`react-native-blob-util`](https://github.com/RonRadtke/react-native-blob-util) to handle file system access in this package,
+So you should install react-native-pdf and react-native-blob-util
 
-> The table below shows the supported versions of React Native and rn-fetch-blob for different versions of `react-native-pdf`.
+> The table below shows the supported versions of React Native and react-native-blob-util for different versions of `react-native-pdf`.
 
 | React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    |
 | ------------------------- | --------------- | ------- | -------- | -------- |
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
-| rn-fetch-blob             | 0.10.15         | 0.10.15 | 0.11.0+  | 0.11.0+  |
-
-Currently, Windows support is partial. For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
-```
-yarn add github:joltup/rn-fetch-blob#pull/701/head
-```
+| react-native-blob-util    |                 |         |          | 0.13.7+  |
 
 ### Installation
 
 ```bash
 # Using npm
-npm install react-native-pdf rn-fetch-blob --save
+npm install react-native-pdf react-native-blob-util fbjs --save
 
 # or using yarn:
-yarn add react-native-pdf rn-fetch-blob
-```
-
-For Windows, it's necessary to install `rn-fetch-blob` from the [PR that adds Windows support](https://github.com/joltup/rn-fetch-blob/pull/701):
-```
-yarn add github:joltup/rn-fetch-blob#pull/701/head
+yarn add react-native-pdf react-native-blob-util fbjs
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
@@ -56,7 +46,7 @@ Run `pod install` in the `ios` directory. Linking is not required in React Nativ
 **React Native 0.59 and below**
 
 ```bash
-react-native link rn-fetch-blob
+react-native link react-native-blob-util
 react-native link react-native-pdf
 ```
 </details>
@@ -83,7 +73,7 @@ android {
 
 **React Native 0.59.0 and below**
 ```bash
-react-native link rn-fetch-blob
+react-native link react-native-blob-util
 react-native link react-native-pdf
 ```
 
@@ -97,12 +87,15 @@ react-native link react-native-pdf
 - Open your solution in Visual Studio 2019 (eg. `windows\yourapp.sln`)
 - Right-click Solution icon in Solution Explorer > Add > Existing Project...
 - If running RNW 0.62: add `node_modules\react-native-pdf\windows\RCTPdf\RCTPdf.vcxproj`
-- If running RNW 0.62: add `node_modules\rn-fetch-blob\windows\RNFetchBlob\RNFetchBlob.vcxproj`
+- If running RNW 0.62: add `node_modules\react-native-blob-util\windows\ReactNativeBlobUtil\ReactNativeBlobUtil.vcxproj`
 - Right-click main application project > Add > Reference...
-  - If running 0.62, also select `RCTPdf` and `RNFetchBlob`
+- Select `progress-view` and  in Solution Projects
+  - If running 0.62, also select `RCTPdf` and `ReactNativeBlobUtil`
 - In app `pch.h` add `#include "winrt/RCTPdf.h"`
-  - If running 0.62, also select `#include "winrt/RNFetchBlob.h"`
-- If running RNW 0.62, add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::RNFetchBlob::ReactPackageProvider());` before `InitializeComponent();`
+  - If running 0.62, also select `#include "winrt/ReactNativeBlobUtil.h"`
+- In `App.cpp` add `PackageProviders().Append(winrt::progress_view::ReactPackageProvider());` before `InitializeComponent();`
+  - If running RNW 0.62, also add `PackageProviders().Append(winrt::RCTPdf::ReactPackageProvider());` and `PackageProviders().Append(winrt::ReactNativeBlobUtil::ReactPackageProvider());`
+
 
 #### Bundling PDFs with the app
 To add a `test.pdf` like in the example add:
@@ -249,38 +242,38 @@ v5.1.3
 
 import React from 'react';
 import { StyleSheet, Dimensions, View } from 'react-native';
-
 import Pdf from 'react-native-pdf';
 
 export default class PDFExample extends React.Component {
     render() {
-        const source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
+        const source = { uri: 'http://samples.leanpub.com/thereactnativebook-sample.pdf', cache: true };
         //const source = require('./test.pdf');  // ios only
-        //const source = {uri:'bundle-assets://test.pdf'};
-
+        //const source = {uri:'bundle-assets://test.pdf' };
         //const source = {uri:'file:///sdcard/test.pdf'};
         //const source = {uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."};
+        //const source = {uri:"content://com.example.blobs/xxxxxxxx-...?offset=0&size=xxx"};
+        //const source = {uri:"blob:xxxxxxxx-...?offset=0&size=xxx"};
 
         return (
             <View style={styles.container}>
                 <Pdf
                     source={source}
-                    onLoadComplete={(numberOfPages,filePath)=>{
-                        console.log(`number of pages: ${numberOfPages}`);
+                    onLoadComplete={(numberOfPages,filePath) => {
+                        console.log(`Number of pages: ${numberOfPages}`);
                     }}
-                    onPageChanged={(page,numberOfPages)=>{
-                        console.log(`current page: ${page}`);
+                    onPageChanged={(page,numberOfPages) => {
+                        console.log(`Current page: ${page}`);
                     }}
-                    onError={(error)=>{
+                    onError={(error) => {
                         console.log(error);
                     }}
-                    onPressLink={(uri)=>{
-                        console.log(`Link presse: ${uri}`)
+                    onPressLink={(uri) => {
+                        console.log(`Link pressed: ${uri}`);
                     }}
                     style={styles.pdf}/>
             </View>
         )
-  }
+    }
 }
 
 const styles = StyleSheet.create({
@@ -352,8 +345,10 @@ const styles = StyleSheet.create({
 | `{uri:"data:application/pdf;base64,JVBERi0xLjcKJc..."}` | load pdf from base64 string | ✔   | ✔ | ✔ |
 | `{uri:"file:///absolute/path/to/xxx.pdf"}` | load pdf from local file system | ✔  | ✔ | ✔  |
 | `{uri:"ms-appx:///xxx.pdf"}}` | load pdf bundled with UWP app |  ✖ | ✖ | ✔ |
+| `{uri:"content://com.example.blobs/xxxxxxxx-...?offset=0&size=xxx"}` | load pdf from content URI | ✔* | ✖ | ✖ |
+| `{uri:"blob:xxxxxxxx-...?offset=0&size=xxx"}` | load pdf from blob URL | ✖ | ✔ | ✖ |
 
-
+\*) requires building React Native from source with [this patch](https://github.com/facebook/react-native/pull/31789)
 ### Methods
 * [setPage](#setPage)
 
