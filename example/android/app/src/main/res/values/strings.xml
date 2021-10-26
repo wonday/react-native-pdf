@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PDFExample</string>
+    <string name="blob_provider_authority">com.pdfexample.blobs</string>
 </resources>
