@@ -29,10 +29,10 @@ So you should install react-native-pdf and react-native-blob-util
 
 ```bash
 # Using npm
-npm install react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view --save
+npm install react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view fbjs --save
 
 # or using yarn:
-yarn add react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view
+yarn add react-native-pdf react-native-blob-util @react-native-community/progress-bar-android @react-native-community/progress-view fbjs
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
