@@ -40,7 +40,6 @@
         "DoubleTapView.js",
         "index.d.ts",
         "index.js",
-        "index.js.flow",
         "PdfManager.js",
         "PdfPageView.js",
         "PdfView.js",
