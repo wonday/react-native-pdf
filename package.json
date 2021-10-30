@@ -28,7 +28,24 @@
         "url": "https://github.com/wonday/react-native-pdf/issues"
     },
     "dependencies": {
-        "crypto-js": "^3.2.0",
+        "crypto-js": "^3.2.0"
+    },
+    "devDependencies": {
         "prop-types": "^15.7.2"
-    }
+    },
+    "files": [
+        "android/",
+        "ios/",
+        "windows/",
+        "DoubleTapView.js",
+        "index.d.ts",
+        "index.js",
+        "index.js.flow",
+        "PdfManager.js",
+        "PdfPageView.js",
+        "PdfView.js",
+        "PdfViewFlatList.js",
+        "PinchZoomView.js",
+        "react-native-pdf.podspec"
+    ]
 }
