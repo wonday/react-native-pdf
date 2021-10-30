@@ -18,10 +18,10 @@ So you should install react-native-pdf and react-native-blob-util
 
 > The table below shows the supported versions of React Native and react-native-blob-util for different versions of `react-native-pdf`.
 
-| React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    |
-| ------------------------- | --------------- | ------- | -------- | -------- |
-| react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   |
-| react-native-blob-util    |                 |         |          | 0.13.7+  |
+| React Native              | 0.4x - 0.56     | 0.57    | 0.60+    | 0.62+    | 0.62+    |
+| ------------------------- | --------------- | ------- | -------- | -------- | -------- |
+| react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   | 6.4.0+   |
+| react-native-blob-util    |                 |         |          |          | 0.13.7+  |
 
 ### Installation
 
@@ -166,6 +166,13 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.4.0
+1. Remove sample for reducing NPM package size
+2. Add support for setting a filename for the cached pdf file
+3. Use react-native-blob-util instead of rn-fetch-blob
+4. Add blob support
+5. remove progress-view dependency
+
 v6.3.0
 1. Add windows support
 2. Fixed some bugs
@@ -204,25 +211,6 @@ v6.0.1
 v6.0.0
 1. Add JS callback onPressLink for pdf link press listener
 2. Fix calling setState while unmounted
-
-v5.1.7
-1. Downgraded to AndroidPdfViewer 3.1.0-beta.1
-
-v5.1.6
-1. Fixed componentWillReceiveProps and componentWillMount warnings
-
-v5.1.5
-1. Added setPage() method
-2. Upgraded to AndroidPdfViewer to 3.2.0-beta.1
-3. Fixed some codes ,readme and sample
-
-v5.1.4
-1. Updated example project to RN 0.60.4
-2. Fixed blank view after native module got recycled in onDetachedFromWindow event
-3. Restore singleTap, only callback, do not change scale
-
-v5.1.3
-1. Removed singleTap action from iOS, make the same with Android.
 
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
@@ -314,7 +302,7 @@ const styles = StyleSheet.create({
 | enableRTL  | bool            | false        | scroll page as "page3, page2, page1"  | ✔   | ✖ | ✔ | 5.0.1 |
 | enableAnnotationRendering  | bool            | true        | enable rendering annotation, notice:iOS only support initial setting,not support realtime changing  | ✔ | ✔ | ✖ | 5.0.3 |
 | trustAllCerts  | bool            | true        | Allow connections to servers with self-signed certification  | ✔ | ✔ | ✖ | 6.0.? |
-| singlePage  | bool  | false | Only show first page, useful for thumbnail views | ✔ | ✔ | ✔ | 6.1.2 |
+| singlePage  | bool  | false | Only show first page, useful for thumbnail views | ✔ | ✔ | ✔ | 6.2.1 |
 | onLoadProgress      | function(percent) | null        | callback when loading, return loading progress (0-1) | ✔   | ✔ | ✖ | <3.0 |
 | onLoadComplete      | function(numberOfPages, path, {width, height}, tableContents) | null        | callback when pdf load completed, return total page count, pdf local/cache path, {width,height} and table of contents | ✔   | ✔ | ✔ but without tableContents | <3.0 |
 | onPageChanged       | function(page,numberOfPages)  | null        | callback when page changed ,return current page and total page count | ✔   | ✔ | ✔ | <3.0 |
