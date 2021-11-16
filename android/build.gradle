@@ -13,7 +13,7 @@ buildscript {
 
 repositories {
     mavenCentral()
-    mavenCentral {
+    maven {
         url 'https://jitpack.io'
         content {
             // Use Jitpack only for AndroidPdfViewer; the rest is hosted at mavenCentral.
