@@ -2,7 +2,7 @@ description = 'react-native-pdf'
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         google()
     }
 
@@ -12,11 +12,11 @@ buildscript {
 }
 
 repositories {
-    jcenter()
-    maven {
+    mavenCentral()
+    mavenCentral {
         url 'https://jitpack.io'
         content {
-            // Use Jitpack only for AndroidPdfViewer; the rest is hosted at jcenter.
+            // Use Jitpack only for AndroidPdfViewer; the rest is hosted at mavenCentral.
             includeGroup "com.github.TalbotGooday"
         }
     }
