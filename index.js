@@ -397,7 +397,7 @@ export default class Pdf extends Component {
                             >
                                 {this.props.renderActivityIndicator
                                     ? this.props.renderActivityIndicator(this.state.progress)
-                                    : <Text>{`${this.state.progress}%`}</Text>}
+                                    : <Text>{`${(Math.round(this.state.progress*10000)/100).toFixed(0)}%`}</Text>}
                             </View>):(
                                 Platform.OS === "android" || Platform.OS === "windows"?(
                                         <PdfCustom
