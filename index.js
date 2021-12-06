@@ -278,7 +278,7 @@ export default class Pdf extends Component {
             .progress((received, total) => {
                 this.props.onLoadProgress && this.props.onLoadProgress(received / total);
                 if (this._mounted) {
-                    this.setState({progress: Math.floor(received / total)});
+                    this.setState({progress: received / total});
                 }
             });
 
