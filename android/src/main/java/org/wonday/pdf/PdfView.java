@@ -166,8 +166,25 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         //Constants.Pinch.MINIMUM_ZOOM = this.minScale;
         //Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
+        int totalWidth = (int) this.toCurrentScale((this.getPageCount() * ((this.getPageSize(page).getWidth() + this.getSpacingPx()))));
+        int currentPage = (int) ((this.getPageCount() * (Math.abs(this.getCurrentXOffset()) + e.getX())) / totalWidth);
+        SizeF pageSize = getPageSize(currentPage);
+        float pageWidth = this.toCurrentScale(pageSize.getWidth());
+        float pageHeight = this.toCurrentScale(pageSize.getHeight());
+
+        float x = ((((Math.abs(this.getCurrentXOffset()) + e.getX()) / pageWidth) - currentPage)
+                * pageWidth
+                - (this.toCurrentScale(this.getSpacingPx()) * currentPage));
+        float y = (Math.abs(this.getCurrentYOffset()) + e.getY());
+
         WritableMap event = Arguments.createMap();
-        event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY());
+        event.putString("message",
+                "pageSingleTap"
+                +"|"+(currentPage + 1)
+                +"|"+pageWidth
+                +"|"+pageHeight
+                +"|"+x
+                +"|"+y);
 
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
