@@ -18,7 +18,6 @@
     UseSystemFocusVisuals="False"
     PointerWheelChanged="PagesContainer_PointerWheelChanged"
     Tapped="PagesContainer_Tapped"
-    DoubleTapped="PagesContainer_DoubleTapped"
     ViewChanged="PagesContainer_ViewChanged"
     >
     <ItemsControl x:Name="Pages" HorizontalAlignment="Center"
