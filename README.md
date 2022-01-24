@@ -23,6 +23,9 @@ So you should install react-native-pdf and react-native-blob-util
 | react-native-pdf          | 4.x.x - 5.0.x   | 5.0.9+  | 6.0.0+   | 6.2.0+   | 6.4.0+   |
 | react-native-blob-util    |                 |         |          |          | 0.13.7+  |
 
+
+> 🚨 Expo: This package is not available in the [Expo Go](https://expo.dev/client) app. Learn how you can use this package in [Custom Dev Clients](https://docs.expo.dev/development/getting-started/) via the out-of-tree [Expo Config Plugin](https://github.com/expo/config-plugins/tree/master/packages/react-native-pdf). Example: [`with-pdf`](https://github.com/expo/examples/tree/master/with-pdf).
+
 ### Installation
 
 ```bash
