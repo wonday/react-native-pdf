@@ -16,9 +16,20 @@ export type TableContent = {
     title: string,
 };
 
+export type Source = {
+    uri?: string;
+    headers?: {
+        [key: string]: string;
+    };
+    cache?: boolean;
+    cacheFileName?: string;
+    expiration?: number;
+    method?: string;
+};
+
 interface Props {
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>,
-    source: object,
+    source: Source | number,
     page?: number,
     scale?: number,
     minScale?: number,
