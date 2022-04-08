@@ -169,6 +169,13 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.5.0
+1. Fix: replace mavenCentral with maven
+2. Breaking Change(Android): replace deprecated repository: jcenter()
+3. Fix: loading progress
+4. Add: Typed "source" prop
+5. Remove: dependency to fbjs
+
 v6.4.0
 1. Remove sample for reducing NPM package size
 2. Add support for setting a filename for the cached pdf file
