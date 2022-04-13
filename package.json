@@ -31,6 +31,9 @@
         "crypto-js": "^3.2.0"
     },
     "devDependencies": {
+        "husky": "^7.0.4",
+        "prettier": "2.6.2",
+        "pretty-quick": "^3.1.3",
         "prop-types": "^15.7.2"
     },
     "files": [
@@ -47,5 +50,10 @@
         "PdfViewFlatList.js",
         "PinchZoomView.js",
         "react-native-pdf.podspec"
-    ]
+    ],
+    "scripts": {
+        "prepare": "husky install",
+        "prettier": "prettier --write .",
+        "prettier:stage": "pretty-quick --staged"
+    }
 }
