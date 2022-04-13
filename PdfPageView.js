@@ -6,36 +6,23 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 'use strict';
-import React, {PureComponent} from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import {
-    ViewPropTypes,
-    requireNativeComponent,
-} from 'react-native';
+import { ViewPropTypes, requireNativeComponent } from 'react-native';
 
 export default class PdfPageView extends PureComponent {
     _getStylePropsProps = () => {
-        const {width, height} = this.props;
+        const { width, height } = this.props;
         if (width || height) {
-            return {width, height};
+            return { width, height };
         }
         return {};
     };
 
     render() {
-        const {
-            style,
-            ...restProps
-        } = this.props;
-        return (
-            <PdfPageViewCustom
-                {...restProps}
-                style={[style, this._getStylePropsProps()]}
-            />
-        );
-
+        const { style, ...restProps } = this.props;
+        return <PdfPageViewCustom {...restProps} style={[style, this._getStylePropsProps()]} />;
     }
 }
 
@@ -44,11 +31,11 @@ PdfPageView.propTypes = {
     fileNo: PropTypes.number,
     page: PropTypes.number,
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
 };
 
 PdfPageView.defaultProps = {
-    style: {}
+    style: {},
 };
 
-let PdfPageViewCustom = requireNativeComponent('RCTPdfPageView', PdfPageView, {nativeOnly: {}});
+let PdfPageViewCustom = requireNativeComponent('RCTPdfPageView', PdfPageView, { nativeOnly: {} });

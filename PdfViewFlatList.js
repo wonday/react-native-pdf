@@ -7,10 +7,8 @@
  */
 
 'use strict';
-import React, {Component} from 'react';
-import {
-    FlatList,
-} from 'react-native';
+import React, { Component } from 'react';
+import { FlatList } from 'react-native';
 
 export default class PdfViewFlatList extends FlatList {
     /**
@@ -25,7 +23,6 @@ export default class PdfViewFlatList extends FlatList {
      * This is deprecated due to ambiguity (y before x), and SHOULD NOT BE USED.
      */
     scrollToXY = (x, y) => {
-        this._listRef._scrollRef.scrollTo({x: x, y: y, animated: false});
-    }
-
+        this._listRef._scrollRef.scrollTo({ x: x, y: y, animated: false });
+    };
 }

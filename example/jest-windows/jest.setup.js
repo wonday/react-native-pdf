@@ -1,1 +1,1 @@
-platform = "windows"
+platform = 'windows';
