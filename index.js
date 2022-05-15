@@ -13,14 +13,13 @@ import {
     requireNativeComponent,
     View,
     Platform,
-    ViewPropTypes,
     StyleSheet,
     Image,
     Text
 } from 'react-native';
 
 import ReactNativeBlobUtil from 'react-native-blob-util'
-
+import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 const SHA1 = require('crypto-js/sha1');
 import PdfView from './PdfView';
 
