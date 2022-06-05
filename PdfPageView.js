@@ -11,9 +11,11 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {
-    ViewPropTypes,
     requireNativeComponent,
 } from 'react-native';
+
+import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+
 
 export default class PdfPageView extends PureComponent {
     _getStylePropsProps = () => {

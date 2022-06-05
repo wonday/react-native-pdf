@@ -13,11 +13,12 @@ import {
     requireNativeComponent,
     View,
     Platform,
-    ViewPropTypes,
     StyleSheet,
     Image,
     Text
 } from 'react-native';
+
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 
 import ReactNativeBlobUtil from 'react-native-blob-util'
 
