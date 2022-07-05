@@ -19,14 +19,14 @@ import {
 } from 'react-native';
 
 import ReactNativeBlobUtil from 'react-native-blob-util'
-import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
 const SHA1 = require('crypto-js/sha1');
 import PdfView from './PdfView';
 
 export default class Pdf extends Component {
 
     static propTypes = {
-        ...ViewPropTypes,
+        ...ViewProps,
         source: PropTypes.oneOfType([
             PropTypes.shape({
                 uri: PropTypes.string,

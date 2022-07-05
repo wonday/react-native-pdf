@@ -13,11 +13,11 @@ import {
     PanResponder
 } from 'react-native';
 import PropTypes from 'prop-types';
-import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
 export default class DoubleTapView extends Component {
 
     static propTypes = {
-        ...ViewPropTypes,
+        ...ViewProps,
         delay: PropTypes.number,
         radius: PropTypes.number,
         onSingleTap: PropTypes.func,

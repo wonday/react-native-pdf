@@ -9,7 +9,7 @@
 'use strict';
 import React, {Component} from 'react';
 import {ScrollView, FlatList, View, StyleSheet} from 'react-native';
-import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
 import PropTypes from 'prop-types';
 
 import PdfManager from './PdfManager';
@@ -26,7 +26,7 @@ const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10
 export default class PdfView extends Component {
 
     static propTypes = {
-        ...ViewPropTypes,
+        ...ViewProps,
         path: PropTypes.string,
         password: PropTypes.string,
         scale: PropTypes.number,
