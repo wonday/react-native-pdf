@@ -11,8 +11,7 @@
 const PdfManagerNative = require('react-native').NativeModules.PdfManager;
 
 export default class PdfManager {
-
-    static loadFile(path, password) {
+    static loadFile(path: string, password?: string) {
         if (typeof path !== 'string') {
             throw new TypeError('path must be a valid string.');
         }

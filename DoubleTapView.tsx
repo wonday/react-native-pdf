@@ -10,38 +10,30 @@
 import React, {Component} from 'react';
 import {
     View,
-    PanResponder
+    PanResponder,
+    GestureResponderEvent,
+    PanResponderGestureState
 } from 'react-native';
-import PropTypes from 'prop-types';
-import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
-export default class DoubleTapView extends Component {
+import { DoubleTapViewProps } from '.';
 
-    static propTypes = {
-        ...ViewProps,
-        delay: PropTypes.number,
-        radius: PropTypes.number,
-        onSingleTap: PropTypes.func,
-        onDoubleTap: PropTypes.func,
-    };
-
+export default class DoubleTapView extends Component<DoubleTapViewProps> {
     static defaultProps = {
         delay: 300,
         radius: 50,
-        onSingleTap: () => {
-        },
-        onDoubleTap: () => {
-        },
     };
+    gestureHandlers: any;
+    prevTouchInfo: { prevTouchX: number; prevTouchY: number; prevTouchTimeStamp: number; };
+    timer: any;
 
-    constructor() {
-        super();
+    constructor(props: DoubleTapViewProps) {
+        super(props);
 
         this.gestureHandlers = PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => (gestureState.numberActiveTouches === 1),
-            onStartShouldSetResponderCapture: (evt, gestureState) => (gestureState.numberActiveTouches === 1),
-            onMoveShouldSetPanResponder: (evt, gestureState) => (false),
-            onMoveShouldSetResponderCapture: (evt, gestureState) => (false),
-            onPanResponderTerminationRequest: (evt, gestureState) => false,
+            onStartShouldSetPanResponder: (_evt, gestureState) => (gestureState.numberActiveTouches === 1),
+            onStartShouldSetPanResponderCapture: (_evt, gestureState) => (gestureState.numberActiveTouches === 1),
+            onMoveShouldSetPanResponder: () => false,
+            onMoveShouldSetPanResponderCapture: () => false,
+            onPanResponderTerminationRequest: () => false,
             onPanResponderRelease: this.handlePanResponderRelease,
 
         });
@@ -53,39 +45,35 @@ export default class DoubleTapView extends Component {
         };
 
         this.timer = null;
-
     }
 
-
-    distance = (x0, y0, x1, y1) => {
-        return Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)).toFixed(1);
+    distance = (x0: number, y0: number, x1: number, y1: number) => {
+        return Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2));
     };
 
-    isDoubleTap = (currentTouchTimeStamp, {x0, y0}) => {
+    isDoubleTap = (currentTouchTimeStamp: number, gestureState: PanResponderGestureState) => {
         const {prevTouchX, prevTouchY, prevTouchTimeStamp} = this.prevTouchInfo;
         const dt = currentTouchTimeStamp - prevTouchTimeStamp;
         const {delay, radius} = this.props;
 
-        return (prevTouchTimeStamp > 0 && dt < delay && this.distance(prevTouchX, prevTouchY, x0, y0) < radius);
+        return (prevTouchTimeStamp > 0 && dt < delay && this.distance(prevTouchX, prevTouchY, gestureState.x0, gestureState.y0) < radius);
     };
 
-    handlePanResponderRelease = (evt, gestureState) => {
+    handlePanResponderRelease = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
 
         const currentTouchTimeStamp = Date.now();
         const x = evt.nativeEvent.locationX;
         const y = evt.nativeEvent.locationY; 
 
         if (this.timer) {
-
             if (this.isDoubleTap(currentTouchTimeStamp, gestureState)) {
-
                 clearTimeout(this.timer);
                 this.timer = null;
                 this.props.onDoubleTap();
 
             } else {
 
-                const {prevTouchX, prevTouchY, prevTouchTimeStamp} = this.prevTouchInfo;
+                const {prevTouchX, prevTouchY} = this.prevTouchInfo;
                 const {radius} = this.props;
 
                 // if not in radius, it's a move
@@ -114,6 +102,12 @@ export default class DoubleTapView extends Component {
         };
 
     };
+
+    componentWillUnmount() {
+        if (this.timer) {
+            clearTimeout(this.timer);
+        }
+    }
 
     render() {
         return (

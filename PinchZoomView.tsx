@@ -8,35 +8,32 @@
 
 'use strict';
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {
     View,
     StyleSheet,
-    PanResponder
+    PanResponder,
+    GestureResponderEvent,
+    PanResponderGestureState
 } from 'react-native';
-import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
-export default class PinchZoomView extends Component {
+import { PinchZoomViewProps } from '.';
 
-    static propTypes = {
-        ...ViewProps,
-        scalable: PropTypes.bool,
-        onScaleChanged: PropTypes.func,
-    };
-
+export default class PinchZoomView extends Component<PinchZoomViewProps> {
     static defaultProps = {
         scalable: true,
-        onScaleChanged: (scale) => {
-        },
     };
 
-    constructor(props) {
+    distant: number;
+    gestureHandlers: any;
 
+    constructor(props: PinchZoomViewProps) {
         super(props);
         this.state = {};
+
         this.distant = 0;
+        
         this.gestureHandlers = PanResponder.create({
             onStartShouldSetPanResponder: this._handleStartShouldSetPanResponder,
-            onMoveShouldSetResponderCapture: (evt, gestureState) => (true),
+            onMoveShouldSetPanResponderCapture: () => true,
             onMoveShouldSetPanResponder: this._handleMoveShouldSetPanResponder,
             onPanResponderGrant: this._handlePanResponderGrant,
             onPanResponderMove: this._handlePanResponderMove,
@@ -45,45 +42,34 @@ export default class PinchZoomView extends Component {
             onPanResponderTerminate: this._handlePanResponderTerminate,
             onShouldBlockNativeResponder: evt => true
         });
-
     }
 
-    _handleStartShouldSetPanResponder = (e, gestureState) => {
-
+    _handleStartShouldSetPanResponder = () => {
         // don't respond to single touch to avoid shielding click on child components
         return false;
-
     };
 
-    _handleMoveShouldSetPanResponder = (e, gestureState) => {
-
+    _handleMoveShouldSetPanResponder = (e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         return this.props.scalable && (e.nativeEvent.changedTouches.length >= 2 || gestureState.numberActiveTouches >= 2);
-
     };
 
-    _handlePanResponderGrant = (e, gestureState) => {
-
+    _handlePanResponderGrant = (e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         if (e.nativeEvent.changedTouches.length >= 2 || gestureState.numberActiveTouches >= 2) {
             let dx = Math.abs(e.nativeEvent.touches[0].pageX - e.nativeEvent.touches[1].pageX);
             let dy = Math.abs(e.nativeEvent.touches[0].pageY - e.nativeEvent.touches[1].pageY);
             this.distant = Math.sqrt(dx * dx + dy * dy);
         }
-
     };
 
-    _handlePanResponderEnd = (e, gestureState) => {
-
+    _handlePanResponderEnd = () => {
         this.distant = 0;
-
     };
 
-    _handlePanResponderTerminate = (e, gestureState) => {
-
+    _handlePanResponderTerminate = () => {
         this.distant = 0;
-
     };
 
-    _handlePanResponderMove = (e, gestureState) => {
+    _handlePanResponderMove = (e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
 
         if ((e.nativeEvent.changedTouches.length >= 2 || gestureState.numberActiveTouches >= 2) && this.distant > 100) {
 
@@ -95,15 +81,12 @@ export default class PinchZoomView extends Component {
             let pageY = (e.nativeEvent.touches[0].pageY + e.nativeEvent.touches[1].pageY) / 2;
             let pinchInfo = {scale: scale, pageX: pageX, pageY: pageY};
 
-            this.props.onScaleChanged(pinchInfo);
+            this.props.onScaleChanged && this.props.onScaleChanged(pinchInfo);
             this.distant = distant;
-
         }
-
     };
 
     render() {
-
         return (
             <View
                 {...this.props}
@@ -112,7 +95,6 @@ export default class PinchZoomView extends Component {
                 {this.props.children}
             </View>
         );
-
     }
 }
 

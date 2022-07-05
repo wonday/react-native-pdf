@@ -46,3 +46,4 @@ yarn-error.log
 .gitattributes
 .watchmanconfig
 .history
+dist/

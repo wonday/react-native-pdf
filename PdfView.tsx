@@ -8,40 +8,21 @@
 
 'use strict';
 import React, {Component} from 'react';
-import {ScrollView, FlatList, View, StyleSheet} from 'react-native';
-import type {ViewProps} from 'react-native/Libraries/Components/View/ViewPropTypes';
-import PropTypes from 'prop-types';
+import {ScrollView, View, StyleSheet, LayoutChangeEvent} from 'react-native';
 
 import PdfManager from './PdfManager';
 import PdfPageView from './PdfPageView';
 import DoubleTapView from './DoubleTapView';
 import PinchZoomView from './PinchZoomView';
 import PdfViewFlatList from './PdfViewFlatList';
+import { PdfViewProps, PdfViewState } from '.';
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 3;
 
-const VIEWABILITYCONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false};
+const VIEW_ABILITY_CONFIG = {minimumViewTime: 500, itemVisiblePercentThreshold: 10, waitForInteraction: false};
 
-export default class PdfView extends Component {
-
-    static propTypes = {
-        ...ViewProps,
-        path: PropTypes.string,
-        password: PropTypes.string,
-        scale: PropTypes.number,
-        minScale: PropTypes.number,
-        maxScale: PropTypes.number,
-        spacing: PropTypes.number,
-        fitPolicy: PropTypes.number,
-        horizontal: PropTypes.bool,
-        page: PropTypes.number,
-        currentPage: PropTypes.number,
-        singlePage: PropTypes.bool,
-        onPageSingleTap: PropTypes.func,
-        onScaleChanged: PropTypes.func,
-    };
-
+export default class PdfView extends Component<PdfViewProps, PdfViewState> {
     static defaultProps = {
         path: "",
         password: "",
@@ -57,15 +38,19 @@ export default class PdfView extends Component {
         currentPage: -1,
         enablePaging: false,
         singlePage: false,
-        onPageSingleTap: (page, x, y) => {
-        },
-        onScaleChanged: (scale) => {
-        },
     };
 
-    constructor(props) {
+    private _flatList = React.createRef<{
+        scrollToIndex: (config: {animated: boolean; index: number}) => void
+        scrollToXY: (x: number, y: number) => void
+    }>();
+    private _scaleTimer: any = 0;
+    private _scrollTimer: any = 0;
+    private _mounted: boolean;
 
+    constructor(props: PdfViewProps) {
         super(props);
+
         this.state = {
             pdfLoaded: false,
             fileNo: -1,
@@ -75,22 +60,21 @@ export default class PdfView extends Component {
             pageAspectRate: 0.5,
             pdfPageSize: {width: 0, height: 0},
             contentContainerSize: {width: 0, height: 0},
-            scale: this.props.scale,
+            scale: this.props.scale ?? 1,
             contentOffset: {x: 0, y: 0},
             newContentOffset: {x: 0, y: 0},
+            centerContent: false,
         };
 
-        this._flatList = null;
         this._scaleTimer = null;
         this._scrollTimer = null;
         this._mounted = false;
-
     }
 
     componentDidMount() {
         this._mounted = true;
         PdfManager.loadFile(this.props.path, this.props.password)
-            .then((pdfInfo) => {
+            .then((pdfInfo: any) => {
                 if (this._mounted) {
                     const fileNo = pdfInfo[0];
                     const numberOfPages = pdfInfo[1];
@@ -110,22 +94,20 @@ export default class PdfView extends Component {
                         this.props.onLoadComplete(numberOfPages, this.props.path, {width, height});
                     }
                 }
-
             })
-            .catch((error) => {
-                this.props.onError(error);
+            .catch((error: any) => {
+                this.props.onError && this.props.onError(error);
             });
 
-        clearTimeout(this._scrollTimer);
+        this._scrollTimer && clearTimeout(this._scrollTimer);
         this._scrollTimer = setTimeout(() => {
-            if (this._flatList) {
-                this._flatList.scrollToIndex({animated: false, index: this.props.page < 1 ? 0 : this.props.page - 1});
+            if (this._flatList.current) {
+                this._flatList.current.scrollToIndex({animated: false, index: this.props.page < 1 ? 0 : this.props.page - 1});
             }
         }, 200);
     }
 
-    componentDidUpdate(prevProps) {
-
+    componentDidUpdate(prevProps: PdfViewProps) {
         if (this.props.scale !== this.state.scale) {
             this._onScaleChanged({
                 scale: this.props.scale / this.state.scale,
@@ -138,10 +120,10 @@ export default class PdfView extends Component {
             let page = (this.props.page) < 1 ? 1 : this.props.page;
             page = page > this.state.numberOfPages ? this.state.numberOfPages : page;
 
-            if (this._flatList) {
+            if (this._flatList.current) {
                 clearTimeout(this._scrollTimer);
                 this._scrollTimer = setTimeout(() => {
-                    this._flatList.scrollToIndex({animated: false, index: page - 1});
+                    this._flatList.current?.scrollToIndex({animated: false, index: page - 1});
                 }, 200);
             }
         }
@@ -155,17 +137,15 @@ export default class PdfView extends Component {
 
     }
 
-    _keyExtractor = (item, index) => "pdf-page-" + index;
+    _keyExtractor = (_item: any, index: number) => "pdf-page-" + index;
 
     _getPageWidth = () => {
-
         let fitPolicy = this.props.fitPolicy;
 
         // if only one page, show whole page in center
         if (this.state.numberOfPages === 1 || this.props.singlePage) {
             fitPolicy = 2;
         }
-
 
         switch (fitPolicy) {
             case 0:  //fit width
@@ -181,11 +161,9 @@ export default class PdfView extends Component {
                 }
             }
         }
-
     };
 
     _getPageHeight = () => {
-
         let fitPolicy = this.props.fitPolicy;
 
         // if only one page, show whole page in center
@@ -220,14 +198,11 @@ export default class PdfView extends Component {
         }}/>
     );
 
-    _onItemSingleTap = (index, x, y) => {
-
-        this.props.onPageSingleTap(index + 1, x, y);
-
+    _onItemSingleTap = (index: number, x: number, y: number) => {
+        this.props.onPageSingleTap && this.props.onPageSingleTap(index + 1, x, y);
     };
 
-    _onItemDoubleTap = (index) => {
-
+    _onItemDoubleTap = () => {
         if (this.state.scale >= this.props.maxScale) {
             this._onScaleChanged({
                 scale: 1 / this.state.scale,
@@ -241,23 +216,22 @@ export default class PdfView extends Component {
                 pageY: this.state.contentContainerSize.height / 2
             });
         }
-
     };
 
-    _onScaleChanged = (pinchInfo) => {
-
+    _onScaleChanged = (pinchInfo: any) => {
         let newScale = pinchInfo.scale * this.state.scale;
         newScale = newScale > this.props.maxScale ? this.props.maxScale : newScale;
         newScale = newScale < this.props.minScale ? this.props.minScale : newScale;
+
         let newContentOffset = {
             x: (this.state.contentOffset.x + pinchInfo.pageX) * (newScale / this.state.scale) - pinchInfo.pageX,
             y: (this.state.contentOffset.y + pinchInfo.pageY) * (newScale / this.state.scale) - pinchInfo.pageY
         }
         this.setState({scale: newScale, newContentOffset: newContentOffset});
-        this.props.onScaleChanged(newScale);
-
+        this.props.onScaleChanged && this.props.onScaleChanged(newScale);
     };
 
+    // @ts-ignore
     _renderItem = ({item, index}) => {
         const pageView = (
             <PdfPageView
@@ -280,55 +254,57 @@ export default class PdfView extends Component {
 
         return (
             <DoubleTapView style={{flexDirection: this.props.horizontal ? 'row' : 'column'}}
-                           onSingleTap={(x, y) => {
+                           onSingleTap={(x: number, y: number) => {
                                this._onItemSingleTap(index, x, y);
                            }}
                            onDoubleTap={() => {
-                               this._onItemDoubleTap(index);
+                               this._onItemDoubleTap();
                            }}
             >
                 {pageView}
                 {(index !== this.state.numberOfPages - 1) && this._renderSeparator()}
             </DoubleTapView>
         );
-
     };
 
-    _onViewableItemsChanged = (viewableInfo) => {
-
+    _onViewableItemsChanged = (viewableInfo: any) => {
         for (let i = 0; i < viewableInfo.viewableItems.length; i++) {
             this._onPageChanged(viewableInfo.viewableItems[i].index + 1, this.state.numberOfPages);
             if (viewableInfo.viewableItems.length + viewableInfo.viewableItems[0].index < this.state.numberOfPages) break;
         }
-
     };
 
-    _onPageChanged = (page, numberOfPages) => {
+    _onPageChanged = (page: number, numberOfPages: number) => {
         if (this.props.onPageChanged && this.state.currentPage !== page) {
             this.props.onPageChanged(page, numberOfPages);
             this.setState({currentPage: page});
         }
     };
 
-
-    _getRef = (ref) => this._flatList = ref;
-
-    _getItemLayout = (data, index) => ({
+    _getItemLayout = (_data: any, index: number) => ({
         length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
         offset: ((this.props.horizontal ? this._getPageWidth() : this._getPageHeight()) + this.props.spacing * this.state.scale) * index,
         index
     });
 
-    _onScroll = (e) => {
+    _onScroll = (e: any) => {
         this.setState({contentOffset: e.nativeEvent.contentOffset, newContentOffset: e.nativeEvent.contentOffset});
     };
 
-    _onListContentSizeChange = (contentWidth, contentHeight) => {
+    _onListContentSizeChange = (contentWidth: number, contentHeight: number) => {
         if (this.state.contentOffset.x != this.state.newContentOffset.x
             || this.state.contentOffset.y != this.state.newContentOffset.y) {
-            this._flatList.scrollToXY(this.state.newContentOffset.x, this.state.newContentOffset.y);
+            this._flatList.current?.scrollToXY(this.state.newContentOffset.x, this.state.newContentOffset.y);
         }
     };
+
+    _renderScroll = (props: any) => (
+        <ScrollView
+            {...props}
+            centerContent={this.state.centerContent}
+            pinchGestureEnabled={false}
+        />
+    )
 
     _renderList = () => {
         let data = [];
@@ -343,7 +319,8 @@ export default class PdfView extends Component {
 
         return (
             <PdfViewFlatList
-                ref={this._getRef}
+                // @ts-ignore
+                ref={this._flatList}
                 style={[styles.container, this.props.style]}
                 pagingEnabled={this.props.enablePaging}
                 contentContainerStyle={[{
@@ -357,23 +334,18 @@ export default class PdfView extends Component {
                 windowSize={11}
                 getItemLayout={this._getItemLayout}
                 maxToRenderPerBatch={1}
-                renderScrollComponent={(props) => <ScrollView
-                    {...props}
-                    centerContent={this.state.centerContent}
-                    pinchGestureEnabled={false}
-                />}
+                renderScrollComponent={this._renderScroll} 
                 initialScrollIndex={this.props.page < 1 ? 0 : this.props.page - 1}
                 onViewableItemsChanged={this._onViewableItemsChanged}
-                viewabilityConfig={VIEWABILITYCONFIG}
+                viewabilityConfig={VIEW_ABILITY_CONFIG}
                 onScroll={this._onScroll}
                 onContentSizeChange={this._onListContentSizeChange}
                 scrollEnabled={!this.props.singlePage}
             />
         );
-
     };
 
-    _onLayout = (event) => {
+    _onLayout = (event: LayoutChangeEvent) => {
         this.setState({
             contentContainerSize: {
                 width: event.nativeEvent.layout.width,
@@ -381,7 +353,6 @@ export default class PdfView extends Component {
             }
         });
     };
-
 
     render() {
         if (this.props.singlePage) {
@@ -406,7 +377,6 @@ export default class PdfView extends Component {
         );
 
     }
-
 }
 
 const styles = StyleSheet.create({
