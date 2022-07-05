@@ -169,6 +169,19 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.6.2
+1. Fixed: Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'
+2. Added: Decode File Path for iOS
+3. Improved: prefer current page for calculating scale factor on fit
+
+v6.6.1 depresed
+
+v6.6.0 depresed
+1. Fixed: Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'
+2. Added: Decode File Path for iOS
+3. Improved: prefer current page for calculating scale factor on fit
+4. Improved: Typescript version source
+
 v6.5.0
 1. Fix: replace mavenCentral with maven
 2. Breaking Change(Android): replace deprecated repository: jcenter()
