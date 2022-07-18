@@ -58,6 +58,9 @@ export default class Pdf extends Component {
         onError: PropTypes.func,
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
+        onPageScrolled: PropTypes.func,
+        onNextPage: PropTypes.func,
+        onPrevPage: PropTypes.func,
         onPressLink: PropTypes.func,
 
         // Props that are not available in the earlier react native version, added to prevent crashed on android
@@ -97,6 +100,12 @@ export default class Pdf extends Component {
         onPageSingleTap: (page, x, y) => {
         },
         onScaleChanged: (scale) => {
+        },
+        onPageScrolled: (offsetX, offsetY) => {
+        },
+        onPrevPage: () => {
+        },
+        onNextPage: () => {
         },
         onPressLink: (url) => {
         },
@@ -376,6 +385,13 @@ export default class Pdf extends Component {
                 this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1]));
             } else if (message[0] === 'linkPressed') {
                 this.props.onPressLink && this.props.onPressLink(message[1]);
+            } else if (message[0] === 'pageScrolled') {
+                this.props.onPageScrolled && this.props.onPageScrolled(message[1], message[2], message[3]);
+            }
+            else if (message[0] === 'nextPage') {
+                this.props.onNextPage && this.props.onNextPage();
+            }else if (message[0] === 'prevPage') {
+                this.props.onPrevPage && this.props.onPrevPage();
             }
         }
 

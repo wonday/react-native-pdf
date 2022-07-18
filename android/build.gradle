@@ -17,7 +17,7 @@ repositories {
         url 'https://jitpack.io'
         content {
             // Use Jitpack only for AndroidPdfViewer; the rest is hosted at mavenCentral.
-            includeGroup "com.github.TalbotGooday"
+            includeGroup "com.github.maribeiroleya"
         }
     }
 }
@@ -61,6 +61,7 @@ dependencies {
     implementation "com.facebook.react:react-native:${_reactNativeVersion}"
     // NOTE: The original repo at com.github.barteksc is abandoned by the maintainer; there will be no more updates coming from that repo.
     //       It was taken over by com.github.TalbotGooday; from now on please use this repo until (if ever) the Barteksc repo is resumed.
-    implementation 'com.github.TalbotGooday:AndroidPdfViewer:3.1.0-beta.3'
+    //implementation 'com.github.maribeiroleya:AndroidPdfViewerLeya:leya_1.0.0'
+    implementation 'com.github.maribeiroleya:AndroidPdfViewer:leya_1.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
 }
