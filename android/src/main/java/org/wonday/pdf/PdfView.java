@@ -119,6 +119,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         float height = pageSize.getHeight();
 
         this.zoomTo(this.scale);
+        //this.zoomWithAnimation(this.scale);
         WritableMap event = Arguments.createMap();
 
         //create a new json Object for the TableOfContents
@@ -423,17 +424,22 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     @Override
     public void onPageSwipeChange(int offset) {
         WritableMap event = Arguments.createMap();
-        if(offset > 0) {
-            event.putString("message", "prevPage|");
+
+        Log.d("offset", String.format("%d", offset));
+
+        if(Math.abs(offset) > 1500) {
+            if(offset > 0) {
+                event.putString("message", "prevPage|");
+            }
+            else {
+                event.putString("message", "nextPage|");
+            }
+            ReactContext reactContext = (ReactContext)this.getContext();
+            reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+                    this.getId(),
+                    "topChange",
+                    event
+            );
         }
-        else {
-            event.putString("message", "nextPage|");
-        }
-        ReactContext reactContext = (ReactContext)this.getContext();
-        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-                this.getId(),
-                "topChange",
-                event
-        );
     }
 }
