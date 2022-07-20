@@ -382,7 +382,7 @@ export default class Pdf extends Component {
             } else if (message[0] === 'pageSingleTap') {
                 this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]));
             } else if (message[0] === 'scaleChanged') {
-                this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1], Number(message[2]), Number(message[3]), Number(message[4])));
+                this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]));
             } else if (message[0] === 'linkPressed') {
                 this.props.onPressLink && this.props.onPressLink(message[1]);
             } else if (message[0] === 'pageScrolled') {
