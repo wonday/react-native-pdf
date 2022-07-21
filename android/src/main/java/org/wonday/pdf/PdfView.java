@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnActionEnd;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
@@ -61,7 +62,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.shockwave.pdfium.util.SizeF;
 
-public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler, OnPageSwipeChangeListener {
+public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler, OnPageSwipeChangeListener, OnActionEnd {
     private ThemedReactContext context;
     private int page = 1;               // start from 1
     private boolean horizontal = false;
@@ -243,6 +244,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
             configurator.defaultPage(this.page-1)
                     .swipeHorizontal(this.horizontal)
+                    .onActionEnd(this)
                     .onPageChange(this)
                     .onLoad(this)
                     .onError(this)
@@ -441,5 +443,17 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                     event
             );
         }
+    }
+
+    @Override
+    public void actionEnd() {
+        WritableMap event = Arguments.createMap();
+        event.putString("message", "actionEnd|");
+        ReactContext reactContext = (ReactContext)this.getContext();
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+                this.getId(),
+                "topChange",
+                event
+        );
     }
 }
