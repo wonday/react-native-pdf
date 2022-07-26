@@ -118,6 +118,7 @@ const float MIN_SCALE = 1.0f;
 
         if ([changedProps containsObject:@"path"]) {
 
+            _path = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)_path, CFSTR(""));
 
             if (_pdfDocument != Nil) {
                 //Release old doc
