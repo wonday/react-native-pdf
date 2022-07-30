@@ -24,8 +24,8 @@ export default class PdfViewFlatList extends FlatList {
      * the function also accepts separate arguments as an alternative to the options object.
      * This is deprecated due to ambiguity (y before x), and SHOULD NOT BE USED.
      */
-    scrollToXY = (x, y) => {
+    scrollToXY = (x: number, y: number) => {
+        // @ts-ignore
         this._listRef._scrollRef.scrollTo({x: x, y: y, animated: false});
     }
-
 }
