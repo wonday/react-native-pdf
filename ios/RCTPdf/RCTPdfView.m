@@ -132,6 +132,9 @@ const float MIN_SCALE = 1.0f;
                     _pdfDocument = [[PDFDocument alloc] initWithData:blobData];
                 }
             } else {
+            
+                // decode file path
+                _path = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)_path, CFSTR(""));
                 NSURL *fileURL = [NSURL fileURLWithPath:_path];
                 _pdfDocument = [[PDFDocument alloc] initWithURL:fileURL];
             }
