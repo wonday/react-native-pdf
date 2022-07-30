@@ -169,12 +169,18 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.6.0
+1. Fixed: Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'
+2. Added: Decode File Path for iOS
+3. Improved: prefer current page for calculating scale factor on fit
+4. Improved: Typescript version source
+
 v6.5.0
-1. Fix: replace mavenCentral with maven
+1. Fixed: replace mavenCentral with maven
 2. Breaking Change(Android): replace deprecated repository: jcenter()
-3. Fix: loading progress
-4. Add: Typed "source" prop
-5. Remove: dependency to fbjs
+3. Fixed: loading progress
+4. Added: Typed "source" prop
+5. Removed: dependency to fbjs
 
 v6.4.0
 1. Remove sample for reducing NPM package size
