@@ -1,8 +1,8 @@
 {
     "name": "react-native-pdf",
     "version": "6.6.2",
-    "summary": "A react native PDF view component",
-    "description": "A react native PDF view component, support ios and android platform",
+    "summary": "A React Native PDF view component",
+    "description": "A React Native PDF view component (cross-platform support)",
     "main": "index.js",
     "typings": "./index.d.ts",
     "repository": {

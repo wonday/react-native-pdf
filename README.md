@@ -1,7 +1,7 @@
 # react-native-pdf
 [![npm](https://img.shields.io/npm/v/react-native-pdf.svg?style=flat-square)](https://www.npmjs.com/package/react-native-pdf)
 
-A react native PDF view component (cross-platform support)
+A React Native PDF view component (cross-platform support)
 
 ### Feature
 
@@ -180,7 +180,7 @@ v6.6.0 depresed
 1. Fixed: Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'
 2. Added: Decode File Path for iOS
 3. Improved: prefer current page for calculating scale factor on fit
-4. Improved: Typescript version source
+4. Improved: TypeScript version source
 
 v6.5.0
 1. Fix: replace mavenCentral with maven
@@ -190,7 +190,7 @@ v6.5.0
 5. Remove: dependency to fbjs
 
 v6.4.0
-1. Remove sample for reducing NPM package size
+1. Remove sample for reducing npm package size
 2. Add support for setting a filename for the cached pdf file
 3. Use react-native-blob-util instead of rn-fetch-blob
 4. Add blob support
