@@ -8,7 +8,7 @@ import type { Node } from 'react';
 import type { FormField, Methods } from 'react-native-blob-util';
 import { StyleSheet } from 'react-native';
 
-export type { ViewStyleProp } = StyleSheet;
+export type ViewStyleProp = StyleSheet.ViewStyleProp;
 export type AssetId = number;
 
 export type FitWidth = 0;
