@@ -45,6 +45,7 @@
          horizontal: PropTypes.bool,
          spacing: PropTypes.number,
          password: PropTypes.string,
+         hotspots: PropTypes.string,
          renderActivityIndicator: PropTypes.func,
          enableAntialiasing: PropTypes.bool,
          enableAnnotationRendering: PropTypes.bool,
@@ -76,6 +77,7 @@
  
      static defaultProps = {
          password: "",
+         hotspots: "",
          scale: 1,
          minScale: 1,
          maxScale: 3,

@@ -64,6 +64,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setPath(path);
     }
 
+    @ReactProp(name = "hotspots")
+    public void setHotspots(PdfView pdfView, String hotspots) {
+        pdfView.setHotspotsString(hotspots);
+    }
+
     // page start from 1
     @ReactProp(name = "page")
     public void setPage(PdfView pdfView, int page) {

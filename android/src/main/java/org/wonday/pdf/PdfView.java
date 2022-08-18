@@ -57,6 +57,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ClassCastException;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.shockwave.pdfium.PdfDocument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -71,6 +74,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private float maxScale = 3;
     private String asset;
     private String path;
+    private String hotspotsString;
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
@@ -245,6 +249,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 configurator = this.fromUri(getURI(this.path));
             }
 
+            JsonArray array = stringToArray(this.hotspotsString);
+
+            for(JsonElement element : array) {
+                JsonObject object = element.getAsJsonObject();
+                Log.d("HOTSPOTS", object.get("xPos").getAsString());
+                Log.d("HOTSPOTS", object.get("type").getAsString());
+            }
+
             configurator.defaultPage(this.page-1)
                     .swipeHorizontal(this.horizontal)
                     .onActionEnd(this)
@@ -277,8 +289,21 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         }
     }
 
+    public static JsonArray stringToArray(String string) {
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create();
+        return gson.fromJson(string, JsonArray.class);
+    }
+
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public void setHotspotsString(String hotspotsString) {
+        this.hotspotsString = hotspotsString;
     }
 
     // page start from 1
