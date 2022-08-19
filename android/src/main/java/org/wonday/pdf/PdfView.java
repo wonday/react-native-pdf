@@ -56,7 +56,10 @@ import static java.lang.String.format;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ClassCastException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.github.barteksc.pdfviewer.util.Hotspot;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -249,16 +252,19 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 configurator = this.fromUri(getURI(this.path));
             }
 
-            JsonArray array = stringToArray(this.hotspotsString);
 
+            List<Hotspot> hotspots = new ArrayList<>();
+            JsonArray array = stringToArray(this.hotspotsString);
             for(JsonElement element : array) {
+
                 JsonObject object = element.getAsJsonObject();
-                Log.d("HOTSPOTS", object.get("xPos").getAsString());
-                Log.d("HOTSPOTS", object.get("type").getAsString());
+                Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
+                hotspots.add(hotspot);
             }
 
             configurator.defaultPage(this.page-1)
                     .swipeHorizontal(this.horizontal)
+                    .withHotspots(hotspots)
                     .onActionEnd(this)
                     .onPageChange(this)
                     .onLoad(this)
