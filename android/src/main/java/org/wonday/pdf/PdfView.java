@@ -252,14 +252,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 configurator = this.fromUri(getURI(this.path));
             }
 
-
             List<Hotspot> hotspots = new ArrayList<>();
-            JsonArray array = stringToArray(this.hotspotsString);
-            for(JsonElement element : array) {
-
-                JsonObject object = element.getAsJsonObject();
-                Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
-                hotspots.add(hotspot);
+            if(!this.hotspotsString.isEmpty()) {
+                JsonArray array = stringToArray(this.hotspotsString);
+                for(JsonElement element : array) {
+                    JsonObject object = element.getAsJsonObject();
+                    Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
+                    hotspots.add(hotspot);
+                }
             }
 
             configurator.defaultPage(this.page-1)
