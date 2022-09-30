@@ -12,10 +12,9 @@ import PropTypes from 'prop-types';
 import {
     View,
     StyleSheet,
-    PanResponder,
-    ViewPropTypes,
+    PanResponder
 } from 'react-native';
-
+import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 export default class PinchZoomView extends Component {
 
     static propTypes = {
