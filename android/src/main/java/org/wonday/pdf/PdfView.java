@@ -98,6 +98,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     private float zoom = 1;
 
+    private boolean isDestroyed = false;
+
     public PdfView(ThemedReactContext context, AttributeSet set){
         super(context,set);
         //Constants.PART_SIZE=325;
@@ -224,10 +226,18 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             this.drawPdf();
     }
 
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        this.isDestroyed = true;
+    }
+
+
     public void drawPdf() {
         showLog(format("drawPdf path:%s %s", this.path, this.page));
 
-        if (this.path != null){
+        if (this.path != null && !isDestroyed){
 
             // set scale
             this.setMinZoom(this.minScale);
@@ -291,7 +301,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 configurator.onTap(this);
             }
 
-            configurator.load();
+            if(!isDestroyed) {
+                configurator.load();
+            }
         }
     }
 
