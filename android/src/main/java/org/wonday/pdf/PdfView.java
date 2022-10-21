@@ -475,7 +475,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
         Log.d("offset", String.format("%d", offset));
 
-        if(Math.abs(offset) > 1500) {
+        if(Math.abs(offset) > 600) {
             if(offset > 0) {
                 event.putString("message", "prevPage|");
             }
