@@ -11,7 +11,10 @@
   },
   "dependencies": {
     "react": "18.1.0",
-    "react-native": "0.70.6"
+    "react-native": "0.70.6",
+    "react-native-blob-util": "^0.17.0",
+    "react-native-orientation-locker": "^1.5.0",
+    "react-native-pdf": "link:../"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
