@@ -21,6 +21,7 @@
    enablePaging: ?boolean,
    enableRTL: ?boolean,
    enableAnnotationRendering: ?boolean,
+   enableAntialiasing: ?boolean,
    fitPolicy: ?Int32,
    spacing: ?Int32,
    password: ?string,

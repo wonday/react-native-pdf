@@ -8,39 +8,38 @@
 
 package org.wonday.pdf;
 
-import java.io.File;
-
 import android.content.Context;
-import android.view.ViewGroup;
-import android.util.Log;
-import android.graphics.PointF;
-import android.net.Uri;
 
-import com.facebook.react.bridge.NativeModule;
+import androidx.annotation.Nullable;
+
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
-import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.facebook.react.common.MapBuilder;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import static java.lang.String.format;
-import java.lang.ClassCastException;
+import com.facebook.react.uimanager.ViewManagerDelegate;
+import com.facebook.react.viewmanagers.PdfManagerDelegate;
+import com.facebook.react.viewmanagers.PdfManagerInterface;
 
-import com.github.barteksc.pdfviewer.util.FitPolicy;
-
-public class RCTPdfManager extends SimpleViewManager<PdfView> {
+public class RCTPdfManager extends SimpleViewManager<PdfView> implements PdfManagerInterface<PdfView> {
     private static final String REACT_CLASS = "RCTPdf";
     private Context context;
     private PdfView pdfView;
+    private final ViewManagerDelegate<PdfView> mDelegate;
 
+    @Nullable
+    @Override
+    protected ViewManagerDelegate<PdfView> getDelegate() {
+        return mDelegate;
+    }
+
+    public RCTPdfManager() {
+        mDelegate = new PdfManagerDelegate<>(this);
+    }
 
     public RCTPdfManager(ReactApplicationContext reactContext){
         this.context = reactContext;
+        mDelegate = new PdfManagerDelegate<>(this);
     }
 
     @Override
@@ -115,8 +114,13 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setEnablePaging(enablePaging);
     }
 
+    @Override
+    public void setEnableRTL(PdfView view, boolean value) {
+        // NOOP on Android
+    }
+
     @ReactProp(name = "fitPolicy")
-    public void setFitPolycy(PdfView pdfView, int fitPolicy) {
+    public void setFitPolicy(PdfView pdfView, int fitPolicy) {
         pdfView.setFitPolicy(fitPolicy);
     }
 
