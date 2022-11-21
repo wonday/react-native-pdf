@@ -50,6 +50,75 @@ const float MIN_SCALE = 1.0f;
     NSArray<NSString *> *_changedProps;
 }
 
+#ifdef RCT_NEW_ARCH_ENABLED
++ (ComponentDescriptorProvider)componentDescriptorProvider
+{
+  return concreteComponentDescriptorProvider<RNCPickerComponentDescriptor>();
+}
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    if (self = [super initWithFrame:frame]) {
+        static const auto defaultProps = std::make_shared<const RNCPickerProps>();
+        _props = defaultProps;
+        picker = [[RNCPicker alloc] initWithFrame:self.bounds];
+        self.contentView = picker;
+        picker.delegate = self;
+    }
+    return self;
+}
+
+- (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
+{
+    const auto &newProps = *std::static_pointer_cast<const RNCPickerProps>(props);
+    NSMutableArray *items = [NSMutableArray new];
+    for (RNCPickerItemsStruct item : newProps.items)
+    {
+        NSMutableDictionary *dictItem = [NSMutableDictionary new];
+        dictItem[@"value"] = RCTNSStringFromStringNilIfEmpty(item.value);
+        dictItem[@"label"] = RCTNSStringFromStringNilIfEmpty(item.label);
+        dictItem[@"textColor"] = RCTUIColorFromSharedColor(item.textColor);
+        dictItem[@"testID"] = RCTNSStringFromStringNilIfEmpty(item.testID);
+        [items addObject:dictItem];
+    }
+    picker.items = items;
+    picker.selectedIndex = newProps.selectedIndex;
+    picker.color = RCTUIColorFromSharedColor(newProps.color);
+    NSString *textAlign = RCTNSStringFromStringNilIfEmpty(newProps.themeVariant);
+    if ([textAlign isEqualToString:@"auto"]){
+        picker.textAlign = NSTextAlignmentNatural;
+    } else if ([textAlign isEqualToString:@"left"]){
+        picker.textAlign = NSTextAlignmentLeft;
+    } else if ([textAlign isEqualToString:@"center"]){
+        picker.textAlign = NSTextAlignmentCenter;
+    } else if ([textAlign isEqualToString:@"right"]){
+        picker.textAlign = NSTextAlignmentRight;
+    } else if ([textAlign isEqualToString:@"justify"]){
+        picker.textAlign = NSTextAlignmentJustified;
+    }
+    picker.numberOfLines = newProps.numberOfLines;
+    [RCTFont updateFont:picker.font withFamily:RCTNSStringFromStringNilIfEmpty(newProps.fontFamily) size:@(newProps.fontSize) weight:RCTNSStringFromStringNilIfEmpty(newProps.fontWeight) style:RCTNSStringFromStringNilIfEmpty(newProps.fontStyle) variant:nil scaleMultiplier:1];
+    if (@available(iOS 13.4, *)) {
+        NSString *themeVariant = RCTNSStringFromStringNilIfEmpty(newProps.themeVariant);
+            if (themeVariant) {
+                if ([themeVariant isEqual:@"dark"])
+                    picker.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
+                else if ([themeVariant isEqual:@"light"])
+                    picker.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+                else
+                    picker.overrideUserInterfaceStyle = UIUserInterfaceStyleUnspecified;
+            }
+        }
+    [super updateProps:props oldProps:oldProps];
+}
+
+// already added in case https://github.com/facebook/react-native/pull/35378 has been merged
+- (BOOL)shouldBeRecycled
+{
+    return NO;
+}
+#endif
+
 - (instancetype)initWithBridge:(RCTBridge *)bridge
 {
     self = [super init];

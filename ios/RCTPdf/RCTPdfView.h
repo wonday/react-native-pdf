@@ -17,11 +17,19 @@
 #import "UIView+React.h"
 #endif
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <React/RCTViewComponentView.h>
+#endif
 
 @class RCTEventDispatcher;
 
-NS_CLASS_AVAILABLE_IOS(11_0) @interface RCTPdfView : UIView <UIGestureRecognizerDelegate>
-
+NS_CLASS_AVAILABLE_IOS(11_0) @interface RCTPdfView :
+#ifdef RCT_NEW_ARCH_ENABLED
+RCTViewComponentView
+#else
+UIView
+#endif
+<UIGestureRecognizerDelegate>
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @property(nonatomic, strong) NSString *path;
