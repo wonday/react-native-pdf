@@ -13,6 +13,7 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
@@ -21,8 +22,9 @@ import com.facebook.react.uimanager.ViewManagerDelegate;
 import com.facebook.react.viewmanagers.PdfManagerDelegate;
 import com.facebook.react.viewmanagers.PdfManagerInterface;
 
+@ReactModule(name = RCTPdfManager.REACT_CLASS)
 public class RCTPdfManager extends SimpleViewManager<PdfView> implements PdfManagerInterface<PdfView> {
-    private static final String REACT_CLASS = "RCTPdf";
+    public static final String REACT_CLASS = "RCTPdf";
     private Context context;
     private PdfView pdfView;
     private final ViewManagerDelegate<PdfView> mDelegate;

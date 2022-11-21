@@ -17,6 +17,7 @@ import {
     Image,
     Text
 } from 'react-native';
+import PdfViewNativeComponent from './fabric/RCTPdfNativeComponent';
 
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
@@ -438,18 +439,12 @@ export default class Pdf extends Component {
 }
 
 
-if (Platform.OS === "android") {
+if (Platform.OS === "windows") {
     var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
         nativeOnly: {path: true, onChange: true},
     })
-} else if (Platform.OS === "ios") {
-    var PdfCustom = requireNativeComponent('RCTPdfView', Pdf, {
-        nativeOnly: {path: true, onChange: true},
-    })
-} else if (Platform.OS === "windows") {
-    var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
-        nativeOnly: {path: true, onChange: true},
-    })
+} else {
+    var PdfCustom = PdfViewNativeComponent;
 }
 
 
