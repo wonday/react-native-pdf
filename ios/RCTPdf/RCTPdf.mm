@@ -6,6 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+// Due to name mangling, calling c-style functions from .mm files will fail, therefore we need to wrap them with extern
+// "C" so they are handled correctly. We also need to have imports positioned in a correct way, so that this extern "C"
+// wrapper is used before the functions from PDFKit are used.
+extern "C" {
+
+#import <PDFKit/PDFKit.h>
+
+}
+
 #import "RCTPdf.h"
 
 #import <Foundation/Foundation.h>
@@ -30,6 +39,13 @@
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnpdf/ComponentDescriptors.h>
 #import <react/renderer/components/rnpdf/Props.h>
+
+// Some RN private method hacking below similar to how it is done in RNScreens:
+// https://github.com/software-mansion/react-native-screens/blob/90e548739f35b5ded2524a9d6410033fc233f586/ios/RNSScreenStackHeaderConfig.mm#L30
+@interface RCTBridge (Private)
++ (RCTBridge *)currentBridge;
+@end
+
 #endif
 
 #ifndef __OPTIMIZE__
@@ -44,6 +60,9 @@
 
 const float MAX_SCALE = 3.0f;
 const float MIN_SCALE = 1.0f;
+
+@interface RCTPdf() <PDFDocumentDelegate, PDFViewDelegate>
+@end
 
 @implementation RCTPdf
 {
@@ -70,6 +89,7 @@ using namespace facebook::react;
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const RCTPdfProps>();
         _props = defaultProps;
+        [self initCommonProps];
     }
     return self;
 }
@@ -77,6 +97,20 @@ using namespace facebook::react;
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
     const auto &newProps = *std::static_pointer_cast<const RCTPdfProps>(props);
+    self.path = RCTNSStringFromStringNilIfEmpty(newProps.path);
+    self.page = newProps.page;
+    self.scale = newProps.scale;
+    self.minScale = newProps.minScale;
+    self.maxScale = newProps.maxScale;
+    self.horizontal = newProps.horizontal;
+    self.enablePaging = newProps.enablePaging;
+    self.enableRTL = newProps.enableRTL;
+    self.enableAnnotationRendering = newProps.enableAnnotationRendering;
+    self.fitPolicy = newProps.fitPolicy;
+    self.spacing = newProps.spacing;
+    self.password = RCTNSStringFromStringNilIfEmpty(newProps.password);
+    self.singlePage = newProps.singlePage;
+
     [super updateProps:props oldProps:oldProps];
 }
 
@@ -91,58 +125,62 @@ using namespace facebook::react;
 {
     self = [super init];
     if (self) {
-
         _bridge = bridge;
-        _page = 1;
-        _scale = 1;
-        _minScale = MIN_SCALE;
-        _maxScale = MAX_SCALE;
-        _horizontal = NO;
-        _enablePaging = NO;
-        _enableRTL = NO;
-        _enableAnnotationRendering = YES;
-        _fitPolicy = 2;
-        _spacing = 10;
-        _singlePage = NO;
-
-        // init and config PDFView
-        _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
-        _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
-        _pdfView.autoScales = YES;
-        _pdfView.displaysPageBreaks = YES;
-        _pdfView.displayBox = kPDFDisplayBoxCropBox;
-        _pdfView.backgroundColor = [UIColor clearColor];
-
-        _fixScaleFactor = -1.0f;
-        _initialed = NO;
-        _changedProps = NULL;
-
-        [self addSubview:_pdfView];
-
-
-        // register notification
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(onDocumentChanged:) name:PDFViewDocumentChangedNotification object:_pdfView];
-        [center addObserver:self selector:@selector(onPageChanged:) name:PDFViewPageChangedNotification object:_pdfView];
-        [center addObserver:self selector:@selector(onScaleChanged:) name:PDFViewScaleChangedNotification object:_pdfView];
-
-        [[_pdfView document] setDelegate: self];
-        [_pdfView setDelegate: self];
-
-
-        [self bindTap];
+        [self initCommonProps];
     }
 
     return self;
 }
 
+- (void)initCommonProps
+{
+    _page = 1;
+    _scale = 1;
+    _minScale = MIN_SCALE;
+    _maxScale = MAX_SCALE;
+    _horizontal = NO;
+    _enablePaging = NO;
+    _enableRTL = NO;
+    _enableAnnotationRendering = YES;
+    _fitPolicy = 2;
+    _spacing = 10;
+    _singlePage = NO;
+
+    // init and config PDFView
+    _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+    _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
+    _pdfView.autoScales = YES;
+    _pdfView.displaysPageBreaks = YES;
+    _pdfView.displayBox = kPDFDisplayBoxCropBox;
+    _pdfView.backgroundColor = [UIColor clearColor];
+
+    _fixScaleFactor = -1.0f;
+    _initialed = NO;
+    _changedProps = NULL;
+
+    [self addSubview:_pdfView];
+
+
+    // register notification
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(onDocumentChanged:) name:PDFViewDocumentChangedNotification object:_pdfView];
+    [center addObserver:self selector:@selector(onPageChanged:) name:PDFViewPageChangedNotification object:_pdfView];
+    [center addObserver:self selector:@selector(onScaleChanged:) name:PDFViewScaleChangedNotification object:_pdfView];
+
+    [[_pdfView document] setDelegate: self];
+    [_pdfView setDelegate: self];
+
+
+    [self bindTap];
+}
+
 - (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)url
 {
     NSString *_url = url.absoluteString;
-    _onChange(@{ @"message":
+    [self notifyOnChangeWithMessage:
                      [[NSString alloc] initWithString:
                       [NSString stringWithFormat:
-                       @"linkPressed|%s", _url.UTF8String]] });
+                       @"linkPressed|%s", _url.UTF8String]]];
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps
@@ -162,7 +200,13 @@ using namespace facebook::react;
             }
             
             if ([_path hasPrefix:@"blob:"]) {
-                RCTBlobManager *blobManager = [_bridge moduleForName:@"BlobModule"];
+                RCTBlobManager *blobManager = [
+#ifdef RCT_NEW_ARCH_ENABLED
+        [RCTBridge currentBridge]
+#else
+        _bridge
+#endif // RCT_NEW_ARCH_ENABLED
+                    moduleForName:@"BlobModule"];
                 NSURL *blobURL = [NSURL URLWithString:_path];
                 NSData *blobData = [blobManager resolveURL:blobURL];
                 if (blobData != nil) {
@@ -181,7 +225,7 @@ using namespace facebook::react;
                 //check need password or not
                 if (_pdfDocument.isLocked && ![_pdfDocument unlockWithPassword:_password]) {
 
-                    _onChange(@{ @"message": @"error|Password required or incorrect password."});
+                    [self notifyOnChangeWithMessage:@"error|Password required or incorrect password."];
 
                     _pdfDocument = Nil;
                     return;
@@ -190,7 +234,7 @@ using namespace facebook::react;
                 _pdfView.document = _pdfDocument;
             } else {
 
-                _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"error|Load pdf failed. path=%s",_path.UTF8String]]});
+                [self notifyOnChangeWithMessage:[[NSString alloc] initWithString:[NSString stringWithFormat:@"error|Load pdf failed. path=%s",_path.UTF8String]]];
 
                 _pdfDocument = Nil;
                 return;
@@ -349,6 +393,19 @@ using namespace facebook::react;
     [self didSetProps:mProps];
 }
 
+
+- (void)notifyOnChangeWithMessage:(NSString *)message
+{
+#ifdef RCT_NEW_ARCH_ENABLED
+    if (_eventEmitter != nullptr) {
+             std::dynamic_pointer_cast<const RCTPdfEventEmitter>(_eventEmitter)
+                 ->onChange(RCTPdfEventEmitter::OnChange{.message = RCTStringFromNSString(message)});
+           }
+#else
+    _onChange(@{ @"message": message});
+#endif
+}
+
 - (void)dealloc{
 
     _pdfDocument = Nil;
@@ -372,7 +429,8 @@ using namespace facebook::react;
         CGSize pageSize = [_pdfView rowSizeForPage:page];
         NSString *jsonString = [self getTableContents];
 
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%lu|%f|%f|%@", numberOfPages, pageSize.width, pageSize.height,jsonString]]});
+        [self notifyOnChangeWithMessage:
+         [[NSString alloc] initWithString:[NSString stringWithFormat:@"loadComplete|%lu|%f|%f|%@", numberOfPages, pageSize.width, pageSize.height,jsonString]]];
     }
 
 }
@@ -471,7 +529,7 @@ using namespace facebook::react;
         unsigned long page = [_pdfDocument indexForPage:currentPage];
         unsigned long numberOfPages = _pdfDocument.pageCount;
 
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%lu|%lu", page+1, numberOfPages]]});
+        [self notifyOnChangeWithMessage:[[NSString alloc] initWithString:[NSString stringWithFormat:@"pageChanged|%lu|%lu", page+1, numberOfPages]]];
     }
 
 }
@@ -482,7 +540,7 @@ using namespace facebook::react;
     if (_initialed && _fixScaleFactor>0) {
         if (_scale != _pdfView.scaleFactor/_fixScaleFactor) {
             _scale = _pdfView.scaleFactor/_fixScaleFactor;
-            _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"scaleChanged|%f", _scale]]});
+            [self notifyOnChangeWithMessage:[[NSString alloc] initWithString:[NSString stringWithFormat:@"scaleChanged|%f", _scale]]];
         }
     }
 }
@@ -544,7 +602,8 @@ using namespace facebook::react;
     PDFPage *pdfPage = [_pdfView pageForPoint:point nearest:NO];
     if (pdfPage) {
         unsigned long page = [_pdfDocument indexForPage:pdfPage];
-        _onChange(@{ @"message": [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu|%f|%f", page+1, point.x, point.y]]});
+        [self notifyOnChangeWithMessage:
+         [[NSString alloc] initWithString:[NSString stringWithFormat:@"pageSingleTap|%lu|%f|%f", page+1, point.x, point.y]]];
     }
 
     //[self setNeedsDisplay];

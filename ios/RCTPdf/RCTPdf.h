@@ -9,15 +9,6 @@
 #ifndef RCTPdf_h
 #define RCTPdf_h
 
-// Due to name mangling, calling c-style functions from .mm files will fail, therefore we need to wrap them with extern
-// "C" so they are handled correctly. We also need to have imports positioned in a correct way, so that this extern "C"
-// wrapper is used before the functions from PDFKit are used.
-extern "C" {
-
-#import <PDFKit/PDFKit.h>
-
-}
-
 #if __has_include(<React/RCTAssert.h>)
 #import <React/RCTEventDispatcher.h>
 #import <React/UIView+React.h>
@@ -38,7 +29,7 @@ RCTViewComponentView
 #else
 UIView
 #endif
-<UIGestureRecognizerDelegate, PDFDocumentDelegate, PDFViewDelegate>
+<UIGestureRecognizerDelegate>
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @property(nonatomic, strong) NSString *path;
