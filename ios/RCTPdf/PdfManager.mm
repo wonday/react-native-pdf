@@ -136,7 +136,7 @@ RCT_EXPORT_METHOD(loadFile:(NSString *)path
 {
     // release pdf docs
     for(NSValue *item in pdfDocRefs) {
-        CGPDFDocumentRef pdfItem = [item pointerValue];
+        CGPDFDocumentRef pdfItem = (CGPDFDocumentRef)[item pointerValue];
         if (pdfItem != NULL) {
 
             CGPDFDocumentRelease(pdfItem);

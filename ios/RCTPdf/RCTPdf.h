@@ -6,8 +6,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef RCTPdfView_h
-#define RCTPdfView_h
+#ifndef RCTPdf_h
+#define RCTPdf_h
+
+// Due to name mangling, calling c-style functions from .mm files will fail, therefore we need to wrap them with extern
+// "C" so they are handled correctly. We also need to have imports positioned in a correct way, so that this extern "C"
+// wrapper is used before the functions from PDFKit are used.
+extern "C" {
+
+#import <PDFKit/PDFKit.h>
+
+}
 
 #if __has_include(<React/RCTAssert.h>)
 #import <React/RCTEventDispatcher.h>
@@ -23,13 +32,13 @@
 
 @class RCTEventDispatcher;
 
-NS_CLASS_AVAILABLE_IOS(11_0) @interface RCTPdfView :
+NS_CLASS_AVAILABLE_IOS(11_0) @interface RCTPdf :
 #ifdef RCT_NEW_ARCH_ENABLED
 RCTViewComponentView
 #else
 UIView
 #endif
-<UIGestureRecognizerDelegate>
+<UIGestureRecognizerDelegate, PDFDocumentDelegate, PDFViewDelegate>
 - (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @property(nonatomic, strong) NSString *path;
@@ -51,4 +60,4 @@ UIView
 
 @end
 
-#endif /* RCTPdfView_h */
+#endif /* RCTPdf_h */

@@ -636,7 +636,13 @@ PODS:
   - react-native-orientation-locker (1.5.0):
     - React-Core
   - react-native-pdf (6.6.2):
-    - React-Core
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React
+    - React-Codegen
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - React-perflogger (0.70.6)
   - React-RCTActionSheet (0.70.6):
     - React-Core/RCTActionSheetHeaders (= 0.70.6)
@@ -925,7 +931,7 @@ SPEC CHECKSUMS:
   React-logger: 1623c216abaa88974afce404dc8f479406bbc3a0
   react-native-blob-util: ac96d9e221928d8f3787dd7d0bad6fc298815ee7
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
-  react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
+  react-native-pdf: f588ebf615d8214165a0f4d2366cc69d0dc60863
   React-perflogger: 8c79399b0500a30ee8152d0f9f11beae7fc36595
   React-RCTActionSheet: 7316773acabb374642b926c19aef1c115df5c466
   React-RCTAnimation: 5341e288375451297057391227f691d9b2326c3d

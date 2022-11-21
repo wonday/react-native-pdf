@@ -8,11 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RCTPdfViewManager.h"
-#import "RCTPdfView.h"
+#import "RCTPdfManager.h"
+#import "RCTPdf.h"
 
 
-@implementation RCTPdfViewManager
+@implementation RCTPdfManager
 
 RCT_EXPORT_MODULE()
 
@@ -20,7 +20,7 @@ RCT_EXPORT_MODULE()
 {
     if([[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] == NSOrderedDescending
        || [[[UIDevice currentDevice] systemVersion] compare:@"11.0" options:NSNumericSearch] == NSOrderedSame) {
-        return [[RCTPdfView alloc] initWithBridge:self.bridge];
+        return [[RCTPdf alloc] initWithBridge:self.bridge];
     } else {
         return NULL;
     }

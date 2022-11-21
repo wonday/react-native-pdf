@@ -13,6 +13,6 @@
 #endif
 
 
-@interface RCTPdfViewManager : RCTViewManager
+@interface RCTPdfManager : RCTViewManager
 
 @end

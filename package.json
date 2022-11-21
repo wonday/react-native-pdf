@@ -59,7 +59,7 @@
     "codegenConfig": {
         "name": "rnpdf",
         "type": "components",
-        "jsSrcsDir": "./",
+        "jsSrcsDir": "./fabric",
         "android": {
           "javaPackageName": "org.wonday.pdf"
         }

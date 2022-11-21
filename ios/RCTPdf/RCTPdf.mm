@@ -6,11 +6,10 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import "RCTPdfView.h"
+#import "RCTPdf.h"
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
-#import <PDFKit/PDFKit.h>
 
 #if __has_include(<React/RCTAssert.h>)
 #import <React/RCTBridgeModule.h>
@@ -26,6 +25,13 @@
 #import <RCTBlobManager.h">
 #endif
 
+#ifdef RCT_NEW_ARCH_ENABLED
+#import <React/RCTConversions.h>
+#import <React/RCTFabricComponentsPlugins.h>
+#import <react/renderer/components/rnpdf/ComponentDescriptors.h>
+#import <react/renderer/components/rnpdf/Props.h>
+#endif
+
 #ifndef __OPTIMIZE__
 // only output log when debug
 #define DLog( s, ... ) NSLog( @"<%p %@:(%d)> %@", self, [[NSString stringWithUTF8String:__FILE__] lastPathComponent], __LINE__, [NSString stringWithFormat:(s), ##__VA_ARGS__] )
@@ -39,7 +45,7 @@
 const float MAX_SCALE = 3.0f;
 const float MIN_SCALE = 1.0f;
 
-@implementation RCTPdfView
+@implementation RCTPdf
 {
     RCTBridge *_bridge;
     PDFDocument *_pdfDocument;
@@ -51,64 +57,26 @@ const float MIN_SCALE = 1.0f;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
+
+using namespace facebook::react;
+
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return concreteComponentDescriptorProvider<RNCPickerComponentDescriptor>();
+  return concreteComponentDescriptorProvider<RCTPdfComponentDescriptor>();
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        static const auto defaultProps = std::make_shared<const RNCPickerProps>();
+        static const auto defaultProps = std::make_shared<const RCTPdfProps>();
         _props = defaultProps;
-        picker = [[RNCPicker alloc] initWithFrame:self.bounds];
-        self.contentView = picker;
-        picker.delegate = self;
     }
     return self;
 }
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-    const auto &newProps = *std::static_pointer_cast<const RNCPickerProps>(props);
-    NSMutableArray *items = [NSMutableArray new];
-    for (RNCPickerItemsStruct item : newProps.items)
-    {
-        NSMutableDictionary *dictItem = [NSMutableDictionary new];
-        dictItem[@"value"] = RCTNSStringFromStringNilIfEmpty(item.value);
-        dictItem[@"label"] = RCTNSStringFromStringNilIfEmpty(item.label);
-        dictItem[@"textColor"] = RCTUIColorFromSharedColor(item.textColor);
-        dictItem[@"testID"] = RCTNSStringFromStringNilIfEmpty(item.testID);
-        [items addObject:dictItem];
-    }
-    picker.items = items;
-    picker.selectedIndex = newProps.selectedIndex;
-    picker.color = RCTUIColorFromSharedColor(newProps.color);
-    NSString *textAlign = RCTNSStringFromStringNilIfEmpty(newProps.themeVariant);
-    if ([textAlign isEqualToString:@"auto"]){
-        picker.textAlign = NSTextAlignmentNatural;
-    } else if ([textAlign isEqualToString:@"left"]){
-        picker.textAlign = NSTextAlignmentLeft;
-    } else if ([textAlign isEqualToString:@"center"]){
-        picker.textAlign = NSTextAlignmentCenter;
-    } else if ([textAlign isEqualToString:@"right"]){
-        picker.textAlign = NSTextAlignmentRight;
-    } else if ([textAlign isEqualToString:@"justify"]){
-        picker.textAlign = NSTextAlignmentJustified;
-    }
-    picker.numberOfLines = newProps.numberOfLines;
-    [RCTFont updateFont:picker.font withFamily:RCTNSStringFromStringNilIfEmpty(newProps.fontFamily) size:@(newProps.fontSize) weight:RCTNSStringFromStringNilIfEmpty(newProps.fontWeight) style:RCTNSStringFromStringNilIfEmpty(newProps.fontStyle) variant:nil scaleMultiplier:1];
-    if (@available(iOS 13.4, *)) {
-        NSString *themeVariant = RCTNSStringFromStringNilIfEmpty(newProps.themeVariant);
-            if (themeVariant) {
-                if ([themeVariant isEqual:@"dark"])
-                    picker.overrideUserInterfaceStyle = UIUserInterfaceStyleDark;
-                else if ([themeVariant isEqual:@"light"])
-                    picker.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
-                else
-                    picker.overrideUserInterfaceStyle = UIUserInterfaceStyleUnspecified;
-            }
-        }
+    const auto &newProps = *std::static_pointer_cast<const RCTPdfProps>(props);
     [super updateProps:props oldProps:oldProps];
 }
 
@@ -657,6 +625,12 @@ const float MIN_SCALE = 1.0f;
     return !_singlePage;
 }
 
-
-
 @end
+
+#ifdef RCT_NEW_ARCH_ENABLED
+Class<RCTComponentViewProtocol> RCTPdfCls(void)
+{
+    return RCTPdf.class;
+}
+
+#endif
