@@ -19,6 +19,7 @@ extern "C" {
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
+#import <PDFKit/PDFKit.h>
 
 #if __has_include(<React/RCTAssert.h>)
 #import <React/RCTBridgeModule.h>

@@ -625,14 +625,8 @@ PODS:
   - React-jsinspector (0.70.6)
   - React-logger (0.70.6):
     - glog
-  - react-native-blob-util (0.17.0):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Codegen
+  - react-native-blob-util (0.16.4):
     - React-Core
-    - React-RCTFabric
-    - ReactCommon/turbomodule/core
   - react-native-orientation-locker (1.5.0):
     - React-Core
   - react-native-pdf (6.6.2):
@@ -929,9 +923,9 @@ SPEC CHECKSUMS:
   React-jsiexecutor: b4a65947391c658450151275aa406f2b8263178f
   React-jsinspector: 60769e5a0a6d4b32294a2456077f59d0266f9a8b
   React-logger: 1623c216abaa88974afce404dc8f479406bbc3a0
-  react-native-blob-util: ac96d9e221928d8f3787dd7d0bad6fc298815ee7
+  react-native-blob-util: 60453b777610c87a22b3524032c0214e8db555db
   react-native-orientation-locker: 851f6510d8046ea2f14aa169b1e01fcd309a94ba
-  react-native-pdf: f588ebf615d8214165a0f4d2366cc69d0dc60863
+  react-native-pdf: 98810171111685a679dfb6beaf638090ba3a9eb9
   React-perflogger: 8c79399b0500a30ee8152d0f9f11beae7fc36595
   React-RCTActionSheet: 7316773acabb374642b926c19aef1c115df5c466
   React-RCTAnimation: 5341e288375451297057391227f691d9b2326c3d

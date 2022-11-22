@@ -37,6 +37,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = FabricExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = FabricExample/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-FabricExample-FabricExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FabricExample-FabricExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2335AE54292CFE2D00DDE4FA /* PDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PDFKit.framework; path = System/Library/Frameworks/PDFKit.framework; sourceTree = SDKROOT; };
 		3B4392A12AC88292D35C810B /* Pods-FabricExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FabricExample.debug.xcconfig"; path = "Target Support Files/Pods-FabricExample/Pods-FabricExample.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-FabricExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FabricExample.release.xcconfig"; path = "Target Support Files/Pods-FabricExample/Pods-FabricExample.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-FabricExample-FabricExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FabricExample-FabricExampleTests.debug.xcconfig"; path = "Target Support Files/Pods-FabricExample-FabricExampleTests/Pods-FabricExample-FabricExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -99,6 +100,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2335AE54292CFE2D00DDE4FA /* PDFKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-FabricExample.a */,
 				19F6CBCC0A4E27FBF8BF4A61 /* libPods-FabricExample-FabricExampleTests.a */,
