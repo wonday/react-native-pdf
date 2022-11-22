@@ -29,4 +29,4 @@
    singlePage: ?boolean,
  |}>;
 
- export default codegenNativeComponent<NativeProps>('RCTPdf');
+ export default codegenNativeComponent<NativeProps>('RNPDFPdfView');

@@ -8,17 +8,17 @@
 
 #import <Foundation/Foundation.h>
 
-#import "RCTPdfPageViewManager.h"
-#import "RCTPdfPageView.h"
+#import "RNPDFPdfPageViewManager.h"
+#import "RNPDFPdfPageView.h"
 
 
-@implementation RCTPdfPageViewManager
+@implementation RNPDFPdfPageViewManager
 
 RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-  return [[RCTPdfPageView alloc] init];
+  return [[RNPDFPdfPageView alloc] init];
 }
 
 RCT_EXPORT_VIEW_PROPERTY(fileNo, int);

@@ -6,16 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-// Due to name mangling, calling c-style functions from .mm files will fail, therefore we need to wrap them with extern
-// "C" so they are handled correctly. We also need to have imports positioned in a correct way, so that this extern "C"
-// wrapper is used before the functions from PDFKit are used.
-extern "C" {
-
-#import <PDFKit/PDFKit.h>
-
-}
-
-#import "RCTPdf.h"
+#import "RNPDFPdfView.h"
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
@@ -62,10 +53,10 @@ extern "C" {
 const float MAX_SCALE = 3.0f;
 const float MIN_SCALE = 1.0f;
 
-@interface RCTPdf() <PDFDocumentDelegate, PDFViewDelegate>
+@interface RNPDFPdfView() <PDFDocumentDelegate, PDFViewDelegate>
 @end
 
-@implementation RCTPdf
+@implementation RNPDFPdfView
 {
     RCTBridge *_bridge;
     PDFDocument *_pdfDocument;
@@ -82,13 +73,13 @@ using namespace facebook::react;
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
-  return concreteComponentDescriptorProvider<RCTPdfComponentDescriptor>();
+  return concreteComponentDescriptorProvider<RNPDFPdfViewComponentDescriptor>();
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        static const auto defaultProps = std::make_shared<const RCTPdfProps>();
+        static const auto defaultProps = std::make_shared<const RNPDFPdfViewProps>();
         _props = defaultProps;
         [self initCommonProps];
     }
@@ -97,7 +88,7 @@ using namespace facebook::react;
 
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
-    const auto &newProps = *std::static_pointer_cast<const RCTPdfProps>(props);
+    const auto &newProps = *std::static_pointer_cast<const RNPDFPdfViewProps>(props);
     self.path = RCTNSStringFromStringNilIfEmpty(newProps.path);
     self.page = newProps.page;
     self.scale = newProps.scale;
@@ -399,8 +390,8 @@ using namespace facebook::react;
 {
 #ifdef RCT_NEW_ARCH_ENABLED
     if (_eventEmitter != nullptr) {
-             std::dynamic_pointer_cast<const RCTPdfEventEmitter>(_eventEmitter)
-                 ->onChange(RCTPdfEventEmitter::OnChange{.message = RCTStringFromNSString(message)});
+             std::dynamic_pointer_cast<const RNPDFPdfViewEventEmitter>(_eventEmitter)
+                 ->onChange(RNPDFPdfViewEventEmitter::OnChange{.message = RCTStringFromNSString(message)});
            }
 #else
     _onChange(@{ @"message": message});
@@ -688,9 +679,9 @@ using namespace facebook::react;
 @end
 
 #ifdef RCT_NEW_ARCH_ENABLED
-Class<RCTComponentViewProtocol> RCTPdfCls(void)
+Class<RCTComponentViewProtocol> RNPDFPdfViewCls(void)
 {
-    return RCTPdf.class;
+    return RNPDFPdfView.class;
 }
 
 #endif

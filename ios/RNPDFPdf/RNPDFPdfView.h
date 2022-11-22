@@ -6,8 +6,8 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#ifndef RCTPdf_h
-#define RCTPdf_h
+#ifndef RNPDFPdfView_h
+#define RNPDFPdfView_h
 
 #if __has_include(<React/RCTAssert.h>)
 #import <React/RCTEventDispatcher.h>
@@ -23,7 +23,7 @@
 
 @class RCTEventDispatcher;
 
-NS_CLASS_AVAILABLE_IOS(11_0) @interface RCTPdf :
+NS_CLASS_AVAILABLE_IOS(11_0) @interface RNPDFPdfView :
 #ifdef RCT_NEW_ARCH_ENABLED
 RCTViewComponentView
 #else
@@ -51,4 +51,4 @@ UIView
 
 @end
 
-#endif /* RCTPdf_h */
+#endif /* RNPDFPdfView_h */

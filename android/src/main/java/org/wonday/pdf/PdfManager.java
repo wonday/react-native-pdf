@@ -19,12 +19,12 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
 import com.facebook.react.uimanager.ViewManagerDelegate;
-import com.facebook.react.viewmanagers.PdfManagerDelegate;
-import com.facebook.react.viewmanagers.PdfManagerInterface;
+import com.facebook.react.viewmanagers.RNPDFPdfViewManagerDelegate;
+import com.facebook.react.viewmanagers.RNPDFPdfViewManagerInterface;
 
-@ReactModule(name = RCTPdfManager.REACT_CLASS)
-public class RCTPdfManager extends SimpleViewManager<PdfView> implements PdfManagerInterface<PdfView> {
-    public static final String REACT_CLASS = "RCTPdf";
+@ReactModule(name = PdfManager.REACT_CLASS)
+public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfViewManagerInterface<PdfView> {
+    public static final String REACT_CLASS = "RNPDFPdfView";
     private Context context;
     private PdfView pdfView;
     private final ViewManagerDelegate<PdfView> mDelegate;
@@ -35,13 +35,13 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> implements PdfMana
         return mDelegate;
     }
 
-    public RCTPdfManager() {
-        mDelegate = new PdfManagerDelegate<>(this);
+    public PdfManager() {
+        mDelegate = new RNPDFPdfViewManagerDelegate<>(this);
     }
 
-    public RCTPdfManager(ReactApplicationContext reactContext){
+    public PdfManager(ReactApplicationContext reactContext){
         this.context = reactContext;
-        mDelegate = new PdfManagerDelegate<>(this);
+        mDelegate = new RNPDFPdfViewManagerDelegate<>(this);
     }
 
     @Override

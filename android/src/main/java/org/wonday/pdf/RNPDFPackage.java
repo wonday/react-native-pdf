@@ -8,7 +8,6 @@
 
 package org.wonday.pdf;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 
-public class RCTPdfView implements ReactPackage {
+public class RNPDFPackage implements ReactPackage {
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
@@ -34,7 +33,7 @@ public class RCTPdfView implements ReactPackage {
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         List<ViewManager> modules = new ArrayList<>();
-        modules.add(new RCTPdfManager(reactContext));
+        modules.add(new PdfManager(reactContext));
         return modules;
     }
 }

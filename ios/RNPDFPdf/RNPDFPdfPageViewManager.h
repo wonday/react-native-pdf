@@ -13,6 +13,6 @@
 #endif
 
 
-@interface RCTPdfPageViewManager : RCTViewManager
+@interface RNPDFPdfPageViewManager : RCTViewManager
 
 @end
