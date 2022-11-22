@@ -10,14 +10,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
-    requireNativeComponent,
     View,
     Platform,
     StyleSheet,
     Image,
     Text
 } from 'react-native';
-import PdfViewNativeComponent from './fabric/RCTPdfNativeComponent';
+import PdfViewNativeComponent from './fabric/RNPDFPdfNativeComponent';
 
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
@@ -109,7 +108,6 @@ export default class Pdf extends Component {
             path: '',
             isDownloaded: false,
             progress: 0,
-            isSupportPDFKit: -1
         };
 
         this.lastRNBFTask = null;
@@ -136,14 +134,6 @@ export default class Pdf extends Component {
 
     componentDidMount() {
         this._mounted = true;
-        if (Platform.OS === "ios") {
-            const PdfViewManagerNative = require('react-native').NativeModules.PdfViewManager;
-            PdfViewManagerNative.supportPDFKit((isSupportPDFKit) => {
-                if (this._mounted) {
-                    this.setState({isSupportPDFKit: isSupportPDFKit ? 1 : 0});
-                }
-            });
-        }
         this._loadFromSource(this.props.source);
     }
 
@@ -408,7 +398,7 @@ export default class Pdf extends Component {
                                             onChange={this._onChange}
                                         />
                                     ):(
-                                        this.props.usePDFKit && this.state.isSupportPDFKit === 1?(
+                                        this.props.usePDFKit ?(
                                                 <PdfCustom
                                                     ref={component => (this._root = component)}
                                                     {...this.props}
@@ -438,14 +428,7 @@ export default class Pdf extends Component {
     }
 }
 
-
-if (Platform.OS === "windows") {
-    var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
-        nativeOnly: {path: true, onChange: true},
-    })
-} else {
-    var PdfCustom = PdfViewNativeComponent;
-}
+var PdfCustom = PdfViewNativeComponent;
 
 
 const styles = StyleSheet.create({
