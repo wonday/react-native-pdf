@@ -49,7 +49,7 @@ export default class PDFExample extends React.Component {
         Orientation.addOrientationListener(this._onOrientationDidChange);
 
         (async () => {
-            const url = 'http://samples.leanpub.com/thereactnativebook-sample.pdf';
+            const url = 'https://www.africau.edu/images/default/sample.pdf';
             // handling blobs larger than 64 KB on Android requires patching React Native (https://github.com/facebook/react-native/pull/31789)
             const result = await fetch(url);
             const blob = await result.blob();
@@ -92,7 +92,7 @@ export default class PDFExample extends React.Component {
     };
 
     render() {
-        let source = Platform.OS === 'windows' ?  {uri: 'ms-appx:///test.pdf'} : {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
+        let source = Platform.OS === 'windows' ?  {uri: 'ms-appx:///test.pdf'} : {uri:'https://www.africau.edu/images/default/sample.pdf',cache:true};
         //let source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
         //let source = {uri: 'ms-appx:///test.pdf'}
         //let source = require('./test.pdf');  // ios only
