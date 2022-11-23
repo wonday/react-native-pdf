@@ -65,6 +65,10 @@ const float MIN_SCALE = 1.0f;
     float _fixScaleFactor;
     bool _initialed;
     NSArray<NSString *> *_changedProps;
+    UITapGestureRecognizer *_doubleTapRecognizer;
+    UITapGestureRecognizer *_singleTapRecognizer;
+    UIPinchGestureRecognizer *_pinchRecognizer;
+    UILongPressGestureRecognizer *_longPressRecognizer;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -89,21 +93,62 @@ using namespace facebook::react;
 - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
 {
     const auto &newProps = *std::static_pointer_cast<const RNPDFPdfViewProps>(props);
-    self.path = RCTNSStringFromStringNilIfEmpty(newProps.path);
-    self.page = newProps.page;
-    self.scale = newProps.scale;
-    self.minScale = newProps.minScale;
-    self.maxScale = newProps.maxScale;
-    self.horizontal = newProps.horizontal;
-    self.enablePaging = newProps.enablePaging;
-    self.enableRTL = newProps.enableRTL;
-    self.enableAnnotationRendering = newProps.enableAnnotationRendering;
-    self.fitPolicy = newProps.fitPolicy;
-    self.spacing = newProps.spacing;
-    self.password = RCTNSStringFromStringNilIfEmpty(newProps.password);
-    self.singlePage = newProps.singlePage;
+    NSMutableArray<NSString *> *updatedPropNames = [NSMutableArray new];
+    if (_path != RCTNSStringFromStringNilIfEmpty(newProps.path)) {
+        _path = RCTNSStringFromStringNilIfEmpty(newProps.path);
+        [updatedPropNames addObject:@"path"];
+    }
+    if (_page != newProps.page) {
+        _page = newProps.page;
+        [updatedPropNames addObject:@"page"];
+    }
+    if (_scale != newProps.scale) {
+        _scale = newProps.scale;
+        [updatedPropNames addObject:@"scale"];
+    }
+    if (_minScale != newProps.minScale) {
+        _minScale = newProps.minScale;
+        [updatedPropNames addObject:@"minScale"];
+    }
+    if (_maxScale != newProps.maxScale) {
+        _maxScale = newProps.maxScale;
+        [updatedPropNames addObject:@"maxScale"];
+    }
+    if (_horizontal != newProps.horizontal) {
+        _horizontal = newProps.horizontal;
+        [updatedPropNames addObject:@"horizontal"];
+    }
+    if (_enablePaging != newProps.enablePaging) {
+        _enablePaging = newProps.enablePaging;
+        [updatedPropNames addObject:@"enablePaging"];
+    }
+    if (_enableRTL != newProps.enableRTL) {
+        _enableRTL = newProps.enableRTL;
+        [updatedPropNames addObject:@"enableRTL"];
+    }
+    if (_enableAnnotationRendering != newProps.enableAnnotationRendering) {
+        _enableAnnotationRendering = newProps.enableAnnotationRendering;
+        [updatedPropNames addObject:@"enableAnnotationRendering"];
+    }
+    if (_fitPolicy != newProps.fitPolicy) {
+        _fitPolicy = newProps.fitPolicy;
+        [updatedPropNames addObject:@"fitPolicy"];
+    }
+    if (_spacing != newProps.spacing) {
+        _spacing = newProps.spacing;
+        [updatedPropNames addObject:@"spacing"];
+    }
+    if (_password != RCTNSStringFromStringNilIfEmpty(newProps.password)) {
+        _password = RCTNSStringFromStringNilIfEmpty(newProps.password);
+        [updatedPropNames addObject:@"password"];
+    }
+    if (_singlePage != newProps.singlePage) {
+        _singlePage = newProps.singlePage;
+        [updatedPropNames addObject:@"singlePage"];
+    }
 
     [super updateProps:props oldProps:oldProps];
+    [self didSetProps:updatedPropNames];
 }
 
 // already added in case https://github.com/facebook/react-native/pull/35378 has been merged
@@ -111,6 +156,42 @@ using namespace facebook::react;
 {
     return NO;
 }
+
+- (void)prepareForRecycle
+{
+    [super prepareForRecycle];
+
+    _pdfDocument = Nil;
+    _pdfView = Nil;
+    //Remove notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PDFViewDocumentChangedNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PDFViewPageChangedNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PDFViewScaleChangedNotification" object:nil];
+
+    // remove old recognizers before adding new ones
+    [self removeGestureRecognizer:_doubleTapRecognizer];
+    [self removeGestureRecognizer:_singleTapRecognizer];
+    [self removeGestureRecognizer:_pinchRecognizer];
+    [self removeGestureRecognizer:_longPressRecognizer];
+
+    [self initCommonProps];
+}
+
+- (void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics
+{
+    // Fabric equivalent of `reactSetFrame` method
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+    _pdfView.frame = CGRectMake(0, 0, layoutMetrics.frame.size.width, layoutMetrics.frame.size.height);
+
+    NSMutableArray *mProps = [_changedProps mutableCopy];
+    if (_initialed) {
+        [mProps removeObject:@"path"];
+    }
+    _initialed = YES;
+
+    [self didSetProps:mProps];
+}
+
 #endif
 
 - (instancetype)initWithBridge:(RCTBridge *)bridge
@@ -408,6 +489,10 @@ using namespace facebook::react;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PDFViewPageChangedNotification" object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PDFViewScaleChangedNotification" object:nil];
 
+    _doubleTapRecognizer = nil;
+    _singleTapRecognizer = nil;
+    _pinchRecognizer = nil;
+    _longPressRecognizer = nil;
 }
 
 #pragma mark notification process
@@ -638,6 +723,7 @@ using namespace facebook::react;
     doubleTapRecognizer.delegate = self;
 
     [self addGestureRecognizer:doubleTapRecognizer];
+    _doubleTapRecognizer = doubleTapRecognizer;
 
     UITapGestureRecognizer *singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
                                                                                           action:@selector(handleSingleTap:)];
@@ -647,11 +733,15 @@ using namespace facebook::react;
     singleTapRecognizer.delegate = self;
 
     [self addGestureRecognizer:singleTapRecognizer];
+    _singleTapRecognizer = singleTapRecognizer;
+
     [singleTapRecognizer requireGestureRecognizerToFail:doubleTapRecognizer];
 
     UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self
                                                                                           action:@selector(handlePinch:)];
     [self addGestureRecognizer:pinchRecognizer];
+    _pinchRecognizer = pinchRecognizer;
+
     pinchRecognizer.delegate = self;
 
     UILongPressGestureRecognizer *longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self
@@ -662,6 +752,7 @@ using namespace facebook::react;
     longPressRecognizer.minimumPressDuration=0.3;
 
     [self addGestureRecognizer:longPressRecognizer];
+    _longPressRecognizer = longPressRecognizer;
 
 }
 
