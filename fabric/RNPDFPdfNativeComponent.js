@@ -5,6 +5,7 @@
  'use strict';
 
  import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+ import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
  
  type ChangeEvent = $ReadOnly<{|
    message: ?string,
@@ -28,5 +29,16 @@
    onChange: ?BubblingEventHandler<ChangeEvent>,
    singlePage: ?boolean,
  |}>;
+
+ interface NativeCommands {
+  +setNativePage: (
+    viewRef: React.ElementRef<ComponentType>,
+    page: Int32,
+  ) => void;
+}
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['setNativePage'],
+});
 
  export default codegenNativeComponent<NativeProps>('RNPDFPdfView');

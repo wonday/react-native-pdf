@@ -16,8 +16,9 @@ import {
     Image,
     Text
 } from 'react-native';
-import PdfViewNativeComponent from './fabric/RNPDFPdfNativeComponent';
-
+import PdfViewNativeComponent, {
+    Commands as PdfViewCommands,
+  } from './fabric/RNPDFPdfNativeComponent';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 const SHA1 = require('crypto-js/sha1');
@@ -337,9 +338,19 @@ export default class Pdf extends Component {
         if ( (pageNumber === null) || (isNaN(pageNumber)) ) {
             throw new Error('Specified pageNumber is not a number');
         }
-        this.setNativeProps({
-            page: pageNumber
-        });
+        if (!!global?.nativeFabricUIManager ) {
+            if (this._root) {
+                PdfViewCommands.setNativePage(
+                    this._root,
+                    pageNumber,
+                );
+            }
+          } else {
+            this.setNativeProps({
+                page: pageNumber
+            });
+          }
+        
     }
 
     _onChange = (event) => {
@@ -428,8 +439,13 @@ export default class Pdf extends Component {
     }
 }
 
-var PdfCustom = PdfViewNativeComponent;
-
+if (Platform.OS === "android" || Platform.OS === "ios") {
+    var PdfCustom = PdfViewNativeComponent;
+}  else if (Platform.OS === "windows") {
+    var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
+        nativeOnly: {path: true, onChange: true},
+    })
+}
 
 const styles = StyleSheet.create({
     progressContainer: {

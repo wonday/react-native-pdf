@@ -10,9 +10,12 @@ package org.wonday.pdf;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -129,6 +132,23 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
     @ReactProp(name = "singlePage")
     public void setSinglePage(PdfView pdfView, boolean singlePage) {
         pdfView.setSinglePage(singlePage);
+    }
+
+    // It seems funny, but this method is called through delegate on Paper, but on Fabric we need to
+    // use `receiveCommand` method and call this one there
+    @Override
+    public void setNativePage(PdfView view, int page) {
+        pdfView.setPage(page);
+    }
+
+    @Override
+    public void receiveCommand(@NonNull PdfView root, String commandId, @androidx.annotation.Nullable ReadableArray args) {
+        Assertions.assertNotNull(root);
+        if ("setNativePage".equals(commandId)) {
+            Assertions.assertNotNull(args);
+            assert args != null;
+            setNativePage(root, args.getInt(0));
+        }
     }
 
     @Override

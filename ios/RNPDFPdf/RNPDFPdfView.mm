@@ -31,6 +31,7 @@
 #import <React/RCTFabricComponentsPlugins.h>
 #import <react/renderer/components/rnpdf/ComponentDescriptors.h>
 #import <react/renderer/components/rnpdf/Props.h>
+#import <react/renderer/components/rnpdf/RCTComponentViewHelpers.h>
 
 // Some RN private method hacking below similar to how it is done in RNScreens:
 // https://github.com/software-mansion/react-native-screens/blob/90e548739f35b5ded2524a9d6410033fc233f586/ios/RNSScreenStackHeaderConfig.mm#L30
@@ -53,7 +54,11 @@
 const float MAX_SCALE = 3.0f;
 const float MIN_SCALE = 1.0f;
 
-@interface RNPDFPdfView() <PDFDocumentDelegate, PDFViewDelegate>
+@interface RNPDFPdfView() <PDFDocumentDelegate, PDFViewDelegate
+#ifdef RCT_NEW_ARCH_ENABLED
+, RCTRNPDFPdfViewViewProtocol
+#endif
+>
 @end
 
 @implementation RNPDFPdfView
@@ -161,6 +166,7 @@ using namespace facebook::react;
 {
     [super prepareForRecycle];
 
+    [_pdfView removeFromSuperview];
     _pdfDocument = Nil;
     _pdfView = Nil;
     //Remove notifications
@@ -190,6 +196,17 @@ using namespace facebook::react;
     _initialed = YES;
 
     [self didSetProps:mProps];
+}
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
+{
+  RCTRNPDFPdfViewHandleCommand(self, commandName, args);
+}
+
+- (void)setNativePage:(NSInteger)page
+{
+    _page = page;
+    [self didSetProps:[NSArray arrayWithObject:@"page"]];
 }
 
 #endif
