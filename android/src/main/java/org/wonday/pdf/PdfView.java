@@ -87,6 +87,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private float lastPageWidth = 0;
     private float lastPageHeight = 0;
 
+    // used to store the parameters for `super.onSizeChanged`
+    private int oldW = 0;
+    private int oldH = 0;
+
     public PdfView(ThemedReactContext context, AttributeSet set){
         super(context,set);
         this.context = context;
@@ -122,7 +126,6 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     //
     // I'm not sure whether the second condition is necessary, but without it, it would be impossible
     // to set the dimensions to zero after first measurement.
-    private int oldW = 0, oldH = 0;
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         if ((w > 0 && h > 0) || this.oldW > 0 || this.oldH > 0) {
