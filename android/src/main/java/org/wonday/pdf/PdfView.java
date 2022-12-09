@@ -110,6 +110,28 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
          );
     }
 
+    // In some cases Yoga (I think) will measure the view only along one axis first, resulting in
+    // onSizeChanged being called with either w or h set to zero. This in turn starts the rendering
+    // of the pdf under the hood with one dimension being set to zero and the follow-up call to
+    // onSizeChanged with the correct dimensions doesn't have any effect on the already started process.
+    // The offending class is DecodingAsyncTask, which tries to get width and height of the pdfView
+    // in the constructor, and is created as soon as the measurement is complete, which in some cases
+    // may be incomplete as described above.
+    // By delaying calling super.onSizeChanged until the size in both dimensions is correct we are able
+    // to prevent this from happening.
+    //
+    // I'm not sure whether the second condition is necessary, but without it, it would be impossible
+    // to set the dimensions to zero after first measurement.
+    private int oldW = 0, oldH = 0;
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        if ((w > 0 && h > 0) || this.oldW > 0 || this.oldH > 0) {
+            super.onSizeChanged(w, h, this.oldW, this.oldH);
+            this.oldW = w;
+            this.oldH = h;
+        }
+    }
+
     @Override
     public void loadComplete(int numberOfPages) {
         SizeF pageSize = getPageSize(0);
