@@ -32,7 +32,14 @@
         "deprecated-react-native-prop-types": "^2.3.0"
     },
     "devDependencies": {
+        "@babel/core": "^7.20.2",
+        "@babel/runtime": "^7.20.1",
         "prop-types": "^15.7.2"
+    },
+    "peerDependencies": {
+        "react": "*",
+        "react-native": "*",
+        "react-native-blob-util": ">=0.13.7"
     },
     "files": [
         "android/",
@@ -47,6 +54,15 @@
         "PdfView.js",
         "PdfViewFlatList.js",
         "PinchZoomView.js",
-        "react-native-pdf.podspec"
-    ]
+        "react-native-pdf.podspec",
+        "fabric/"
+    ],
+    "codegenConfig": {
+        "name": "rnpdf",
+        "type": "components",
+        "jsSrcsDir": "./fabric",
+        "android": {
+          "javaPackageName": "org.wonday.pdf"
+        }
+      }
 }
