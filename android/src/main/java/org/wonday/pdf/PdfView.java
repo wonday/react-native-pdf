@@ -181,7 +181,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     @Override
     public boolean onTap(MotionEvent e){
         WritableMap event = Arguments.createMap();
-        event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY());
+        event.putString("message", "pageSingleTap|"+page+"|"+e.getRawX()+"|"+e.getRawY()+"|"+getResources().getDisplayMetrics().widthPixels+"|"+getResources().getDisplayMetrics().heightPixels);
 
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(

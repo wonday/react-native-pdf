@@ -45,6 +45,8 @@ export default class Pdf extends Component {
         spacing: PropTypes.number,
         password: PropTypes.string,
         hotspots: PropTypes.string,
+        notes: PropTypes.string,
+        movingElements: PropTypes.bool,
         renderActivityIndicator: PropTypes.func,
         enableAntialiasing: PropTypes.bool,
         enableAnnotationRendering: PropTypes.bool,
@@ -77,6 +79,8 @@ export default class Pdf extends Component {
     static defaultProps = {
         password: "",
         hotspots: "",
+        notes: "",
+        movingElements:false,
         scale: 1,
         minScale: 1,
         maxScale: 3,
@@ -99,7 +103,7 @@ export default class Pdf extends Component {
         },
         onError: (error) => {
         },
-        onPageSingleTap: (page, x, y) => {
+        onPageSingleTap: (page, x, y, width, height) => {
         },
         onScaleChanged: (scale) => {
         },
@@ -384,7 +388,7 @@ export default class Pdf extends Component {
             } else if (message[0] === 'error') {
                 this._onError(new Error(message[1]));
             } else if (message[0] === 'pageSingleTap') {
-                this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]));
+                this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]));
             } else if (message[0] === 'scaleChanged') {
                 this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]));
             } else if (message[0] === 'linkPressed') {
