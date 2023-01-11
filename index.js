@@ -374,9 +374,9 @@ export default class Pdf extends Component {
         let message = event.nativeEvent.message.split('|');
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
-            if (message.length > 5) {
+            /*if (message.length > 5) {
                 message[4] = message.splice(4).join('|');
-            }
+            }*/
             if (message[0] === 'loadComplete') {
                 this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path, {
                     width: Number(message[2]),
