@@ -69,6 +69,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setHotspotsString(hotspots);
     }
 
+    @ReactProp(name = "notes")
+    public void setNotes(PdfView pdfView, String notes) {
+        pdfView.setNotesString(notes);
+    }
+
     // page start from 1
     @ReactProp(name = "page")
     public void setPage(PdfView pdfView, int page) {
@@ -78,6 +83,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
     @ReactProp(name = "scale")
     public void setScale(PdfView pdfView, float scale) {
         pdfView.setScale(scale);
+    }
+
+    @ReactProp(name = "movingElements")
+    public void setMovingElements(PdfView pdfView, boolean movingElements) {
+        pdfView.setMovingElements(movingElements);
     }
 
     @ReactProp(name = "minScale")
