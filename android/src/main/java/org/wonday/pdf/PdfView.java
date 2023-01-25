@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.barteksc.pdfviewer.util.Hotspot;
+import com.github.barteksc.pdfviewer.util.Note;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -78,6 +79,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private String asset;
     private String path;
     private String hotspotsString;
+    private String notesString;
+    private boolean movingElements;
+    private boolean settingMovingElements;
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
@@ -105,6 +109,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         //Constants.PART_SIZE=325;
         this.context = context;
         this.instance = this;
+        this.movingElements = false;
+        this.settingMovingElements = false;
     }
 
     @Override
@@ -183,6 +189,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         WritableMap event = Arguments.createMap();
         event.putString("message", "pageSingleTap|"+page+"|"+e.getRawX()+"|"+e.getRawY()+"|"+getResources().getDisplayMetrics().widthPixels+"|"+getResources().getDisplayMetrics().heightPixels);
 
+
         ReactContext reactContext = (ReactContext)this.getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
                 this.getId(),
@@ -235,74 +242,103 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
 
     public void drawPdf() {
-        showLog(format("drawPdf path:%s %s", this.path, this.page));
-
-        if (this.path != null && !isDestroyed){
-
-            // set scale
-            this.setMinZoom(this.minScale);
-            this.setMaxZoom(this.maxScale);
-            this.setMidZoom((this.maxScale+this.minScale)/2);
-            Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-            Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
-
-            Configurator configurator;
-
-            if (this.path.startsWith("content://")) {
-                ContentResolver contentResolver = getContext().getContentResolver();
-                InputStream inputStream = null;
-                Uri uri = Uri.parse(this.path);
-                try {
-                    inputStream = contentResolver.openInputStream(uri);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                configurator = this.fromStream(inputStream);
-            } else {
-                configurator = this.fromUri(getURI(this.path));
-            }
-
-            List<Hotspot> hotspots = new ArrayList<>();
-            if(!this.hotspotsString.isEmpty()) {
-                JsonArray array = stringToArray(this.hotspotsString);
+        if(this.movingElements) {
+            Log.d("TESTE 2", "TESTE 2");
+            List<Note> notes = new ArrayList<>();
+            if(!this.notesString.isEmpty()) {
+                JsonArray array = stringToArray(this.notesString);
                 for(JsonElement element : array) {
                     JsonObject object = element.getAsJsonObject();
-                    Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
-                    hotspots.add(hotspot);
+                    Note note = new Note(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("color").getAsString());
+                    notes.add(note);
                 }
             }
-
-            configurator.defaultPage(this.page-1)
-                    .swipeHorizontal(this.horizontal)
-                    .withHotspots(hotspots)
-                    .onActionEnd(this)
-                    .onPageChange(this)
-                    .onLoad(this)
-                    .onError(this)
-                    .onDraw(this)
-                    .onPageScroll(this)
-                    .onPageSwipeChange(this)
-                    .spacing(this.spacing)
-                    .password(this.password)
-                    .enableAntialiasing(this.enableAntialiasing)
-                    .pageFitPolicy(this.fitPolicy)
-                    .pageSnap(this.pageSnap)
-                    .autoSpacing(this.autoSpacing)
-                    .pageFling(this.pageFling)
-                    .enableSwipe(!this.singlePage)
-                    .enableDoubletap(!this.singlePage)
-                    .enableAnnotationRendering(this.enableAnnotationRendering)
-                    .linkHandler(this);
-
-            if (this.singlePage) {
-                configurator.pages(this.page-1);
-                setTouchesEnabled(false);
-            } else {
-                configurator.onTap(this);
+            this.setNotes(notes);
+            this.redraw();
+        }
+        else {
+            if(this.settingMovingElements) {
+                this.settingMovingElements = false;
             }
+            else {
+                Log.d("TESTE 1", "TESTE 1");
+                if (this.path != null && !isDestroyed){
+                    this.setMinZoom(this.minScale);
+                    this.setMaxZoom(this.maxScale);
+                    this.setMidZoom((this.maxScale+this.minScale)/2);
+                    Constants.Pinch.MINIMUM_ZOOM = this.minScale;
+                    Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
-            if(!isDestroyed) {
-                configurator.load();
+                    Configurator configurator;
+
+                    if (this.path.startsWith("content://")) {
+                        ContentResolver contentResolver = getContext().getContentResolver();
+                        InputStream inputStream = null;
+                        Uri uri = Uri.parse(this.path);
+                        try {
+                            inputStream = contentResolver.openInputStream(uri);
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e.getMessage());
+                        }
+                        configurator = this.fromStream(inputStream);
+                    } else {
+                        configurator = this.fromUri(getURI(this.path));
+                    }
+
+                    List<Hotspot> hotspots = new ArrayList<>();
+                    List<Note> notes = new ArrayList<>();
+                    if(!this.hotspotsString.isEmpty()) {
+                        JsonArray array = stringToArray(this.hotspotsString);
+                        for(JsonElement element : array) {
+                            JsonObject object = element.getAsJsonObject();
+                            Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
+                            hotspots.add(hotspot);
+                        }
+                    }
+                    if(!this.notesString.isEmpty()) {
+                        Log.d("LOG",this.notesString);
+                        JsonArray array = stringToArray(this.notesString);
+                        for(JsonElement element : array) {
+                            JsonObject object = element.getAsJsonObject();
+                            Note note = new Note(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("color").getAsString());
+                            notes.add(note);
+                        }
+                    }
+
+                    configurator.defaultPage(this.page-1)
+                            .swipeHorizontal(this.horizontal)
+                            .withHotspots(hotspots)
+                            .withNotes(notes)
+                            .onActionEnd(this)
+                            .onPageChange(this)
+                            .onLoad(this)
+                            .onError(this)
+                            .onDraw(this)
+                            .onPageScroll(this)
+                            .onPageSwipeChange(this)
+                            .spacing(this.spacing)
+                            .password(this.password)
+                            .enableAntialiasing(this.enableAntialiasing)
+                            .pageFitPolicy(this.fitPolicy)
+                            .pageSnap(this.pageSnap)
+                            .autoSpacing(this.autoSpacing)
+                            .pageFling(this.pageFling)
+                            .enableSwipe(!this.singlePage)
+                            .enableDoubletap(!this.singlePage)
+                            .enableAnnotationRendering(this.enableAnnotationRendering)
+                            .linkHandler(this);
+
+                    if (this.singlePage) {
+                        configurator.pages(this.page-1);
+                        setTouchesEnabled(false);
+                    } else {
+                        configurator.onTap(this);
+                    }
+
+                    if(!isDestroyed) {
+                        configurator.load();
+                    }
+                }
             }
         }
     }
@@ -323,6 +359,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     public void setHotspotsString(String hotspotsString) {
         this.hotspotsString = hotspotsString;
     }
+    public void setNotesString(String notesString) {
+        this.notesString = notesString;
+    }
 
     // page start from 1
     public void setPage(int page) {
@@ -330,7 +369,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     }
 
     public void setScale(float scale) {
-        this.scale = scale;
+        if(!this.movingElements) {
+            this.scale = scale;
+        }
+    }
+
+    public void setMovingElements(boolean movingElements) {
+        if(!movingElements) {
+            this.settingMovingElements = true;
+        }
+        this.movingElements = movingElements;
     }
 
     public void setMinScale(float minScale) {
@@ -396,9 +444,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         this.singlePage = singlePage;
     }
 
-    /**
-     * @see https://github.com/barteksc/AndroidPdfViewer/blob/master/android-pdf-viewer/src/main/java/com/github/barteksc/pdfviewer/link/DefaultLinkHandler.java
-     */
+
     public void handleLinkEvent(LinkTapEvent event) {
         String uri = event.getLink().getUri();
         Integer page = event.getLink().getDestPageIdx();
@@ -409,9 +455,6 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         }
     }
 
-    /**
-     * @see https://github.com/barteksc/AndroidPdfViewer/blob/master/android-pdf-viewer/src/main/java/com/github/barteksc/pdfviewer/link/DefaultLinkHandler.java
-     */
     private void handleUri(String uri) {
         WritableMap event = Arguments.createMap();
         event.putString("message", "linkPressed|"+uri);
@@ -424,9 +467,6 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         );
     }
 
-    /**
-     * @see https://github.com/barteksc/AndroidPdfViewer/blob/master/android-pdf-viewer/src/main/java/com/github/barteksc/pdfviewer/link/DefaultLinkHandler.java
-     */
     private void handlePage(int page) {
         this.jumpTo(page);
     }
