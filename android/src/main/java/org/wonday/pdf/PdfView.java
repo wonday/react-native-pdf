@@ -80,8 +80,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private String path;
     private String hotspotsString;
     private String notesString;
-    private boolean movingElements;
-    private boolean settingMovingElements;
+    private boolean notesStringChange;
+    private boolean alreadyDraw;
+    //private boolean movingElements;
+    //private boolean settingMovingElements;
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
@@ -109,8 +111,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         //Constants.PART_SIZE=325;
         this.context = context;
         this.instance = this;
-        this.movingElements = false;
-        this.settingMovingElements = false;
+        //this.movingElements = false;
+        //this.settingMovingElements = false;
+        this.notesStringChange = false;
+        this.alreadyDraw = false;
     }
 
     @Override
@@ -242,7 +246,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
 
     public void drawPdf() {
-        if(this.movingElements) {
+        if(this.alreadyDraw) {
             Log.d("TESTE 2", "TESTE 2");
             List<Note> notes = new ArrayList<>();
             if(!this.notesString.isEmpty()) {
@@ -255,12 +259,13 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             }
             this.setNotes(notes);
             this.redraw();
+            this.notesStringChange = false;
         }
         else {
-            if(this.settingMovingElements) {
+            /*if(this.settingMovingElements) {
                 this.settingMovingElements = false;
             }
-            else {
+            else {*/
                 Log.d("TESTE 1", "TESTE 1");
                 if (this.path != null && !isDestroyed){
                     this.setMinZoom(this.minScale);
@@ -338,7 +343,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                     if(!isDestroyed) {
                         configurator.load();
                     }
-                }
+
+                    this.alreadyDraw = true;
+                //}
             }
         }
     }
@@ -360,7 +367,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         this.hotspotsString = hotspotsString;
     }
     public void setNotesString(String notesString) {
-        this.notesString = notesString;
+        if(!notesString.equals(this.notesString )) {
+            this.notesString = notesString;
+        }
     }
 
     // page start from 1
@@ -369,17 +378,18 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     }
 
     public void setScale(float scale) {
-        if(!this.movingElements) {
-            this.scale = scale;
-        }
+        //if(!this.movingElements) {
+        this.alreadyDraw = false;
+        this.scale = scale;
+        //}
     }
 
-    public void setMovingElements(boolean movingElements) {
+    /*public void setMovingElements(boolean movingElements) {
         if(!movingElements) {
             this.settingMovingElements = true;
         }
         this.movingElements = movingElements;
-    }
+    }*/
 
     public void setMinScale(float minScale) {
         this.minScale = minScale;
