@@ -22,6 +22,8 @@
    enablePaging: ?boolean,
    enableRTL: ?boolean,
    enableAnnotationRendering: ?boolean,
+   showsHorizontalScrollIndicator: ?boolean,
+   showsVerticalScrollIndicator: ?boolean,
    enableAntialiasing: ?boolean,
    fitPolicy: ?Int32,
    spacing: ?Int32,
