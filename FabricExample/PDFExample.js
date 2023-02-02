@@ -32,8 +32,8 @@ export default class PDFExample extends React.Component {
             scale: 1,
             numberOfPages: 0,
             horizontal: false,
-            showsHorizontalScrollIndicator: false,
-            showsVerticalScrollIndicator: false,
+            showsHorizontalScrollIndicator: true,
+            showsVerticalScrollIndicator: true,
             width: WIN_WIDTH
         };
         this.pdf = null;
@@ -138,13 +138,17 @@ export default class PDFExample extends React.Component {
                                         onPress={() => this.zoomIn()}>
                         <Text style={styles.btnText}>{'+'}</Text>
                     </TouchableHighlight>
+                </View>
+                <View style={{flexDirection: 'row'}}>
                     <View style={styles.btnText}><Text style={styles.btnText}>{'Horizontal:'}</Text></View>
                     <TouchableHighlight style={styles.btn} onPress={() => this.switchHorizontal()}>
                         {!this.state.horizontal ? (<Text style={styles.btnText}>{'false'}</Text>) : (
                             <Text style={styles.btnText}>{'true'}</Text>)}
                     </TouchableHighlight>
                     <View style={styles.btnText}><Text style={styles.btnText}>{'Scroll'}</Text></View>
-                    <TouchableHighlight style={styles.btn} onPress={() => this.switchShowsVerticalScrollIndicator()}>
+                    <TouchableHighlight style={styles.btn} onPress={
+                        () => {this.switchShowsHorizontalScrollIndicator(); 
+                        this.switchShowsVerticalScrollIndicator()}}>
                         {!this.state.showsVerticalScrollIndicator ? (<Text style={styles.btnText}>{'false'}</Text>) : (
                             <Text style={styles.btnText}>{'true'}</Text>)}
                     </TouchableHighlight>
@@ -158,6 +162,7 @@ export default class PDFExample extends React.Component {
                          scale={this.state.scale}
                          horizontal={this.state.horizontal}
                          showsVerticalScrollIndicator={this.state.showsVerticalScrollIndicator}
+                         showsHorizontalScrollIndicator={this.state.showsHorizontalScrollIndicator}
                          onLoadComplete={(numberOfPages, filePath,{width,height},tableContents) => {
                              this.setState({
                                 numberOfPages: numberOfPages 
