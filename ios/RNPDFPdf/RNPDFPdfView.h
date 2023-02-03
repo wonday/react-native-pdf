@@ -40,7 +40,6 @@ UIView
 @property(nonatomic) BOOL horizontal;
 @property(nonatomic) BOOL showsVerticalScrollIndicator;
 @property(nonatomic) BOOL showsHorizontalScrollIndicator;
-@property(nonatomic) BOOL shows;
 @property(nonatomic) BOOL enablePaging;
 @property(nonatomic) BOOL enableRTL;
 @property(nonatomic) BOOL enableAnnotationRendering;
