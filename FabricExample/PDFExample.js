@@ -145,12 +145,12 @@ export default class PDFExample extends React.Component {
                         {!this.state.horizontal ? (<Text style={styles.btnText}>{'false'}</Text>) : (
                             <Text style={styles.btnText}>{'true'}</Text>)}
                     </TouchableHighlight>
-                    <View style={styles.btnText}><Text style={styles.btnText}>{'Scroll'}</Text></View>
+                    <View style={styles.btnText}><Text style={styles.btnText}>{'Scrollbar'}</Text></View>
                     <TouchableHighlight style={styles.btn} onPress={
                         () => {this.switchShowsHorizontalScrollIndicator(); 
                         this.switchShowsVerticalScrollIndicator()}}>
-                        {!this.state.showsVerticalScrollIndicator ? (<Text style={styles.btnText}>{'false'}</Text>) : (
-                            <Text style={styles.btnText}>{'true'}</Text>)}
+                        {!this.state.showsVerticalScrollIndicator ? (<Text style={styles.btnText}>{'hidden'}</Text>) : (
+                            <Text style={styles.btnText}>{'shown'}</Text>)}
                     </TouchableHighlight>
 
                 </View>
