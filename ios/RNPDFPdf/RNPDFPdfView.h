@@ -38,6 +38,8 @@ UIView
 @property(nonatomic) float minScale;
 @property(nonatomic) float maxScale;
 @property(nonatomic) BOOL horizontal;
+@property(nonatomic) BOOL showsVerticalScrollIndicator;
+@property(nonatomic) BOOL showsHorizontalScrollIndicator;
 @property(nonatomic) BOOL enablePaging;
 @property(nonatomic) BOOL enableRTL;
 @property(nonatomic) BOOL enableAnnotationRendering;

@@ -39,6 +39,8 @@ export type Props = {
   enableRTL?: boolean,
   fitPolicy?: FitWidth | FitHeight | FitBoth,
   horizontal?: boolean,
+  showsHorizontalScrollIndicator?: boolean,
+  showsVerticalScrollIndicator?: boolean,
   maxScale?: number,
   minScale?: number,
   singlePage?: boolean,

@@ -151,6 +151,14 @@ using namespace facebook::react;
         _singlePage = newProps.singlePage;
         [updatedPropNames addObject:@"singlePage"];
     }
+    if (_showsHorizontalScrollIndicator != newProps.showsHorizontalScrollIndicator) {
+        _showsHorizontalScrollIndicator = newProps.showsHorizontalScrollIndicator;
+        [updatedPropNames addObject:@"showsHorizontalScrollIndicator"];
+    }
+    if (_showsVerticalScrollIndicator != newProps.showsVerticalScrollIndicator) {
+        _showsVerticalScrollIndicator = newProps.showsVerticalScrollIndicator;
+        [updatedPropNames addObject:@"showsVerticalScrollIndicator"];
+    }
 
     [super updateProps:props oldProps:oldProps];
     [self didSetProps:updatedPropNames];
@@ -235,6 +243,8 @@ using namespace facebook::react;
     _fitPolicy = 2;
     _spacing = 10;
     _singlePage = NO;
+    _showsHorizontalScrollIndicator = YES;
+    _showsVerticalScrollIndicator = YES;
 
     // init and config PDFView
     _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
@@ -441,6 +451,42 @@ using namespace facebook::react;
             } else {
                 _pdfView.displayMode = kPDFDisplaySinglePageContinuous;
                 _pdfView.userInteractionEnabled = YES;
+            }
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"showsHorizontalScrollIndicator"])) {
+            if (_showsHorizontalScrollIndicator) {
+                for (UIView *subview in _pdfView.subviews) {
+                    if ([subview isKindOfClass:[UIScrollView class]]) {
+                        UIScrollView *scrollView = (UIScrollView *)subview;
+                        scrollView.showsHorizontalScrollIndicator = YES;
+                    }
+                }
+            } else {
+                for (UIView *subview in _pdfView.subviews) {
+                    if ([subview isKindOfClass:[UIScrollView class]]) {
+                        UIScrollView *scrollView = (UIScrollView *)subview;
+                        scrollView.showsHorizontalScrollIndicator = NO;
+                    }
+                }
+            }
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"showsVerticalScrollIndicator"])) {
+            if (_showsVerticalScrollIndicator) {
+                for (UIView *subview in _pdfView.subviews) {
+                    if ([subview isKindOfClass:[UIScrollView class]]) {
+                        UIScrollView *scrollView = (UIScrollView *)subview;
+                        scrollView.showsVerticalScrollIndicator = YES;
+                    }
+                }
+            } else {
+                for (UIView *subview in _pdfView.subviews) {
+                    if ([subview isKindOfClass:[UIScrollView class]]) {
+                        UIScrollView *scrollView = (UIScrollView *)subview;
+                        scrollView.showsVerticalScrollIndicator = NO;
+                    }
+                }
             }
         }
 

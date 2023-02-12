@@ -32,6 +32,8 @@ export default class PDFExample extends React.Component {
             scale: 1,
             numberOfPages: 0,
             horizontal: false,
+            showsHorizontalScrollIndicator: true,
+            showsVerticalScrollIndicator: true,
             width: WIN_WIDTH
         };
         this.pdf = null;
@@ -91,6 +93,14 @@ export default class PDFExample extends React.Component {
         this.setState({horizontal: !this.state.horizontal, page: this.state.page});
     };
 
+    switchShowsHorizontalScrollIndicator = () => {
+        this.setState({showsHorizontalScrollIndicator: !this.state.showsHorizontalScrollIndicator});
+    };
+
+    switchShowsVerticalScrollIndicator = () => {
+        this.setState({showsVerticalScrollIndicator: !this.state.showsVerticalScrollIndicator});
+    };
+
     render() {
         let source = Platform.OS === 'windows' ?  {uri: 'ms-appx:///test.pdf'} : {uri:'https://www.africau.edu/images/default/sample.pdf',cache:true};
         //let source = {uri:'http://samples.leanpub.com/thereactnativebook-sample.pdf',cache:true};
@@ -128,10 +138,19 @@ export default class PDFExample extends React.Component {
                                         onPress={() => this.zoomIn()}>
                         <Text style={styles.btnText}>{'+'}</Text>
                     </TouchableHighlight>
+                </View>
+                <View style={{flexDirection: 'row'}}>
                     <View style={styles.btnText}><Text style={styles.btnText}>{'Horizontal:'}</Text></View>
                     <TouchableHighlight style={styles.btn} onPress={() => this.switchHorizontal()}>
                         {!this.state.horizontal ? (<Text style={styles.btnText}>{'false'}</Text>) : (
                             <Text style={styles.btnText}>{'true'}</Text>)}
+                    </TouchableHighlight>
+                    <View style={styles.btnText}><Text style={styles.btnText}>{'Scrollbar'}</Text></View>
+                    <TouchableHighlight style={styles.btn} onPress={
+                        () => {this.switchShowsHorizontalScrollIndicator(); 
+                        this.switchShowsVerticalScrollIndicator()}}>
+                        {!this.state.showsVerticalScrollIndicator ? (<Text style={styles.btnText}>{'hidden'}</Text>) : (
+                            <Text style={styles.btnText}>{'shown'}</Text>)}
                     </TouchableHighlight>
 
                 </View>
@@ -142,6 +161,8 @@ export default class PDFExample extends React.Component {
                          source={source}
                          scale={this.state.scale}
                          horizontal={this.state.horizontal}
+                         showsVerticalScrollIndicator={this.state.showsVerticalScrollIndicator}
+                         showsHorizontalScrollIndicator={this.state.showsHorizontalScrollIndicator}
                          onLoadComplete={(numberOfPages, filePath,{width,height},tableContents) => {
                              this.setState({
                                 numberOfPages: numberOfPages 

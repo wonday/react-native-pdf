@@ -35,6 +35,8 @@ interface Props {
     minScale?: number,
     maxScale?: number,
     horizontal?: boolean,
+    showsHorizontalScrollIndicator?: boolean,
+    showsVerticalScrollIndicator?: boolean,
     spacing?: number,
     password?: string,
     renderActivityIndicator?: (progress: number) => React.ReactElement,
