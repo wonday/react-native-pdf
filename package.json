@@ -39,7 +39,7 @@
     "peerDependencies": {
         "react": "*",
         "react-native": "*",
-        "react-native-blob-util": ">=0.13.7"
+        "rn-fetch-blob": "0.12.0"
     },
     "files": [
         "android/",
