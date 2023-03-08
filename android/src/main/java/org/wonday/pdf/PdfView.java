@@ -61,6 +61,8 @@ import java.util.List;
 
 import com.github.barteksc.pdfviewer.util.Hotspot;
 import com.github.barteksc.pdfviewer.util.Note;
+import com.github.barteksc.pdfviewer.util.TextLine;
+import com.github.barteksc.pdfviewer.util.TextNote;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -80,8 +82,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private String path;
     private String hotspotsString;
     private String notesString;
-    private boolean notesStringChange;
+    private String textNotesString;
     private boolean alreadyDraw;
+    private boolean scaleChange;
     //private boolean movingElements;
     //private boolean settingMovingElements;
     private int spacing = 10;
@@ -111,10 +114,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         //Constants.PART_SIZE=325;
         this.context = context;
         this.instance = this;
-        //this.movingElements = false;
-        //this.settingMovingElements = false;
-        this.notesStringChange = false;
         this.alreadyDraw = false;
+        this.scaleChange = false;
     }
 
     @Override
@@ -143,6 +144,11 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         this.zoomTo(this.scale);
         //this.zoomWithAnimation(this.scale);
         WritableMap event = Arguments.createMap();
+
+
+
+        Log.d("DENSITY", String.format("%f", getResources().getDisplayMetrics().density));
+
 
         //create a new json Object for the TableOfContents
         Gson gson = new Gson();
@@ -245,106 +251,145 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     }
 
 
+    protected List<Note> constructNotes() {
+        List<Note> notes = new ArrayList<>();
+        if(!this.notesString.isEmpty()) {
+            JsonArray array = stringToArray(this.notesString);
+            for(JsonElement element : array) {
+                JsonObject object = element.getAsJsonObject();
+                Note note = new Note(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("color").getAsString());
+                notes.add(note);
+            }
+        }
+        return notes;
+    }
+
+
+    protected List<TextNote> constructTextNotes() {
+        List<TextNote> textNotes = new ArrayList<>();
+        if(!this.textNotesString.isEmpty()) {
+
+            JsonArray array = stringToArray(this.textNotesString);
+            for(JsonElement element : array) {
+                JsonObject object = element.getAsJsonObject();
+                List<TextLine> lines = new ArrayList<>();
+                for(JsonElement lineElement : object.getAsJsonArray("lines")) {
+                    JsonObject objectLine = lineElement.getAsJsonObject();
+                    lines.add(new TextLine(
+                            Double.valueOf(objectLine.get("fontSize").getAsString()).doubleValue(),
+                            objectLine.get("fontColor").getAsString(),
+                            Double.valueOf(objectLine.get("fontOpacity").getAsString()).floatValue(),
+                            objectLine.get("text").getAsString()));
+                }
+                TextNote note = new TextNote(
+                        Double.valueOf(object.get("xPos").getAsString()).doubleValue(),
+                        Double.valueOf(object.get("yPos").getAsString()).doubleValue(),
+                        Double.valueOf(object.get("width").getAsString()).doubleValue(),
+                        Double.valueOf(object.get("height").getAsString()).doubleValue(),
+                        object.get("backgroundColor").getAsString(),
+                        Double.valueOf(object.get("backgroundOpacity").getAsString()).floatValue(),
+                        object.get("borderColor").getAsString(),
+                        object.get("borderSize").getAsInt(),
+                        Double.valueOf(object.get("borderOpacity").getAsString()).floatValue(),
+                        lines);
+                textNotes.add(note);
+            }
+        }
+        return textNotes;
+    }
+
+
     public void drawPdf() {
         if(this.alreadyDraw) {
-            Log.d("TESTE 2", "TESTE 2");
-            List<Note> notes = new ArrayList<>();
-            if(!this.notesString.isEmpty()) {
-                JsonArray array = stringToArray(this.notesString);
-                for(JsonElement element : array) {
-                    JsonObject object = element.getAsJsonObject();
-                    Note note = new Note(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("color").getAsString());
-                    notes.add(note);
-                }
+            if(this.scaleChange) {
+                this.zoomWithAnimation(this.scale);
+                this.scaleChange = false;
             }
-            this.setNotes(notes);
-            this.redraw();
-            this.notesStringChange = false;
+            else {
+                List<Note> notes = constructNotes();
+                this.setNotes(notes);
+                List<TextNote> textNotes = constructTextNotes();
+                this.setTextNotes(textNotes);
+                this.redraw();
+            }
         }
         else {
             /*if(this.settingMovingElements) {
                 this.settingMovingElements = false;
             }
             else {*/
-                Log.d("TESTE 1", "TESTE 1");
-                if (this.path != null && !isDestroyed){
-                    this.setMinZoom(this.minScale);
-                    this.setMaxZoom(this.maxScale);
-                    this.setMidZoom((this.maxScale+this.minScale)/2);
-                    Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-                    Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
+            Log.d("TESTE 1", "TESTE 1");
+            if (this.path != null && !isDestroyed){
+                this.setMinZoom(this.minScale);
+                this.setMaxZoom(this.maxScale);
+                this.setMidZoom((this.maxScale+this.minScale)/2);
+                Constants.Pinch.MINIMUM_ZOOM = this.minScale;
+                Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
-                    Configurator configurator;
+                Configurator configurator;
 
-                    if (this.path.startsWith("content://")) {
-                        ContentResolver contentResolver = getContext().getContentResolver();
-                        InputStream inputStream = null;
-                        Uri uri = Uri.parse(this.path);
-                        try {
-                            inputStream = contentResolver.openInputStream(uri);
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e.getMessage());
-                        }
-                        configurator = this.fromStream(inputStream);
-                    } else {
-                        configurator = this.fromUri(getURI(this.path));
+                if (this.path.startsWith("content://")) {
+                    ContentResolver contentResolver = getContext().getContentResolver();
+                    InputStream inputStream = null;
+                    Uri uri = Uri.parse(this.path);
+                    try {
+                        inputStream = contentResolver.openInputStream(uri);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e.getMessage());
                     }
+                    configurator = this.fromStream(inputStream);
+                } else {
+                    configurator = this.fromUri(getURI(this.path));
+                }
 
-                    List<Hotspot> hotspots = new ArrayList<>();
-                    List<Note> notes = new ArrayList<>();
-                    if(!this.hotspotsString.isEmpty()) {
-                        JsonArray array = stringToArray(this.hotspotsString);
-                        for(JsonElement element : array) {
-                            JsonObject object = element.getAsJsonObject();
-                            Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
-                            hotspots.add(hotspot);
-                        }
+                List<Hotspot> hotspots = new ArrayList<>();
+                if(!this.hotspotsString.isEmpty()) {
+                    JsonArray array = stringToArray(this.hotspotsString);
+                    for(JsonElement element : array) {
+                        JsonObject object = element.getAsJsonObject();
+                        Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
+                        hotspots.add(hotspot);
                     }
-                    if(!this.notesString.isEmpty()) {
-                        Log.d("LOG",this.notesString);
-                        JsonArray array = stringToArray(this.notesString);
-                        for(JsonElement element : array) {
-                            JsonObject object = element.getAsJsonObject();
-                            Note note = new Note(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("color").getAsString());
-                            notes.add(note);
-                        }
-                    }
+                }
+                List<Note> notes = constructNotes();
+                List<TextNote> textNotes = constructTextNotes();
 
-                    configurator.defaultPage(this.page-1)
-                            .swipeHorizontal(this.horizontal)
-                            .withHotspots(hotspots)
-                            .withNotes(notes)
-                            .onActionEnd(this)
-                            .onPageChange(this)
-                            .onLoad(this)
-                            .onError(this)
-                            .onDraw(this)
-                            .onPageScroll(this)
-                            .onPageSwipeChange(this)
-                            .spacing(this.spacing)
-                            .password(this.password)
-                            .enableAntialiasing(this.enableAntialiasing)
-                            .pageFitPolicy(this.fitPolicy)
-                            .pageSnap(this.pageSnap)
-                            .autoSpacing(this.autoSpacing)
-                            .pageFling(this.pageFling)
-                            .enableSwipe(!this.singlePage)
-                            .enableDoubletap(!this.singlePage)
-                            .enableAnnotationRendering(this.enableAnnotationRendering)
-                            .linkHandler(this);
+                configurator.defaultPage(this.page-1)
+                        .swipeHorizontal(this.horizontal)
+                        .withHotspots(hotspots)
+                        .withNotes(notes)
+                        .withTextNotes(textNotes)
+                        .onActionEnd(this)
+                        .onPageChange(this)
+                        .onLoad(this)
+                        .onError(this)
+                        .onDraw(this)
+                        .onPageScroll(this)
+                        .onPageSwipeChange(this)
+                        .spacing(this.spacing)
+                        .password(this.password)
+                        .enableAntialiasing(this.enableAntialiasing)
+                        .pageFitPolicy(this.fitPolicy)
+                        .pageSnap(this.pageSnap)
+                        .autoSpacing(this.autoSpacing)
+                        .pageFling(this.pageFling)
+                        .enableSwipe(!this.singlePage)
+                        .enableDoubletap(!this.singlePage)
+                        .enableAnnotationRendering(this.enableAnnotationRendering)
+                        .linkHandler(this);
 
-                    if (this.singlePage) {
-                        configurator.pages(this.page-1);
-                        setTouchesEnabled(false);
-                    } else {
-                        configurator.onTap(this);
-                    }
+                if (this.singlePage) {
+                    configurator.pages(this.page-1);
+                    setTouchesEnabled(false);
+                } else {
+                    configurator.onTap(this);
+                }
 
-                    if(!isDestroyed) {
-                        configurator.load();
-                    }
+                if(!isDestroyed) {
+                    configurator.load();
+                }
 
-                    this.alreadyDraw = true;
+                this.alreadyDraw = true;
                 //}
             }
         }
@@ -372,6 +417,12 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         }
     }
 
+    public void setTextNotesString(String textNotesString) {
+        if(!textNotesString.equals(this.textNotesString )) {
+            this.textNotesString = textNotesString;
+        }
+    }
+
     // page start from 1
     public void setPage(int page) {
         this.page = page>1?page:1;
@@ -379,7 +430,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setScale(float scale) {
         //if(!this.movingElements) {
-        this.alreadyDraw = false;
+        //this.alreadyDraw = false;
+        if(this.alreadyDraw) {
+            this.scaleChange = true;
+        }
         this.scale = scale;
         //}
     }

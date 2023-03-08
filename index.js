@@ -46,6 +46,7 @@ export default class Pdf extends Component {
         password: PropTypes.string,
         hotspots: PropTypes.string,
         notes: PropTypes.string,
+        textNotes: PropTypes.string,
         movingElements: PropTypes.bool,
         renderActivityIndicator: PropTypes.func,
         enableAntialiasing: PropTypes.bool,
@@ -80,6 +81,7 @@ export default class Pdf extends Component {
         password: "",
         hotspots: "",
         notes: "",
+        textNotes:"",
         movingElements:false,
         scale: 1,
         minScale: 1,
@@ -368,6 +370,20 @@ export default class Pdf extends Component {
             page: pageNumber
         });
     }
+
+    setNotes(notes) {
+        this.setNativeProps({
+            notes: notes
+        });
+    }
+
+
+    setTextNotes(notes) {
+        this.setNativeProps({
+            textNotes: notes
+        });
+    }
+
 
     _onChange = (event) => {
 
