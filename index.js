@@ -47,6 +47,7 @@ export default class Pdf extends Component {
         hotspots: PropTypes.string,
         notes: PropTypes.string,
         textNotes: PropTypes.string,
+        width: PropTypes.number,
         movingElements: PropTypes.bool,
         renderActivityIndicator: PropTypes.func,
         enableAntialiasing: PropTypes.bool,
@@ -62,6 +63,7 @@ export default class Pdf extends Component {
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
         onPageScrolled: PropTypes.func,
+        onPageScrolledEnd: PropTypes.func,
         onNextPage: PropTypes.func,
         onPrevPage: PropTypes.func,
         onActionEnd: PropTypes.func,
@@ -82,7 +84,7 @@ export default class Pdf extends Component {
         hotspots: "",
         notes: "",
         textNotes:"",
-        movingElements:false,
+        width:0,
         scale: 1,
         minScale: 1,
         maxScale: 3,
@@ -110,6 +112,8 @@ export default class Pdf extends Component {
         onScaleChanged: (scale) => {
         },
         onPageScrolled: (offsetX, offsetY) => {
+        },
+        onPageScrolledEnd: (offsetX, offsetY) => {
         },
         onPrevPage: () => {
         },
@@ -411,6 +415,8 @@ export default class Pdf extends Component {
                 this.props.onPressLink && this.props.onPressLink(message[1]);
             } else if (message[0] === 'pageScrolled') {
                 this.props.onPageScrolled && this.props.onPageScrolled(message[1], message[2], message[3]);
+            } else if (message[0] === 'pageScrolledEnd') {
+                this.props.onPageScrolledEnd && this.props.onPageScrolledEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]));
             }
             else if (message[0] === 'nextPage') {
                 this.props.onNextPage && this.props.onNextPage();
@@ -418,7 +424,7 @@ export default class Pdf extends Component {
                 this.props.onPrevPage && this.props.onPrevPage();
             }
             else if (message[0] === 'actionEnd') {
-               this.props.onActionEnd && this.props.onActionEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]));
+               this.props.onActionEnd && this.props.onActionEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]), Number(message[6]));
                //this.props.onActionEnd && this.props.onActionEnd();
             }
         }

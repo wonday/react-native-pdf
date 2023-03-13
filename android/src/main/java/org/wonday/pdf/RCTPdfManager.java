@@ -90,11 +90,6 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
         pdfView.setScale(scale);
     }
 
-    @ReactProp(name = "movingElements")
-    public void setMovingElements(PdfView pdfView, boolean movingElements) {
-        //pdfView.setMovingElements(movingElements);
-    }
-
     @ReactProp(name = "minScale")
     public void setMinScale(PdfView pdfView, float minScale) {
         pdfView.setMinScale(minScale);
@@ -143,6 +138,11 @@ public class RCTPdfManager extends SimpleViewManager<PdfView> {
     @ReactProp(name = "singlePage")
     public void setSinglePage(PdfView pdfView, boolean singlePage) {
         pdfView.setSinglePage(singlePage);
+    }
+
+    @ReactProp(name = "width")
+    public void setWidth(PdfView pdfView, float width) {
+        pdfView.moveEnds();
     }
 
     @Override
