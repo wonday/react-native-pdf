@@ -271,6 +271,20 @@
      }
  
  
+     protected List<Hotspot> constructHotspots() {
+         List<Hotspot> hotspots = new ArrayList<>();
+         if(!this.hotspotsString.isEmpty()) {
+             JsonArray array = stringToArray(this.hotspotsString);
+             for(JsonElement element : array) {
+                 JsonObject object = element.getAsJsonObject();
+                 Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
+                 hotspots.add(hotspot);
+             }
+         }
+         return hotspots;
+     }
+ 
+ 
      protected List<TextNote> constructTextNotes() {
          List<TextNote> textNotes = new ArrayList<>();
          if(!this.textNotesString.isEmpty()) {
@@ -316,6 +330,8 @@
                  this.setNotes(notes);
                  List<TextNote> textNotes = constructTextNotes();
                  this.setTextNotes(textNotes);
+                 List<Hotspot> hotspots = constructHotspots();
+                 this.setHotspots(hotspots);
                  this.redraw();
              }
          }
@@ -343,15 +359,7 @@
                      configurator = this.fromUri(getURI(this.path));
                  }
  
-                 List<Hotspot> hotspots = new ArrayList<>();
-                 if(!this.hotspotsString.isEmpty()) {
-                     JsonArray array = stringToArray(this.hotspotsString);
-                     for(JsonElement element : array) {
-                         JsonObject object = element.getAsJsonObject();
-                         Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
-                         hotspots.add(hotspot);
-                     }
-                 }
+                 List<Hotspot> hotspots = constructHotspots();
                  List<Note> notes = constructNotes();
                  List<TextNote> textNotes = constructTextNotes();
  

@@ -375,6 +375,14 @@ export default class Pdf extends Component {
         });
     }
 
+
+    setHotspots(hotspots) {
+        this.setNativeProps({
+            hotspots: hotspots
+        });
+    }
+
+
     setNotes(notes) {
         this.setNativeProps({
             notes: notes
