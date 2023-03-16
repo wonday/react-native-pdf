@@ -333,6 +333,7 @@
                  List<Hotspot> hotspots = constructHotspots();
                  this.setHotspots(hotspots);
                  this.redraw();
+                 this.moveEnds();
              }
          }
          else {
@@ -430,6 +431,11 @@
              this.textNotesString = textNotesString;
          }
      }
+ 
+     public void setUpdate() {
+         this.moveEnds();
+     }
+ 
  
      // page start from 1
      public void setPage(int page) {
