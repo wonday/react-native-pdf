@@ -151,10 +151,10 @@ add an exception for the server hosting the pdf in the ios `info.plist`. Here is
 **Android:**
 [`see here`](https://stackoverflow.com/questions/54818098/cleartext-http-traffic-not-permitted)
 
-Q4. why doesn't it work with react native expo?.
+Q4. why doesn't it work with react native expo?.  
 A4. Expo does not support native module. you can read more expo caveats [`here`](https://facebook.github.io/react-native/docs/getting-started.html#caveats)
 
-Q5. Why can't I run the iOS example? `'Failed to build iOS project. We ran "xcodebuild" command but it exited with error code 65.'`
+Q5. Why can't I run the iOS example? `'Failed to build iOS project. We ran "xcodebuild" command but it exited with error code 65.'`  
 A5. Run the following commands in the project folder (e.g. `react-native-pdf/example`) to ensure that all dependencies are available:
 ```
 yarn install (or npm install)
