@@ -114,14 +114,14 @@ in the app `.vcxproj` file, before `<None Include="packages.config" />`.
 <details>
   <summary>FAQ details</summary>
 
-Q1. After installation and running, I can not see the pdf file.
+Q1. After installation and running, I can not see the pdf file.  
 A1: maybe you forgot to excute ```react-native link``` or it does not run correctly.
 You can add it manually. For detail you can see the issue [`#24`](https://github.com/wonday/react-native-pdf/issues/24) and [`#2`](https://github.com/wonday/react-native-pdf/issues/2)
 
-Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```
+Q2. When running, it shows ```'Pdf' has no propType for native prop RCTPdf.acessibilityLabel of native type 'String'```  
 A2. Your react-native version is too old, please upgrade it to 0.47.0+ see also [`#39`](https://github.com/wonday/react-native-pdf/issues/39)
 
-Q3. When I run the example app I get a white/gray screen / the loading bar isn't progressing .
+Q3. When I run the example app I get a white/gray screen / the loading bar isn't progressing .  
 A3. Check your uri, if you hit a pdf that is hosted on a `http` you will need to do the following:
 
 **iOS:**
