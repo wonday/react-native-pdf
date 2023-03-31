@@ -47,6 +47,7 @@ export default class Pdf extends Component {
         hotspots: PropTypes.string,
         notes: PropTypes.string,
         textNotes: PropTypes.string,
+        enableMovement: PropTypes.bool,
         update: PropTypes.bool,
         width: PropTypes.number,
         movingElements: PropTypes.bool,
@@ -86,6 +87,7 @@ export default class Pdf extends Component {
         notes: "",
         textNotes:"",
         update: false,
+        enableMovement:true,
         width:0,
         scale: 1,
         minScale: 1,
@@ -399,6 +401,13 @@ export default class Pdf extends Component {
     }
 
 
+    setEnableMovement(enableMovement) {
+        this.setNativeProps({
+            enableMovement: enableMovement
+        });
+    }
+
+
     _onChange = (event) => {
 
         let message = event.nativeEvent.message.split('|');
@@ -426,7 +435,7 @@ export default class Pdf extends Component {
             } else if (message[0] === 'pageScrolled') {
                 this.props.onPageScrolled && this.props.onPageScrolled(message[1], message[2], message[3]);
             } else if (message[0] === 'pageScrolledEnd') {
-                this.props.onPageScrolledEnd && this.props.onPageScrolledEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]));
+                this.props.onPageScrolledEnd && this.props.onPageScrolledEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]));
             }
             else if (message[0] === 'nextPage') {
                 this.props.onNextPage && this.props.onNextPage();

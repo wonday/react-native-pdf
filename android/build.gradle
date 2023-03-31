@@ -62,6 +62,6 @@ dependencies {
     // NOTE: The original repo at com.github.barteksc is abandoned by the maintainer; there will be no more updates coming from that repo.
     //       It was taken over by com.github.TalbotGooday; from now on please use this repo until (if ever) the Barteksc repo is resumed.
     //implementation 'com.github.maribeiroleya:AndroidPdfViewerLeya:leya_1.0.0'
-    implementation 'com.github.maribeiroleya:AndroidPdfViewer:leya_1.0.35'
+    implementation 'com.github.maribeiroleya:AndroidPdfViewer:leya_1.0.50'
     implementation 'com.google.code.gson:gson:2.8.5'
 }

@@ -105,6 +105,9 @@
  
      private boolean isDestroyed = false;
  
+ 
+     private boolean alreadyLoaded = false;
+ 
      public PdfView(ThemedReactContext context, AttributeSet set){
          super(context,set);
          //Constants.PART_SIZE=325;
@@ -149,6 +152,8 @@
                  "topChange",
                  event
          );
+ 
+         this.alreadyLoaded = true;
      }
  
      @Override
@@ -185,13 +190,13 @@
      }
  
      @Override
-     public void onPageScrolledEnd() {
+     public void onPageScrolledEnd(float zoom) {
          SizeF pageSize = getPageSize(0);
          float width = pageSize.getWidth();
          float height = pageSize.getHeight();
  
          WritableMap event = Arguments.createMap();
-         event.putString("message", "pageScrolledEnd|"+(this.getCurrentXOffset())+"|"+(this.getCurrentYOffset())+"|"+width+"|"+height);
+         event.putString("message", "pageScrolledEnd|"+(this.getCurrentXOffset())+"|"+(this.getCurrentYOffset())+"|"+width+"|"+height+"|"+zoom);
  
          ReactContext reactContext = (ReactContext)this.getContext();
          reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
@@ -204,8 +209,7 @@
      @Override
      public boolean onTap(MotionEvent e){
          WritableMap event = Arguments.createMap();
-         event.putString("message", "pageSingleTap|"+page+"|"+e.getRawX()+"|"+e.getRawY()+"|"+getResources().getDisplayMetrics().widthPixels+"|"+getResources().getDisplayMetrics().heightPixels);
- 
+         event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY()+"|"+getWidth()+"|"+getHeight());
  
          ReactContext reactContext = (ReactContext)this.getContext();
          reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
@@ -293,13 +297,24 @@
              for(JsonElement element : array) {
                  JsonObject object = element.getAsJsonObject();
                  List<TextLine> lines = new ArrayList<>();
+                 String text = "";
+                 int count = 0;
                  for(JsonElement lineElement : object.getAsJsonArray("lines")) {
                      JsonObject objectLine = lineElement.getAsJsonObject();
-                     lines.add(new TextLine(
+                     if(count != 0) {
+                         text += '\n';
+                     }
+                     text += objectLine.get("text").getAsString();
+                     count++;
+                 }
+                 if(!text.equals("") && object.getAsJsonArray("lines").size() > 0) {
+                     JsonObject objectLine = object.getAsJsonArray("lines").get(0).getAsJsonObject();
+                     TextLine line = new TextLine(
                              Double.valueOf(objectLine.get("fontSize").getAsString()).doubleValue(),
                              objectLine.get("fontColor").getAsString(),
                              Double.valueOf(objectLine.get("fontOpacity").getAsString()).floatValue(),
-                             objectLine.get("text").getAsString()));
+                             text);
+                     lines.add(line);
                  }
                  TextNote note = new TextNote(
                          Double.valueOf(object.get("xPos").getAsString()).doubleValue(),
@@ -319,6 +334,20 @@
      }
  
  
+     public void updateMovement(boolean enableMovement) {
+         this.enableMovement(enableMovement);
+     }
+ 
+ 
+     public void drawAll() {
+         if(this.alreadyLoaded) {
+             if(this.alreadyDraw) {
+                 this.zoomWithAnimation(this.scale);
+             }
+         }
+     }
+ 
+ 
      public void drawPdf() {
          if(this.alreadyDraw) {
              if(this.scaleChange) {
@@ -333,7 +362,6 @@
                  List<Hotspot> hotspots = constructHotspots();
                  this.setHotspots(hotspots);
                  this.redraw();
-                 this.moveEnds();
              }
          }
          else {

@@ -147,7 +147,13 @@
  
      @ReactProp(name = "width")
      public void setWidth(PdfView pdfView, float width) {
-         pdfView.moveEnds();
+         pdfView.drawAll();
+     }
+ 
+ 
+     @ReactProp(name = "enableMovement")
+     public void setEnableMovement(PdfView pdfView, boolean enableMovement) {
+         pdfView.updateMovement(enableMovement);
      }
  
      @Override
