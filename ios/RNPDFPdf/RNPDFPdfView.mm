@@ -710,7 +710,15 @@ using namespace facebook::react;
 
     CGFloat newScale = scale * self->_fixScaleFactor;
     CGPoint tapPoint = [recognizer locationInView:self->_pdfView];
-    tapPoint = [self->_pdfView convertPoint:tapPoint toPage:self->_pdfView.currentPage];
+
+    PDFPage *tappedPdfPage = [_pdfView pageForPoint:tapPoint nearest:NO];
+    PDFPage *pageRef;
+    if (tappedPdfPage) {
+        pageRef = tappedPdfPage;
+    }   else {
+        pageRef = self->_pdfView.currentPage;
+    }
+    tapPoint = [self->_pdfView convertPoint:tapPoint toPage:pageRef];
 
     CGRect tempZoomRect = CGRectZero;
     tempZoomRect.size.width = self->_pdfView.frame.size.width;
@@ -721,17 +729,17 @@ using namespace facebook::react;
         [UIView animateWithDuration:0.3 animations:^{
             [self->_pdfView setScaleFactor:newScale];
 
-            [self->_pdfView goToRect:tempZoomRect onPage:self->_pdfView.currentPage];
-            CGPoint defZoomOrigin = [self->_pdfView convertPoint:tempZoomRect.origin fromPage:self->_pdfView.currentPage];
+            [self->_pdfView goToRect:tempZoomRect onPage:pageRef];
+            CGPoint defZoomOrigin = [self->_pdfView convertPoint:tempZoomRect.origin fromPage:pageRef];
             defZoomOrigin.x = defZoomOrigin.x - self->_pdfView.frame.size.width / 2;
             defZoomOrigin.y = defZoomOrigin.y - self->_pdfView.frame.size.height / 2;
-            defZoomOrigin = [self->_pdfView convertPoint:defZoomOrigin toPage:self->_pdfView.currentPage];
+            defZoomOrigin = [self->_pdfView convertPoint:defZoomOrigin toPage:pageRef];
             CGRect defZoomRect =  CGRectOffset(
                 tempZoomRect,
                 defZoomOrigin.x - tempZoomRect.origin.x,
                 defZoomOrigin.y - tempZoomRect.origin.y
             );
-            [self->_pdfView goToRect:defZoomRect onPage:self->_pdfView.currentPage];
+            [self->_pdfView goToRect:defZoomRect onPage:pageRef];
 
             [self setNeedsDisplay];
             [self onScaleChanged:Nil];
