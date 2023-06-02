@@ -281,7 +281,7 @@ dependencies {
 
 if (isNewArchitectureEnabled()) {
     // If new architecture is enabled, we let you build RN from source
-    // Otherwise we fallback to a prebuilt .aar bundled in the NPM package.
+    // Otherwise we fallback to a prebuilt .aar bundled in the npm package.
     // This will be applied to all the imported transtitive dependency.
     configurations.all {
         resolutionStrategy.dependencySubstitution {
