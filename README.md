@@ -169,6 +169,12 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.7.0
+1. Fixed: fix(iOS): center page at tap point after double tap to zoom
+2. Fixed: add PDFKit to podspec to make ios compile
+3. Improved: Update build.gradle to support RN 0.71 on new arch
+4. Fixed: fix some small bugs and documents.
+
 v6.6.2
 1. Fixed: Migrate to ViewPropTypes exported from 'deprecated-react-native-prop-types'
 2. Added: Decode File Path for iOS
@@ -199,42 +205,6 @@ v6.4.0
 v6.3.0
 1. Add windows support
 2. Fixed some bugs
-
-v6.2.2
-1. Fixed incorrect type of onPageSingleTap and onScaleChanged argument
-2. Fixed included missing setPage method in TypeScript and Flow types
-3. fixed Xcode 12 compatibility
-
-v6.2.1
-1. Fixed typescript `onLoadComplete()` definition
-2. Switched the AndroidPdfViewer dependency from Barteksc repo to TalbotGooday
-3. Add singlePage property
-
-v6.2.0
-1. Fixed ReferenceError, url should be source.uri
-2. Dependency bump to support React-Native >= 0.62
-
-v6.1.2
-1. Fixed wrong scale returned from onScaleChanged()
-2. Fixed iOS Double Tap zoom
-3. Fixed Some critical typo fixes
-
-v6.1.1
-1. Fixed undefined is not an object, crashing on ios
-
-v6.1.0
-1. Fixed react-native warning on `componentWill*`
-2. Fixed onPageSingleTap
-3. Set the PDF View background color to be transparent On iOS
-
-v6.0.1
-1. Expose prop to trust self-signed SSL certs
-2. Use ViewStyleProp in index.js.flow, not deprecated StyleSheet.Styles
-
-v6.0.0
-1. Add JS callback onPressLink for pdf link press listener
-2. Fix calling setState while unmounted
-
 
 [[more]](https://github.com/wonday/react-native-pdf/releases)
 
