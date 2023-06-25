@@ -169,6 +169,10 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.7.1
+1. Fixed: fix ios project setting
+2. Fixed: fix typo in RNPDFPdfViewManagerInterface interface causing android build error
+
 v6.7.0
 1. Fixed: fix(iOS): center page at tap point after double tap to zoom
 2. Fixed: add PDFKit to podspec to make ios compile
