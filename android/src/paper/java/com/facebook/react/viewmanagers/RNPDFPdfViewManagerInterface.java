@@ -19,8 +19,8 @@ public interface RNPDFPdfViewManagerInterface<T extends View> {
   void setMinScale(T view, float value);
   void setMaxScale(T view, float value);
   void setHorizontal(T view, boolean value);
-  void showsHorizontalScrollIndicator(T view, boolean value);
-  void showsVerticalScrollIndicator(T view, boolean value);
+  void setShowsHorizontalScrollIndicator(T view, boolean value);
+  void setShowsVerticalScrollIndicator(T view, boolean value);
   void setEnablePaging(T view, boolean value);
   void setEnableRTL(T view, boolean value);
   void setEnableAnnotationRendering(T view, boolean value);
