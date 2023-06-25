@@ -41,11 +41,11 @@ public class RNPDFPdfViewManagerDelegate<T extends View, U extends BaseViewManag
         mViewManager.setHorizontal(view, value == null ? false : (boolean) value);
         break;
       case "showsHorizontalScrollIndicator":
-        // mViewManager.setShowsHorizontalScrollIndicator(view, value == null ? false : (boolean) value);
+        mViewManager.setShowsHorizontalScrollIndicator(view, value == null ? false : (boolean) value);
         break;
       case "showsVerticalScrollIndicator":
-        // mViewManager.setShowsVerticalScrollIndicator(view, value == null ? false : (boolean) value);
-        break;    
+        mViewManager.setShowsVerticalScrollIndicator(view, value == null ? false : (boolean) value);
+        break;
       case "enablePaging":
         mViewManager.setEnablePaging(view, value == null ? false : (boolean) value);
         break;
