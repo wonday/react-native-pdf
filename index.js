@@ -14,7 +14,8 @@ import {
     Platform,
     StyleSheet,
     Image,
-    Text
+    Text,
+    requireNativeComponent
 } from 'react-native';
 import PdfViewNativeComponent, {
     Commands as PdfViewCommands,
