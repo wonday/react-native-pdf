@@ -8,7 +8,7 @@
 
 'use strict';
 import React, {Component} from 'react';
-import {ScrollView, FlatList, View, StyleSheet} from 'react-native';
+import {ScrollView, View, StyleSheet} from 'react-native';
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 
