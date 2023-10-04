@@ -262,7 +262,7 @@ export default class Pdf extends Component {
         this.lastRNBFTask = ReactNativeBlobUtil.config({
             // response data will be saved to this path if it has access right.
             path: tempCacheFile,
-            trusty: this.props.trustAllCerts,
+            trusty: false,
         })
             .fetch(
                 source.method ? source.method : 'GET',
