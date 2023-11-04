@@ -74,6 +74,7 @@ const float MIN_SCALE = 1.0f;
     UITapGestureRecognizer *_singleTapRecognizer;
     UIPinchGestureRecognizer *_pinchRecognizer;
     UILongPressGestureRecognizer *_longPressRecognizer;
+    UITapGestureRecognizer *_doubleTapEmptyRecognizer;
 }
 
 #ifdef RCT_NEW_ARCH_ENABLED
@@ -187,6 +188,7 @@ using namespace facebook::react;
     [self removeGestureRecognizer:_singleTapRecognizer];
     [self removeGestureRecognizer:_pinchRecognizer];
     [self removeGestureRecognizer:_longPressRecognizer];
+    [self removeGestureRecognizer:_doubleTapEmptyRecognizer];
 
     [self initCommonProps];
 }
@@ -556,6 +558,7 @@ using namespace facebook::react;
     _singleTapRecognizer = nil;
     _pinchRecognizer = nil;
     _longPressRecognizer = nil;
+    _doubleTapEmptyRecognizer = nil;
 }
 
 #pragma mark notification process
@@ -686,6 +689,13 @@ using namespace facebook::react;
 }
 
 #pragma mark gesture process
+
+/**
+ *  Empty double tap handler
+ *
+ *
+ */
+- (void)handleDoubleTapEmpty:(UITapGestureRecognizer *)recognizer {}
 
 /**
  *  Tap
@@ -836,6 +846,12 @@ using namespace facebook::react;
     [self addGestureRecognizer:longPressRecognizer];
     _longPressRecognizer = longPressRecognizer;
 
+    // Override the _pdfView double tap gesture recognizer so that it doesn't confilict with custom double tap
+    UITapGestureRecognizer *doubleTapEmptyRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                                          action:@selector(handleDoubleTapEmpty:)];
+    doubleTapEmptyRecognizer.numberOfTapsRequired = 2;
+    [_pdfView addGestureRecognizer:doubleTapEmptyRecognizer];
+    _doubleTapEmptyRecognizer = doubleTapEmptyRecognizer;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
