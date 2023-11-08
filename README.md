@@ -170,6 +170,9 @@ react-native run-ios
   <summary>ChangeLog details</summary>
 
 v6.7.1
+1. Fixed: Fix iOS double tap zoom scrolling
+
+v6.7.1
 1. Fixed: fix ios project setting
 2. Fixed: fix typo in RNPDFPdfViewManagerInterface interface causing android build error
 
