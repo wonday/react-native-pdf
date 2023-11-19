@@ -170,7 +170,9 @@ react-native run-ios
   <summary>ChangeLog details</summary>
 
 v6.7.2
-1. Fixed: Fix iOS double tap zoom scrolling
+1. Fixed: fix iOS double tap zoom scrolling
+2. Fixed: fix RN 73 compatibility
+3. Fixed: bump crypto-js to avoid critical vulnerability
 
 v6.7.1
 1. Fixed: fix ios project setting
