@@ -169,6 +169,9 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.7.3
+1. Fixed: fix android package name
+
 v6.7.2
 1. Fixed: fix iOS double tap zoom scrolling
 2. Fixed: fix RN 73 compatibility
