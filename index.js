@@ -276,6 +276,9 @@ export default class Pdf extends Component {
                 if (this._mounted) {
                     this.setState({progress: received / total});
                 }
+            })
+            .catch(async (error) => {
+                this._onError(error);
             });
 
         this.lastRNBFTask
