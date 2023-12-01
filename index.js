@@ -367,11 +367,18 @@ export default class Pdf extends Component {
                 message[4] = message.splice(4).join('|');
             }
             if (message[0] === 'loadComplete') {
+                let tableContents;
+                try {
+                    tableContents = message[4]&&JSON.parse(message[4]);
+                } catch(e) {
+                    tableContents = message[4];
+                }
                 this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path, {
                     width: Number(message[2]),
                     height: Number(message[3]),
                 },
-                message[4]&&JSON.parse(message[4]));
+                tableContents
+                );
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {
