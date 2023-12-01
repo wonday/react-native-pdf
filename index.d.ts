@@ -27,7 +27,7 @@ export type Source = {
     method?: string;
 };
 
-interface PdfProps {
+export interface PdfProps {
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>,
     source: Source | number,
     page?: number,
