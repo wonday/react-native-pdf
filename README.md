@@ -169,6 +169,9 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 
+v6.7.4
+1. Fixed: Fix Android crash issue
+
 v6.7.3
 1. Fixed: fix android package name
 
