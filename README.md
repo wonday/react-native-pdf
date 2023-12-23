@@ -367,3 +367,4 @@ Example:
 ```
 this.pdf.setPage(42); // Display the answer to the Ultimate Question of Life, the Universe, and Everything
 ```
+
