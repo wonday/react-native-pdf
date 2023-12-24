@@ -124,6 +124,11 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
         pdfView.setEnableAnnotationRendering(enableAnnotationRendering);
     }
 
+    @ReactProp(name = "enableDoubleTapZoom")
+    public void setEnableDoubleTapZoom(PdfView pdfView, boolean enableDoubleTap) {
+        pdfView.setEnableDoubleTapZoom(enableDoubleTap);
+    }
+
     @ReactProp(name = "enablePaging")
     public void setEnablePaging(PdfView pdfView, boolean enablePaging) {
         pdfView.setEnablePaging(enablePaging);

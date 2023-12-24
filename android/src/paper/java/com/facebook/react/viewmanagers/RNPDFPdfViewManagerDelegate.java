@@ -55,6 +55,9 @@ public class RNPDFPdfViewManagerDelegate<T extends View, U extends BaseViewManag
       case "enableAnnotationRendering":
         mViewManager.setEnableAnnotationRendering(view, value == null ? false : (boolean) value);
         break;
+      case "enableDoubleTapZoom":
+        mViewManager.setEnableDoubleTapZoom(view, value == null ? false : (boolean) value);
+        break;
       case "enableAntialiasing":
         mViewManager.setEnableAntialiasing(view, value == null ? false : (boolean) value);
         break;

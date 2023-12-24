@@ -44,6 +44,7 @@ export interface PdfProps {
     enablePaging?: boolean,
     enableRTL?: boolean,
     enableAnnotationRendering?: boolean,
+    enableDoubleTapZoom?: boolean;
     fitPolicy?: number,
     trustAllCerts?: boolean,
     singlePage?: boolean,
