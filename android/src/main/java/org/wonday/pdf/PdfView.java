@@ -73,6 +73,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private String password = "";
     private boolean enableAntialiasing = true;
     private boolean enableAnnotationRendering = true;
+    private boolean enableDoubleTapZoom = true;
 
     private boolean enablePaging = false;
     private boolean autoSpacing = false;
@@ -282,7 +283,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .autoSpacing(this.autoSpacing)
                 .pageFling(this.pageFling)
                 .enableSwipe(!this.singlePage)
-                .enableDoubletap(!this.singlePage)
+                .enableDoubletap(!this.singlePage && this.enableDoubleTapZoom)
                 .enableAnnotationRendering(this.enableAnnotationRendering)
                 .linkHandler(this);
 
@@ -295,6 +296,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
             configurator.load();
         }
+    }
+
+    public void setEnableDoubleTapZoom(boolean enableDoubleTapZoom) {
+        this.enableDoubleTapZoom = enableDoubleTapZoom;
     }
 
     public void setPath(String path) {

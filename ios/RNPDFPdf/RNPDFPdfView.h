@@ -43,6 +43,7 @@ UIView
 @property(nonatomic) BOOL enablePaging;
 @property(nonatomic) BOOL enableRTL;
 @property(nonatomic) BOOL enableAnnotationRendering;
+@property(nonatomic) BOOL enableDoubleTapZoom;
 @property(nonatomic) int fitPolicy;
 @property(nonatomic) int spacing;
 @property(nonatomic, strong) NSString *password;
