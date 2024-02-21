@@ -53,6 +53,7 @@ export type Props = {
   onPressLink?: (url: string) => void,
   page?: number,
   password?: string,
+  progressContainerStyle?: ViewStyleProp,
   scale?: number,
   source: AssetId | Source,
   spacing?: number,
