@@ -169,6 +169,7 @@ react-native run-ios
 <details>
   <summary>ChangeLog details</summary>
 v6.9.0
+
 1. Added progressContainerStyle prop
 
 v6.8.0
@@ -312,7 +313,7 @@ const styles = StyleSheet.create({
 | spacing                        |                            number                             |            10            | the breaker size between pages                                                                                                                                                | ✔   | ✔       | ✔                           | <3.0                     |
 | password                       |                            string                             |            ""            | pdf password, if password error, will call OnError() with message "Password required or incorrect password."                                                                  | ✔   | ✔       | ✔                           | <3.0                     |
 | style                          |                            object                             | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color...                                                                                                    | ✔   | ✔       | ✔                           | <3.0 
-| progressContainerStyle         |                            object                             | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color...                                                                                             | ✔   | ✔       | ✔                           | <6.9.0                     |
+| progressContainerStyle         |                            object                             | {backgroundColor:"#eee"} | support normal view style, you can use this to set border/spacing color...                                                                                             | ✔   | ✔       | ✔                           | 6.9.0                     |
 | renderActivityIndicator        |                    (progress) => Component                    |      <ProgressBar/>      | when loading show it as an indicator, you can use your component                                                                                                              | ✔   | ✔       | ✖                           | <3.0                     |
 | enableAntialiasing             |                             bool                              |           true           | improve rendering a little bit on low-res screens, but maybe course some problem on Android 4.4, so add a switch                                                              | ✖   | ✔       | ✖                           | <3.0                     |
 | enablePaging                   |                             bool                              |          false           | only show one page in screen                                                                                                                                                  | ✔   | ✔       | ✔                           | 5.0.1                    |
