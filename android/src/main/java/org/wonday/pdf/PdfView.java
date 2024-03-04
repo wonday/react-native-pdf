@@ -11,23 +11,19 @@ package org.wonday.pdf;
 import java.io.File;
 
 import android.content.ContentResolver;
-import android.content.Context;
+import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
 import android.util.Log;
-import android.graphics.PointF;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.graphics.Canvas;
-import javax.annotation.Nullable;
-
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
-import com.github.barteksc.pdfviewer.listener.OnRenderListener;
 import com.github.barteksc.pdfviewer.listener.OnTapListener;
 import com.github.barteksc.pdfviewer.listener.OnDrawListener;
 import com.github.barteksc.pdfviewer.listener.OnPageScrollListener;
@@ -53,12 +49,8 @@ import static java.lang.String.format;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.ClassCastException;
 
-import com.shockwave.pdfium.PdfDocument;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.shockwave.pdfium.util.SizeF;
 
 public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler {
     private ThemedReactContext context;
