@@ -1,7 +1,7 @@
 description = 'react-native-pdf'
 
 buildscript {
-    ext.safeExtGet = {prop, fallback ->
+    ext.safeExtGet = { prop, fallback ->
         rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
     }
     repositories {
@@ -21,7 +21,7 @@ repositories {
         url "$projectDir/../node_modules/react-native/android"
         content {
             // Use Jitpack only for AndroidPdfViewer; the rest is hosted at mavenCentral.
-            includeGroup "com.github.TalbotGooday"
+            includeGroup "com.github.zacharee"
         }
     }
     maven { url 'https://jitpack.io' }
@@ -49,9 +49,9 @@ def resolveReactNativeDirectory() {
     }
 
     throw new Exception(
-            "[react-native-pdf] Unable to resolve react-native location in " +
-                    "node_modules. You should add project extension property (in app/build.gradle) " +
-                    "`REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
+        "[react-native-pdf] Unable to resolve react-native location in " +
+            "node_modules. You should add project extension property (in app/build.gradle) " +
+            "`REACT_NATIVE_NODE_MODULES_DIR` with path to react-native."
     )
 }
 
@@ -107,12 +107,12 @@ android {
     }
 
     packagingOptions {
-       pickFirst 'lib/x86/libc++_shared.so'
-       pickFirst 'lib/x86_64/libjsc.so'
-       pickFirst 'lib/x86_64/libc++_shared.so'
-       pickFirst 'lib/arm64-v8a/libjsc.so'
-       pickFirst 'lib/arm64-v8a/libc++_shared.so'
-       pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libjsc.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libjsc.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
     }
 }
 
@@ -123,7 +123,9 @@ dependencies {
         implementation 'com.facebook.react:react-native:+'
     }
     // NOTE: The original repo at com.github.barteksc is abandoned by the maintainer; there will be no more updates coming from that repo.
-    //       It was taken over by com.github.TalbotGooday; from now on please use this repo until (if ever) the Barteksc repo is resumed.
-    implementation 'com.github.TalbotGooday:AndroidPdfViewer:3.1.0-beta.3'
+    // The repo from zacharee is based on PdfiumAndroidKt, a much newer fork of PdfiumAndroid, with better maintenance and updated native libraries.
+    implementation 'com.github.zacharee:AndroidPdfViewer:4.0.1'
+    // Depend on PdfiumAndroidKt directly so this can be updated independently of AndroidPdfViewer as updates are provided.
+    implementation 'io.legere:pdfiumandroid:1.0.19'
     implementation 'com.google.code.gson:gson:2.8.5'
 }

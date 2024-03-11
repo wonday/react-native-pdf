@@ -12,6 +12,7 @@ import java.io.File;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
 import android.util.Log;
@@ -55,10 +56,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.ClassCastException;
 
-import com.shockwave.pdfium.PdfDocument;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.shockwave.pdfium.util.SizeF;
 
 public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler {
     private ThemedReactContext context;
