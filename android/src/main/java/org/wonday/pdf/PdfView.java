@@ -16,19 +16,16 @@ import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
 import android.util.Log;
-import android.graphics.PointF;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.graphics.Canvas;
-import javax.annotation.Nullable;
 
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
-import com.github.barteksc.pdfviewer.listener.OnRenderListener;
 import com.github.barteksc.pdfviewer.listener.OnTapListener;
 import com.github.barteksc.pdfviewer.listener.OnDrawListener;
 import com.github.barteksc.pdfviewer.listener.OnPageScrollListener;
@@ -42,7 +39,6 @@ import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.uimanager.SimpleViewManager;
-import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.common.MapBuilder;
@@ -54,19 +50,15 @@ import static java.lang.String.format;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.lang.ClassCastException;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler {
-    private ThemedReactContext context;
     private int page = 1;               // start from 1
     private boolean horizontal = false;
     private float scale = 1;
     private float minScale = 1;
     private float maxScale = 3;
-    private String asset;
     private String path;
     private int spacing = 10;
     private String password = "";
@@ -81,8 +73,6 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private FitPolicy fitPolicy = FitPolicy.WIDTH;
     private boolean singlePage = false;
 
-    private static PdfView instance = null;
-
     private float originalWidth = 0;
     private float lastPageWidth = 0;
     private float lastPageHeight = 0;
@@ -91,10 +81,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private int oldW = 0;
     private int oldH = 0;
 
-    public PdfView(ThemedReactContext context, AttributeSet set){
-        super(context,set);
-        this.context = context;
-        this.instance = this;
+    public PdfView(Context context, AttributeSet set){
+        super(context, set);
     }
 
     @Override
