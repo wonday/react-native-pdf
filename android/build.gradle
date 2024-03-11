@@ -25,6 +25,7 @@ repositories {
         }
     }
     maven { url 'https://jitpack.io' }
+    google()
 }
 
 apply plugin: 'com.android.library'
