@@ -29,6 +29,7 @@ export type Source = {
 
 export interface PdfProps {
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>,
+    progressContainerStyle?: ReactNative.StyleProp<ReactNative.ViewStyle>,
     source: Source | number,
     page?: number,
     scale?: number,
