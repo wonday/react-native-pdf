@@ -168,16 +168,15 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
-v6.9.0
+v6.7.5
 
 1. Added progressContainerStyle prop
-
-v6.8.0
-
-1. Improved: Added enableDoubleTapZoom option
+2. Improved: Added enableDoubleTapZoom option
+3. Fixed: Fix app crash with this.lastRNBFTask.cancel is not a function (#827)
+4. Fixed: Remove override to fix 'no matching methods to override' error (#822)
 
 v6.7.4
-1. Fixed: Fix Android crash issue
+1. Fixed: fix Android crash issue
 
 v6.7.3
 1. Fixed: fix android package name
