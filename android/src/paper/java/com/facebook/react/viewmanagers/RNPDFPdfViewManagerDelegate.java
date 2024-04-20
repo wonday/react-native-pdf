@@ -19,7 +19,7 @@ public class RNPDFPdfViewManagerDelegate<T extends View, U extends BaseViewManag
   public RNPDFPdfViewManagerDelegate(U viewManager) {
     super(viewManager);
   }
-  @Override
+
   public void setProperty(T view, String propName, @Nullable Object value) {
     switch (propName) {
       case "path":
@@ -78,7 +78,6 @@ public class RNPDFPdfViewManagerDelegate<T extends View, U extends BaseViewManag
     }
   }
 
-  @Override
   public void receiveCommand(T view, String commandName, ReadableArray args) {
     switch (commandName) {
       case "setNativePage":
