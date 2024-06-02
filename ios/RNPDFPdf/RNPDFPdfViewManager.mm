@@ -35,6 +35,7 @@ RCT_EXPORT_VIEW_PROPERTY(maxScale, float);
 RCT_EXPORT_VIEW_PROPERTY(horizontal, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(showsHorizontalScrollIndicator, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(showsVerticalScrollIndicator, BOOL);
+RCT_EXPORT_VIEW_PROPERTY(scrollEnabled, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(enablePaging, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(enableRTL, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(enableAnnotationRendering, BOOL);
