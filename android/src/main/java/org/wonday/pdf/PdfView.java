@@ -72,6 +72,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private boolean pageSnap = false;
     private FitPolicy fitPolicy = FitPolicy.WIDTH;
     private boolean singlePage = false;
+    private boolean scrollEnabled = true;
 
     private float originalWidth = 0;
     private float lastPageWidth = 0;
@@ -269,7 +270,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .pageSnap(this.pageSnap)
                 .autoSpacing(this.autoSpacing)
                 .pageFling(this.pageFling)
-                .enableSwipe(!this.singlePage)
+                .enableSwipe(!this.singlePage && this.scrollEnabled)
                 .enableDoubletap(!this.singlePage && this.enableDoubleTapZoom)
                 .enableAnnotationRendering(this.enableAnnotationRendering)
                 .linkHandler(this);
@@ -312,6 +313,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setHorizontal(boolean horizontal) {
         this.horizontal = horizontal;
+    }
+
+    public void setScrollEnabled(boolean scrollEnabled) {
+        this.scrollEnabled = scrollEnabled;
     }
 
     public void setSpacing(int spacing) {

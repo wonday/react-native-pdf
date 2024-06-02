@@ -104,9 +104,9 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
         // NOOP on Android
     }
 
-    @Override
-    public void setScrollEnabled(PdfView view, boolean value) {
-        // NOOP on Android
+    @ReactProp(name = "scrollEnabled")
+    public void setScrollEnabled(PdfView view, boolean scrollEnabled) {
+        pdfView.setScrollEnabled(scrollEnabled);
     }
 
     @ReactProp(name = "spacing")
