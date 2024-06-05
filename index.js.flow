@@ -41,6 +41,7 @@ export type Props = {
   horizontal?: boolean,
   showsHorizontalScrollIndicator?: boolean,
   showsVerticalScrollIndicator?: boolean,
+  scrollEnabled?: boolean,
   maxScale?: number,
   minScale?: number,
   singlePage?: boolean,

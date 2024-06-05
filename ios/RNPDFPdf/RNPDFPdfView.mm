@@ -165,6 +165,11 @@ using namespace facebook::react;
         [updatedPropNames addObject:@"showsVerticalScrollIndicator"];
     }
 
+    if (_scrollEnabled != newProps.scrollEnabled) {
+        _scrollEnabled = newProps.scrollEnabled;
+        [updatedPropNames addObject:@"scrollEnabled"];
+    }
+
     [super updateProps:props oldProps:oldProps];
     [self didSetProps:updatedPropNames];
 }
@@ -252,6 +257,7 @@ using namespace facebook::react;
     _singlePage = NO;
     _showsHorizontalScrollIndicator = YES;
     _showsVerticalScrollIndicator = YES;
+    _scrollEnabled = YES;
 
     // init and config PDFView
     _pdfView = [[PDFView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
@@ -498,6 +504,24 @@ using namespace facebook::react;
                     if ([subview isKindOfClass:[UIScrollView class]]) {
                         UIScrollView *scrollView = (UIScrollView *)subview;
                         scrollView.showsVerticalScrollIndicator = NO;
+                    }
+                }
+            }
+        }
+
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"scrollEnabled"])) {
+            if (_scrollEnabled) {
+                for (UIView *subview in _pdfView.subviews) {
+                    if ([subview isKindOfClass:[UIScrollView class]]) {
+                        UIScrollView *scrollView = (UIScrollView *)subview;
+                        scrollView.scrollEnabled = YES;
+                    }
+                }
+            } else {
+                for (UIView *subview in _pdfView.subviews) {
+                    if ([subview isKindOfClass:[UIScrollView class]]) {
+                        UIScrollView *scrollView = (UIScrollView *)subview;
+                        scrollView.scrollEnabled = NO;
                     }
                 }
             }

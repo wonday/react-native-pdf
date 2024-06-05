@@ -25,6 +25,7 @@
    enableDoubleTapZoom: ?boolean,
    showsHorizontalScrollIndicator: ?boolean,
    showsVerticalScrollIndicator: ?boolean,
+   scrollEnabled: ?boolean,
    enableAntialiasing: ?boolean,
    fitPolicy: ?Int32,
    spacing: ?Int32,
