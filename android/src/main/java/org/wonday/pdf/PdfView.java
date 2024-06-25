@@ -22,6 +22,8 @@ import android.view.MotionEvent;
 import android.graphics.Canvas;
 
 
+import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.UIManagerHelper;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
@@ -34,17 +36,15 @@ import com.github.barteksc.pdfviewer.util.Constants;
 import com.github.barteksc.pdfviewer.link.LinkHandler;
 import com.github.barteksc.pdfviewer.model.LinkTapEvent;
 
-import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.uimanager.SimpleViewManager;
-import com.facebook.react.uimanager.annotations.ReactProp;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.uimanager.UIManagerModule;
+import com.facebook.react.uimanager.events.EventDispatcher;
+import com.facebook.react.uimanager.events.Event;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
-import com.facebook.react.common.MapBuilder;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.facebook.common.logging.FLog;
-import com.facebook.react.common.ReactConstants;
+
 
 import static java.lang.String.format;
 
@@ -52,6 +52,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import com.google.gson.Gson;
+
+import org.wonday.pdf.events.TopChangeEvent;
 
 public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler {
     private int page = 1;               // start from 1
@@ -95,12 +97,23 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
         WritableMap event = Arguments.createMap();
         event.putString("message", "pageChanged|"+page+"|"+numberOfPages);
-        ReactContext reactContext = (ReactContext)this.getContext();
-        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-            this.getId(),
-            "topChange",
-            event
-         );
+
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+
+//        ReactContext reactContext = (ReactContext)this.getContext();
+//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+//            this.getId(),
+//            "topChange",
+//            event
+//         );
     }
 
     // In some cases Yoga (I think) will measure the view only along one axis first, resulting in
@@ -136,12 +149,22 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         //create a new json Object for the TableOfContents
         Gson gson = new Gson();
         event.putString("message", "loadComplete|"+numberOfPages+"|"+width+"|"+height+"|"+gson.toJson(this.getTableOfContents()));
-        ReactContext reactContext = (ReactContext)this.getContext();
-        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-            this.getId(),
-            "topChange",
-            event
-         );
+
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+        //        ReactContext reactContext = (ReactContext)this.getContext();
+//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+//            this.getId(),
+//            "topChange",
+//            event
+//         );
 
         //Log.e("ReactNative", gson.toJson(this.getTableOfContents()));
 
@@ -156,12 +179,22 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             event.putString("message", "error|"+t.getMessage());
         }
 
-        ReactContext reactContext = (ReactContext)this.getContext();
-        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-            this.getId(),
-            "topChange",
-            event
-         );
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+
+//        ReactContext reactContext = (ReactContext)this.getContext();
+//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+//            this.getId(),
+//            "topChange",
+//            event
+//         );
     }
 
     @Override
@@ -183,12 +216,21 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         WritableMap event = Arguments.createMap();
         event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY());
 
-        ReactContext reactContext = (ReactContext)this.getContext();
-        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-            this.getId(),
-            "topChange",
-            event
-         );
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+//        ReactContext reactContext = (ReactContext)this.getContext();
+//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+//            this.getId(),
+//            "topChange",
+//            event
+//         );
 
         // process as tap
          return true;
@@ -208,13 +250,21 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
             WritableMap event = Arguments.createMap();
             event.putString("message", "scaleChanged|"+(pageWidth/originalWidth));
+            ThemedReactContext context = (ThemedReactContext) getContext();
+            EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+            int surfaceId = UIManagerHelper.getSurfaceId(this);
 
-            ReactContext reactContext = (ReactContext)this.getContext();
-            reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-                this.getId(),
-                "topChange",
-                event
-             );
+            TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+            if (dispatcher != null) {
+                dispatcher.dispatchEvent(tce);
+            }
+//            ReactContext reactContext = (ReactContext)this.getContext();
+//            reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+//                this.getId(),
+//                "topChange",
+//                event
+//             );
         }
 
         lastPageWidth = pageWidth;
@@ -390,12 +440,22 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         WritableMap event = Arguments.createMap();
         event.putString("message", "linkPressed|"+uri);
 
-        ReactContext reactContext = (ReactContext)this.getContext();
-        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-            this.getId(),
-            "topChange",
-            event
-        );
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+
+//        ReactContext reactContext = (ReactContext)this.getContext();
+//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+//            this.getId(),
+//            "topChange",
+//            event
+//        );
     }
 
     /**
