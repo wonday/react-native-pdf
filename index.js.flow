@@ -5,8 +5,10 @@
 import { Component } from 'react';
 
 import type { Node } from 'react';
-import type { FormField, Methods } from 'rn-fetch-blob';
-import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet'
+import type { FormField, Methods } from 'react-native-blob-util';
+import { StyleSheet } from 'react-native';
+
+export type ViewStyleProp = StyleSheet.ViewStyleProp;
 
 export type AssetId = number;
 
