@@ -27,6 +27,7 @@
    showsVerticalScrollIndicator: ?boolean,
    scrollEnabled: ?boolean,
    enableAntialiasing: ?boolean,
+   enableDoubleTapZoom: ?boolean,
    fitPolicy: ?Int32,
    spacing: ?Int32,
    password: ?string,
