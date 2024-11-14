@@ -22,7 +22,6 @@
    enablePaging: ?boolean,
    enableRTL: ?boolean,
    enableAnnotationRendering: ?boolean,
-   enableDoubleTapZoom: ?boolean,
    showsHorizontalScrollIndicator: ?boolean,
    showsVerticalScrollIndicator: ?boolean,
    scrollEnabled: ?boolean,
