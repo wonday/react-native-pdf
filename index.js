@@ -235,7 +235,7 @@ export default class Pdf extends Component {
                 } else {
                     if (this._mounted) {
                        this.setState({
-                            path: unescape(uri.replace(/file:\/\//i, '')),
+                            path: decodeURIComponent(uri.replace(/file:\/\//i, '')),
                             isDownloaded: true,
                         });
                     }
