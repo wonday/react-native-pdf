@@ -168,8 +168,17 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
-v6.7.5
+v6.7.6
+1. Fixed: Add missing 'enableDoubleTapZoom' to fabric codegen source (#832)
+2. Fixed: added missing 'scrollEnabled' prop (#842)
+3. Fixed: java.lang.IllegalStateException: Tried to access a JS module before the React instance was fully set up (#840)
+4. Fixed: an issue that crashes when cancel is not present (#852)
+5. Added: add load method (#861)
+6. Fixed: encoded accented character is decoded incorrectly (#873)
+7. Fixed: enableDoubleTapZoom bugfix
 
+
+v6.7.5
 1. Added progressContainerStyle prop
 2. Improved: Added enableDoubleTapZoom option
 3. Fixed: Fix app crash with this.lastRNBFTask.cancel is not a function (#827)
