@@ -479,40 +479,8 @@ using namespace facebook::react;
             }
         }
 
-        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"showsHorizontalScrollIndicator"])) {
-            if (_showsHorizontalScrollIndicator) {
-                for (UIView *subview in _pdfView.subviews) {
-                    if ([subview isKindOfClass:[UIScrollView class]]) {
-                        UIScrollView *scrollView = (UIScrollView *)subview;
-                        scrollView.showsHorizontalScrollIndicator = YES;
-                    }
-                }
-            } else {
-                for (UIView *subview in _pdfView.subviews) {
-                    if ([subview isKindOfClass:[UIScrollView class]]) {
-                        UIScrollView *scrollView = (UIScrollView *)subview;
-                        scrollView.showsHorizontalScrollIndicator = NO;
-                    }
-                }
-            }
-        }
-
-        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"showsVerticalScrollIndicator"])) {
-            if (_showsVerticalScrollIndicator) {
-                for (UIView *subview in _pdfView.subviews) {
-                    if ([subview isKindOfClass:[UIScrollView class]]) {
-                        UIScrollView *scrollView = (UIScrollView *)subview;
-                        scrollView.showsVerticalScrollIndicator = YES;
-                    }
-                }
-            } else {
-                for (UIView *subview in _pdfView.subviews) {
-                    if ([subview isKindOfClass:[UIScrollView class]]) {
-                        UIScrollView *scrollView = (UIScrollView *)subview;
-                        scrollView.showsVerticalScrollIndicator = NO;
-                    }
-                }
-            }
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"showsHorizontalScrollIndicator"] || [changedProps containsObject:@"showsVerticalScrollIndicator"])) {
+            [self setScrollIndicators:self horizontal:_showsHorizontalScrollIndicator vertical:_showsVerticalScrollIndicator depth:0];
         }
 
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"scrollEnabled"])) {
@@ -926,6 +894,23 @@ using namespace facebook::react;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return !_singlePage;
+}
+
+- (void)setScrollIndicators:(UIView *)view horizontal:(BOOL)horizontal vertical:(BOOL)vertical depth:(int)depth {
+    // max depth, prevent infinite loop
+    if (depth > 10) {
+        return;
+    }
+    
+    if ([view isKindOfClass:[UIScrollView class]]) {
+        UIScrollView *scrollView = (UIScrollView *)view;
+        scrollView.showsHorizontalScrollIndicator = horizontal;
+        scrollView.showsVerticalScrollIndicator = vertical;
+    }
+    
+    for (UIView *subview in view.subviews) {
+        [self setScrollIndicators:subview horizontal:horizontal vertical:vertical depth:depth + 1];
+    }
 }
 
 @end
