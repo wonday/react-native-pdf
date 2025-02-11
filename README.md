@@ -168,6 +168,10 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
+v6.7.7
+1. Added: add support for customizable scroll indicators in PdfView component (#904)
+2. Fixed: fix field values not being visible on android. issue #864 :bug: (#896)
+
 v6.7.6
 1. Fixed: Add missing 'enableDoubleTapZoom' to fabric codegen source (#832)
 2. Fixed: added missing 'scrollEnabled' prop (#842)
