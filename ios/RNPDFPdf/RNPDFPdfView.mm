@@ -292,7 +292,7 @@ using namespace facebook::react;
     // Disable built-in double tap, so as not to conflict with custom recognizers.
     for (UIGestureRecognizer *recognizer in _pdfView.gestureRecognizers) {
         if ([recognizer isKindOfClass:[UITapGestureRecognizer class]]) {
-            recognizer.enabled = NO;
+            recognizer.enabled = YES;
         }
     }
 
