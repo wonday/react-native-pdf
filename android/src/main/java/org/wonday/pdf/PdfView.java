@@ -75,6 +75,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private FitPolicy fitPolicy = FitPolicy.WIDTH;
     private boolean singlePage = false;
     private boolean scrollEnabled = true;
+    private boolean enableRTL = false;
 
     private float originalWidth = 0;
     private float lastPageWidth = 0;
@@ -83,6 +84,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     // used to store the parameters for `super.onSizeChanged`
     private int oldW = 0;
     private int oldH = 0;
+
+    private int totalPages = 0;
+    private int[] pagesArrays;
+    private int bookmarks = 0; 
 
     public PdfView(Context context, AttributeSet set){
         super(context, set);
@@ -280,7 +285,34 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void drawPdf() {
         showLog(format("drawPdf path:%s %s", this.path, this.page));
+        File file = new File(this.path);
 
+         if (file.exists()) {
+             try {
+                 ParcelFileDescriptor fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+                 PdfRenderer pdfRenderer = new PdfRenderer(fileDescriptor);
+                 this.totalPages = pdfRenderer.getPageCount();
+                 int[] pagesArrays = new int[this.totalPages];
+                 if (this.enableRTL) {
+                    if(this.page>0){
+                        this.page= this.bookmarks-1;
+                    }else{
+                        this.page=this.totalPages;
+                    }
+                    for (int i = totalPages-1; i>=0; i--) {
+                        pagesArrays[i] =totalPages-1- i;
+                    }
+                    this.pagesArrays = pagesArrays;
+                    
+                }else{
+                    this.pagesArrays = null;
+                    this.page=this.bookmarks-1;
+                }
+             } catch (IOException e) {
+                 Log.e("error", "error read PDF", e);
+             }
+         }
+        
         if (this.path != null){
 
             // set scale
@@ -306,7 +338,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 configurator = this.fromUri(getURI(this.path));
             }
 
-            configurator.defaultPage(this.page-1)
+            configurator
+                .pages(this.pagesArrays)
+                .defaultPage(this.page)
                 .swipeHorizontal(this.horizontal)
                 .onPageChange(this)
                 .onLoad(this)
@@ -346,8 +380,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     // page start from 1
     public void setPage(int page) {
-        this.page = page>1?page:1;
+        this.page = page;
+        this.bookmarks = page;
     }
+
+    public void setEnableRTL(boolean enableRTL){
+        this.enableRTL= enableRTL;
+        
+     }
 
     public void setScale(float scale) {
         this.scale = scale;
