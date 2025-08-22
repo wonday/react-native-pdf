@@ -99,9 +99,9 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
         // NOOP on Android
     }
 
-    @Override
-    public void setShowsVerticalScrollIndicator(PdfView view, boolean value) {
-        // NOOP on Android
+    @ReactProp(name = "enableRTL")
+    public void setEnableRTL(PdfView view, boolean enableRTL) {
+        pdfView.setEnableRTL(enableRTL);
     }
 
     @ReactProp(name = "scrollEnabled")
