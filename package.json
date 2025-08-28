@@ -62,12 +62,12 @@
         "type": "components",
         "jsSrcsDir": "./fabric",
         "android": {
-          "javaPackageName": "org.wonday.pdf"
+            "javaPackageName": "org.wonday.pdf"
         },
         "ios": {
-          "componentProvider": {
-            "RNPDFPdfView": "RNPDFPdfView"
-          }
+            "componentProvider": {
+                "RNPDFPdfView": "RNPDFPdfView"
+            }
         }
-      }
+    }
 }
