@@ -225,6 +225,7 @@ export default class PDFExample extends React.Component<
                 ref={(pdf: any) => {
                 this.pdf = pdf;
                 }}
+                trustAllCerts={false}
                 source={source}
                 scale={this.state.scale}
                 horizontal={this.state.horizontal}
