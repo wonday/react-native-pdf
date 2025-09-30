@@ -8,7 +8,7 @@
 
 'use strict';
 import React, {Component} from 'react';
-import {ScrollView, FlatList, View, StyleSheet} from 'react-native';
+import {ScrollView, View, StyleSheet} from 'react-native';
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 
@@ -40,6 +40,8 @@ export default class PdfView extends Component {
         singlePage: PropTypes.bool,
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
+        showsHorizontalScrollIndicator: PropTypes.bool,
+        showsVerticalScrollIndicator: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -50,6 +52,7 @@ export default class PdfView extends Component {
         maxScale: MAX_SCALE,
         spacing: 10,
         style: {},
+        progressContainerStyle: {},
         fitPolicy: 2,
         horizontal: false,
         centerContent: false,
@@ -61,6 +64,8 @@ export default class PdfView extends Component {
         },
         onScaleChanged: (scale) => {
         },
+        showsHorizontalScrollIndicator: true,
+        showsVerticalScrollIndicator: true,
     };
 
     constructor(props) {

@@ -10,14 +10,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
-    requireNativeComponent,
     View,
     Platform,
     StyleSheet,
     Image,
-    Text
+    Text,
+    requireNativeComponent
 } from 'react-native';
-
+import PdfViewNativeComponent, {
+    Commands as PdfViewCommands,
+  } from './fabric/RNPDFPdfNativeComponent';
 import ReactNativeBlobUtil from 'react-native-blob-util'
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 const SHA1 = require('crypto-js/sha1');
@@ -44,16 +46,12 @@ export default class Pdf extends Component {
         horizontal: PropTypes.bool,
         spacing: PropTypes.number,
         password: PropTypes.string,
-        hotspots: PropTypes.string,
-        notes: PropTypes.string,
-        textNotes: PropTypes.string,
-        enableMovement: PropTypes.bool,
-        update: PropTypes.bool,
-        width: PropTypes.number,
-        movingElements: PropTypes.bool,
         renderActivityIndicator: PropTypes.func,
         enableAntialiasing: PropTypes.bool,
         enableAnnotationRendering: PropTypes.bool,
+        showsHorizontalScrollIndicator: PropTypes.bool,
+        showsVerticalScrollIndicator: PropTypes.bool,
+        scrollEnabled: PropTypes.bool,
         enablePaging: PropTypes.bool,
         enableRTL: PropTypes.bool,
         fitPolicy: PropTypes.number,
@@ -64,11 +62,6 @@ export default class Pdf extends Component {
         onError: PropTypes.func,
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
-        onPageScrolled: PropTypes.func,
-        onPageScrolledEnd: PropTypes.func,
-        onNextPage: PropTypes.func,
-        onPrevPage: PropTypes.func,
-        onActionEnd: PropTypes.func,
         onPressLink: PropTypes.func,
 
         // Props that are not available in the earlier react native version, added to prevent crashed on android
@@ -83,12 +76,6 @@ export default class Pdf extends Component {
 
     static defaultProps = {
         password: "",
-        hotspots: "",
-        notes: "",
-        textNotes:"",
-        update: false,
-        enableMovement:true,
-        width:0,
         scale: 1,
         minScale: 1,
         maxScale: 3,
@@ -98,6 +85,9 @@ export default class Pdf extends Component {
         page: 1,
         enableAntialiasing: true,
         enableAnnotationRendering: true,
+        showsHorizontalScrollIndicator: true,
+        showsVerticalScrollIndicator: true,
+        scrollEnabled: true,
         enablePaging: false,
         enableRTL: false,
         trustAllCerts: true,
@@ -111,19 +101,9 @@ export default class Pdf extends Component {
         },
         onError: (error) => {
         },
-        onPageSingleTap: (page, x, y, width, height) => {
+        onPageSingleTap: (page, x, y) => {
         },
         onScaleChanged: (scale) => {
-        },
-        onPageScrolled: (offsetX, offsetY) => {
-        },
-        onPageScrolledEnd: (offsetX, offsetY) => {
-        },
-        onPrevPage: () => {
-        },
-        onNextPage: () => {
-        },
-        onActionEnd: () => {
         },
         onPressLink: (url) => {
         },
@@ -136,7 +116,6 @@ export default class Pdf extends Component {
             path: '',
             isDownloaded: false,
             progress: 0,
-            isSupportPDFKit: -1
         };
 
         this.lastRNBFTask = null;
@@ -150,7 +129,7 @@ export default class Pdf extends Component {
 
         if ((nextSource.uri !== curSource.uri)) {
             // if has download task, then cancel it.
-            if (this.lastRNBFTask) {
+            if (this.lastRNBFTask && this.lastRNBFTask.cancel) {
                 this.lastRNBFTask.cancel(err => {
                     this._loadFromSource(this.props.source);
                 });
@@ -163,22 +142,14 @@ export default class Pdf extends Component {
 
     componentDidMount() {
         this._mounted = true;
-        if (Platform.OS === "ios") {
-            const PdfViewManagerNative = require('react-native').NativeModules.PdfViewManager;
-            PdfViewManagerNative.supportPDFKit((isSupportPDFKit) => {
-                if (this._mounted) {
-                    this.setState({isSupportPDFKit: isSupportPDFKit ? 1 : 0});
-                }
-            });
-        }
         this._loadFromSource(this.props.source);
     }
 
     componentWillUnmount() {
         this._mounted = false;
         if (this.lastRNBFTask) {
-            this.lastRNBFTask.cancel(err => {
-            });
+            // this.lastRNBFTask.cancel(err => {
+            // });
             this.lastRNBFTask = null;
         }
 
@@ -264,7 +235,7 @@ export default class Pdf extends Component {
                 } else {
                     if (this._mounted) {
                        this.setState({
-                            path: uri.replace(/file:\/\//i, ''),
+                            path: decodeURIComponent(uri.replace(/file:\/\//i, '')),
                             isDownloaded: true,
                         });
                     }
@@ -307,6 +278,9 @@ export default class Pdf extends Component {
                 if (this._mounted) {
                     this.setState({progress: received / total});
                 }
+            })
+            .catch(async (error) => {
+                this._onError(error);
             });
 
         this.lastRNBFTask
@@ -374,77 +348,52 @@ export default class Pdf extends Component {
         if ( (pageNumber === null) || (isNaN(pageNumber)) ) {
             throw new Error('Specified pageNumber is not a number');
         }
-        this.setNativeProps({
-            page: pageNumber
-        });
+        if (!!global?.nativeFabricUIManager ) {
+            if (this._root) {
+                PdfViewCommands.setNativePage(
+                    this._root,
+                    pageNumber,
+                );
+            }
+          } else {
+            this.setNativeProps({
+                page: pageNumber
+            });
+          }
+        
     }
-
-
-    setHotspots(hotspots) {
-        this.setNativeProps({
-            hotspots: hotspots
-        });
-    }
-
-
-    setNotes(notes) {
-        this.setNativeProps({
-            notes: notes
-        });
-    }
-
-
-    setTextNotes(notes) {
-        this.setNativeProps({
-            textNotes: notes
-        });
-    }
-
-
-    setEnableMovement(enableMovement) {
-        this.setNativeProps({
-            enableMovement: enableMovement
-        });
-    }
-
 
     _onChange = (event) => {
 
         let message = event.nativeEvent.message.split('|');
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
-            /*if (message.length > 5) {
+            if (message.length > 5) {
                 message[4] = message.splice(4).join('|');
-            }*/
+            }
             if (message[0] === 'loadComplete') {
+                let tableContents;
+                try {
+                    tableContents = message[4]&&JSON.parse(message[4]);
+                } catch(e) {
+                    tableContents = message[4];
+                }
                 this.props.onLoadComplete && this.props.onLoadComplete(Number(message[1]), this.state.path, {
                     width: Number(message[2]),
                     height: Number(message[3]),
                 },
-                message[4]&&JSON.parse(message[4]));
+                tableContents
+                );
             } else if (message[0] === 'pageChanged') {
                 this.props.onPageChanged && this.props.onPageChanged(Number(message[1]), Number(message[2]));
             } else if (message[0] === 'error') {
                 this._onError(new Error(message[1]));
             } else if (message[0] === 'pageSingleTap') {
-                this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]));
+                this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]));
             } else if (message[0] === 'scaleChanged') {
-                this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]));
+                this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1]));
             } else if (message[0] === 'linkPressed') {
                 this.props.onPressLink && this.props.onPressLink(message[1]);
-            } else if (message[0] === 'pageScrolled') {
-                this.props.onPageScrolled && this.props.onPageScrolled(message[1], message[2], message[3]);
-            } else if (message[0] === 'pageScrolledEnd') {
-                this.props.onPageScrolledEnd && this.props.onPageScrolledEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]));
-            }
-            else if (message[0] === 'nextPage') {
-                this.props.onNextPage && this.props.onNextPage();
-            }else if (message[0] === 'prevPage') {
-                this.props.onPrevPage && this.props.onPrevPage();
-            }
-            else if (message[0] === 'actionEnd') {
-               this.props.onActionEnd && this.props.onActionEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]), Number(message[6]));
-               //this.props.onActionEnd && this.props.onActionEnd();
             }
         }
 
@@ -462,7 +411,7 @@ export default class Pdf extends Component {
                     <View style={[this.props.style,{overflow: 'hidden'}]}>
                         {!this.state.isDownloaded?
                             (<View
-                                style={styles.progressContainer}
+                                style={[styles.progressContainer, this.props.progressContainerStyle]}
                             >
                                 {this.props.renderActivityIndicator
                                     ? this.props.renderActivityIndicator(this.state.progress)
@@ -477,7 +426,7 @@ export default class Pdf extends Component {
                                             onChange={this._onChange}
                                         />
                                     ):(
-                                        this.props.usePDFKit && this.state.isSupportPDFKit === 1?(
+                                        this.props.usePDFKit ?(
                                                 <PdfCustom
                                                     ref={component => (this._root = component)}
                                                     {...this.props}
@@ -507,21 +456,13 @@ export default class Pdf extends Component {
     }
 }
 
-
-if (Platform.OS === "android") {
-    var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
-        nativeOnly: {path: true, onChange: true},
-    })
-} else if (Platform.OS === "ios") {
-    var PdfCustom = requireNativeComponent('RCTPdfView', Pdf, {
-        nativeOnly: {path: true, onChange: true},
-    })
-} else if (Platform.OS === "windows") {
+if (Platform.OS === "android" || Platform.OS === "ios") {
+    var PdfCustom = PdfViewNativeComponent;
+}  else if (Platform.OS === "windows") {
     var PdfCustom = requireNativeComponent('RCTPdf', Pdf, {
         nativeOnly: {path: true, onChange: true},
     })
 }
-
 
 const styles = StyleSheet.create({
     progressContainer: {

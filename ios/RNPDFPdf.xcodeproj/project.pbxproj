@@ -1,0 +1,321 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5267DA06210F0EDE00D20C59 /* RNPDFPdfView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5267DA03210F0EDD00D20C59 /* RNPDFPdfView.mm */; };
+		5267DA07210F0EDE00D20C59 /* RNPDFPdfViewManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5267DA05210F0EDE00D20C59 /* RNPDFPdfViewManager.mm */; };
+		5267DA0A210F0F0800D20C59 /* PDFKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5267DA09210F0F0800D20C59 /* PDFKit.framework */; };
+		526B80401EABD92200259970 /* RNPDFPdfPageViewManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 526B803F1EABD92200259970 /* RNPDFPdfPageViewManager.mm */; };
+		52A324EA1FD3C3FB000B0B18 /* PdfManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52A324E91FD3C3FB000B0B18 /* PdfManager.mm */; };
+		52F79DB71EB2DA4F00CAD00C /* RNPDFPdfPageView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 52F79DB41EB2DA4F00CAD00C /* RNPDFPdfPageView.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		20D8E03D1C8E946C00039823 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		20D8E03F1C8E946C00039823 /* libRNPDFPdf.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNPDFPdf.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5267DA02210F0EDD00D20C59 /* RNPDFPdfView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPDFPdfView.h; sourceTree = "<group>"; };
+		5267DA03210F0EDD00D20C59 /* RNPDFPdfView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNPDFPdfView.mm; sourceTree = "<group>"; };
+		5267DA04210F0EDD00D20C59 /* RNPDFPdfViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPDFPdfViewManager.h; sourceTree = "<group>"; };
+		5267DA05210F0EDE00D20C59 /* RNPDFPdfViewManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNPDFPdfViewManager.mm; sourceTree = "<group>"; };
+		5267DA09210F0F0800D20C59 /* PDFKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PDFKit.framework; path = System/Library/Frameworks/PDFKit.framework; sourceTree = SDKROOT; };
+		526B803E1EABD92200259970 /* RNPDFPdfPageViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPDFPdfPageViewManager.h; sourceTree = "<group>"; };
+		526B803F1EABD92200259970 /* RNPDFPdfPageViewManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNPDFPdfPageViewManager.mm; sourceTree = "<group>"; };
+		52A324E81FD3C3FB000B0B18 /* PdfManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PdfManager.h; sourceTree = "<group>"; };
+		52A324E91FD3C3FB000B0B18 /* PdfManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PdfManager.mm; sourceTree = "<group>"; };
+		52F79DB31EB2DA4F00CAD00C /* RNPDFPdfPageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNPDFPdfPageView.h; sourceTree = "<group>"; };
+		52F79DB41EB2DA4F00CAD00C /* RNPDFPdfPageView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNPDFPdfPageView.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		20D8E03C1C8E946C00039823 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5267DA0A210F0F0800D20C59 /* PDFKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		20D8E0361C8E946C00039823 = {
+			isa = PBXGroup;
+			children = (
+				20D8E0411C8E946C00039823 /* RNPDFPdf */,
+				20D8E0401C8E946C00039823 /* Products */,
+				5267DA08210F0F0800D20C59 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		20D8E0401C8E946C00039823 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				20D8E03F1C8E946C00039823 /* libRNPDFPdf.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		20D8E0411C8E946C00039823 /* RNPDFPdf */ = {
+			isa = PBXGroup;
+			children = (
+				5267DA02210F0EDD00D20C59 /* RNPDFPdfView.h */,
+				5267DA03210F0EDD00D20C59 /* RNPDFPdfView.mm */,
+				5267DA04210F0EDD00D20C59 /* RNPDFPdfViewManager.h */,
+				5267DA05210F0EDE00D20C59 /* RNPDFPdfViewManager.mm */,
+				52A324E81FD3C3FB000B0B18 /* PdfManager.h */,
+				52A324E91FD3C3FB000B0B18 /* PdfManager.mm */,
+				52F79DB31EB2DA4F00CAD00C /* RNPDFPdfPageView.h */,
+				52F79DB41EB2DA4F00CAD00C /* RNPDFPdfPageView.mm */,
+				526B803E1EABD92200259970 /* RNPDFPdfPageViewManager.h */,
+				526B803F1EABD92200259970 /* RNPDFPdfPageViewManager.mm */,
+			);
+			path = RNPDFPdf;
+			sourceTree = "<group>";
+		};
+		5267DA08210F0F0800D20C59 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5267DA09210F0F0800D20C59 /* PDFKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		20D8E03E1C8E946C00039823 /* RNPDFPdf */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20D8E0481C8E946C00039823 /* Build configuration list for PBXNativeTarget "RNPDFPdf" */;
+			buildPhases = (
+				20D8E03B1C8E946C00039823 /* Sources */,
+				20D8E03C1C8E946C00039823 /* Frameworks */,
+				20D8E03D1C8E946C00039823 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RNPDFPdf;
+			productName = RNPDFPdf;
+			productReference = 20D8E03F1C8E946C00039823 /* libRNPDFPdf.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		20D8E0371C8E946C00039823 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = wonday.org;
+				TargetAttributes = {
+					20D8E03E1C8E946C00039823 = {
+						CreatedOnToolsVersion = 7.2.1;
+						DevelopmentTeam = M8UXLTC426;
+					};
+				};
+			};
+			buildConfigurationList = 20D8E03A1C8E946C00039823 /* Build configuration list for PBXProject "RNPDFPdf" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 20D8E0361C8E946C00039823;
+			productRefGroup = 20D8E0401C8E946C00039823 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				20D8E03E1C8E946C00039823 /* RNPDFPdf */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		20D8E03B1C8E946C00039823 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52A324EA1FD3C3FB000B0B18 /* PdfManager.mm in Sources */,
+				5267DA07210F0EDE00D20C59 /* RNPDFPdfViewManager.mm in Sources */,
+				5267DA06210F0EDE00D20C59 /* RNPDFPdfView.mm in Sources */,
+				526B80401EABD92200259970 /* RNPDFPdfPageViewManager.mm in Sources */,
+				52F79DB71EB2DA4F00CAD00C /* RNPDFPdfPageView.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		20D8E0461C8E946C00039823 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		20D8E0471C8E946C00039823 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		20D8E0491C8E946C00039823 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/../../node_modules/react-native/React/**",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		20D8E04A1C8E946C00039823 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+					"$(SRCROOT)/../../node_modules/react-native/React/**",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		20D8E03A1C8E946C00039823 /* Build configuration list for PBXProject "RNPDFPdf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20D8E0461C8E946C00039823 /* Debug */,
+				20D8E0471C8E946C00039823 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		20D8E0481C8E946C00039823 /* Build configuration list for PBXNativeTarget "RNPDFPdf" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20D8E0491C8E946C00039823 /* Debug */,
+				20D8E04A1C8E946C00039823 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 20D8E0371C8E946C00039823 /* Project object */;
+}

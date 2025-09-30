@@ -27,14 +27,18 @@ export type Source = {
     method?: string;
 };
 
-interface Props {
+export interface PdfProps {
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>,
+    progressContainerStyle?: ReactNative.StyleProp<ReactNative.ViewStyle>,
     source: Source | number,
     page?: number,
     scale?: number,
     minScale?: number,
     maxScale?: number,
     horizontal?: boolean,
+    showsHorizontalScrollIndicator?: boolean,
+    showsVerticalScrollIndicator?: boolean,
+    scrollEnabled?: boolean,
     spacing?: number,
     password?: string,
     renderActivityIndicator?: (progress: number) => React.ReactElement,
@@ -42,7 +46,14 @@ interface Props {
     enablePaging?: boolean,
     enableRTL?: boolean,
     enableAnnotationRendering?: boolean,
-    fitPolicy?: number,
+    enableDoubleTapZoom?: boolean;
+    /**
+     * Fit policy.  This will adjust the initial zoom of the PDF based on the initial size of the view and the scale factor.
+     * 0 = fit width
+     * 1 = fit height
+     * 2 = fit both
+     */
+    fitPolicy?: 0 | 1 | 2,
     trustAllCerts?: boolean,
     singlePage?: boolean,
     onLoadProgress?: (percent: number,) => void,
@@ -54,7 +65,7 @@ interface Props {
     onPressLink?: (url: string) => void,
 }
 
-declare class Pdf extends React.Component<Props, any> {
+declare class Pdf extends React.Component<PdfProps, any> {
     setPage: (pageNumber: number) => void;
 }
 
