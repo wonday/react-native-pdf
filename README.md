@@ -168,6 +168,13 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
+v7.0.0
+1. Fixed: not rendering on iOS
+2. Added: Android 16 KB Page Size support
+3. Fixed: crash issue in io.legere:pdfiumandroid that occurred due to multithreading
+4. Added: Upgrade Fabric Example to Latest React Native 0.81.0
+5. Added: support RTL android
+
 v6.7.7
 1. Added: add support for customizable scroll indicators in PdfView component (#904)
 2. Fixed: fix field values not being visible on android. issue #864 :bug: (#896)
