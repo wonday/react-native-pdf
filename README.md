@@ -85,7 +85,7 @@ react-native link react-native-pdf
 
 ### Windows installation
 <details>
-  <sumary>Windows details</summary>
+  <summary>Windows details</summary>
 
 - Open your solution in Visual Studio 2019 (eg. `windows\yourapp.sln`)
 - Right-click Solution icon in Solution Explorer > Add > Existing Project...
