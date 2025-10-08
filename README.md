@@ -168,7 +168,7 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
-v7.0.0
+v7.0.1
 1. Fixed: not rendering on iOS
 2. Added: Android 16 KB Page Size support
 3. Fixed: crash issue in io.legere:pdfiumandroid that occurred due to multithreading
