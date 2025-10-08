@@ -9,11 +9,13 @@
 package org.wonday.pdf;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,7 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.graphics.Canvas;
-
+import android.graphics.pdf.PdfRenderer;
 
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
