@@ -91,7 +91,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     private int totalPages = 0;
     private int[] pagesArrays;
-    private int bookmarks = 0; 
+    private int bookmarks = 0;
 
     public PdfView(Context context, AttributeSet set){
         super(context, set);
@@ -251,7 +251,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         if (originalWidth == 0) {
             originalWidth = pageWidth;
         }
-        
+
         if (lastPageWidth>0 && lastPageHeight>0 && (pageWidth!=lastPageWidth || pageHeight!=lastPageHeight)) {
             // maybe change by other instance, restore zoom setting
             Constants.Pinch.MINIMUM_ZOOM = this.minScale;
@@ -299,7 +299,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                  int[] pagesArrays = new int[this.totalPages];
                  if (this.enableRTL) {
                     if(this.page>0){
-                        this.page= this.bookmarks-1;
+                        this.page = Math.max(this.bookmarks-1, 0);
                     }else{
                         this.page=this.totalPages;
                     }
@@ -307,16 +307,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                         pagesArrays[i] =totalPages-1- i;
                     }
                     this.pagesArrays = pagesArrays;
-                    
+
                 }else{
                     this.pagesArrays = null;
-                    this.page=this.bookmarks-1;
+                    this.page = Math.max(this.bookmarks-1, 0);
                 }
              } catch (IOException e) {
                  Log.e("error", "error read PDF", e);
              }
          }
-        
+
         if (this.path != null){
 
             // set scale
@@ -390,7 +390,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setEnableRTL(boolean enableRTL){
         this.enableRTL= enableRTL;
-        
+
      }
 
     public void setScale(float scale) {
