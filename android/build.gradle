@@ -124,8 +124,8 @@ dependencies {
     }
     // NOTE: The original repo at com.github.barteksc is abandoned by the maintainer; there will be no more updates coming from that repo.
     // The repo from zacharee is based on PdfiumAndroidKt, a much newer fork of PdfiumAndroid, with better maintenance and updated native libraries.
-    implementation 'com.github.zacharee:AndroidPdfViewer:4.0.1'
+    implementation 'com.github.maribeiroleya:AndroidPdfViewer:leya_2.1.2'
     // Depend on PdfiumAndroidKt directly so this can be updated independently of AndroidPdfViewer as updates are provided.
     implementation 'io.legere:pdfiumandroid:1.0.33'
-    implementation 'com.google.code.gson:gson:2.13.1'
+    implementation 'com.google.code.gson:gson:2.13.2'
 }

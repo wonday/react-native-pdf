@@ -63,11 +63,6 @@
         "jsSrcsDir": "./fabric",
         "android": {
           "javaPackageName": "org.wonday.pdf"
-        },
-        "ios": {
-          "componentProvider": {
-            "RNPDFPdfView": "RNPDFPdfView"
-          }
         }
       }
 }

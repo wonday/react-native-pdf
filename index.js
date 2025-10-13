@@ -46,6 +46,11 @@ export default class Pdf extends Component {
         horizontal: PropTypes.bool,
         spacing: PropTypes.number,
         password: PropTypes.string,
+        hotspots: PropTypes.string,
+        notes: PropTypes.string,
+        textNotes: PropTypes.string,
+        enableMovement: PropTypes.bool,
+        update: PropTypes.bool,
         renderActivityIndicator: PropTypes.func,
         enableAntialiasing: PropTypes.bool,
         enableAnnotationRendering: PropTypes.bool,
@@ -76,6 +81,11 @@ export default class Pdf extends Component {
 
     static defaultProps = {
         password: "",
+        hotspots: "",
+        notes: "",
+        textNotes:"",
+        update: false,
+        enableMovement:true,
         scale: 1,
         minScale: 1,
         maxScale: 3,
@@ -101,7 +111,7 @@ export default class Pdf extends Component {
         },
         onError: (error) => {
         },
-        onPageSingleTap: (page, x, y) => {
+        onPageSingleTap: (page, x, y, width, height) => {
         },
         onScaleChanged: (scale) => {
         },
@@ -363,14 +373,42 @@ export default class Pdf extends Component {
         
     }
 
-    _onChange = (event) => {
 
+    setHotspots(hotspots) {
+        this.setNativeProps({
+            hotspots: hotspots
+        });
+    }
+
+
+    setNotes(notes) {
+        this.setNativeProps({
+            notes: notes
+        });
+    }
+
+
+    setTextNotes(notes) {
+        this.setNativeProps({
+            textNotes: notes
+        });
+    }
+
+
+    setEnableMovement(enableMovement) {
+        this.setNativeProps({
+            enableMovement: enableMovement
+        });
+    }
+
+
+    _onChange = (event) => {
         let message = event.nativeEvent.message.split('|');
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
-            if (message.length > 5) {
+            /*if (message.length > 5) {
                 message[4] = message.splice(4).join('|');
-            }
+            }*/
             if (message[0] === 'loadComplete') {
                 let tableContents;
                 try {
@@ -389,11 +427,22 @@ export default class Pdf extends Component {
             } else if (message[0] === 'error') {
                 this._onError(new Error(message[1]));
             } else if (message[0] === 'pageSingleTap') {
-                this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]));
+                this.props.onPageSingleTap && this.props.onPageSingleTap(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]));
+            } else if (message[0] === 'pageScrolled') {
+                this.props.onPageScrolled && this.props.onPageScrolled(message[1], message[2], message[3]);
             } else if (message[0] === 'scaleChanged') {
                 this.props.onScaleChanged && this.props.onScaleChanged(Number(message[1]));
             } else if (message[0] === 'linkPressed') {
                 this.props.onPressLink && this.props.onPressLink(message[1]);
+            } else if (message[0] === 'pageScrolledEnd') {
+                this.props.onPageScrolledEnd && this.props.onPageScrolledEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]));
+            } else if (message[0] === 'nextPage') {
+                this.props.onNextPage && this.props.onNextPage();
+            } else if (message[0] === 'prevPage') {
+                this.props.onPrevPage && this.props.onPrevPage();
+            }
+            else if (message[0] === 'actionEnd') {
+                this.props.onActionEnd && this.props.onActionEnd(Number(message[1]), Number(message[2]), Number(message[3]), Number(message[4]), Number(message[5]), Number(message[6]));
             }
         }
 

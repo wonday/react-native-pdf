@@ -68,6 +68,21 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
         pdfView.setPath(path);
     }
 
+    @ReactProp(name = "hotspots")
+    public void setHotspots(PdfView pdfView, String hotspots) {
+        pdfView.setHotspotsString(hotspots);
+    }
+
+    @ReactProp(name = "notes")
+    public void setNotes(PdfView pdfView, String notes) {
+        pdfView.setNotesString(notes);
+    }
+
+    @ReactProp(name = "textNotes")
+    public void setTextNotes(PdfView pdfView, String textNotes) {
+        pdfView.setTextNotesString(textNotes);
+    }
+
     // page start from 1
     @ReactProp(name = "page")
     public void setPage(PdfView pdfView, int page) {
@@ -170,6 +185,13 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
             setNativePage(root, args.getInt(0));
         }
     }
+
+
+    @ReactProp(name = "enableMovement")
+    public void setEnableMovement(PdfView pdfView, boolean enableMovement) {
+        pdfView.updateMovement(enableMovement);
+    }
+
 
     @Override
     public void onAfterUpdateTransaction(PdfView pdfView) {

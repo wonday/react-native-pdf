@@ -12,8 +12,6 @@ import java.io.File;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,9 +25,11 @@ import android.graphics.Canvas;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnActionEnd;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
+import com.github.barteksc.pdfviewer.listener.OnPageSwipeChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnTapListener;
 import com.github.barteksc.pdfviewer.listener.OnDrawListener;
 import com.github.barteksc.pdfviewer.listener.OnPageScrollListener;
@@ -52,18 +52,34 @@ import static java.lang.String.format;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.github.barteksc.pdfviewer.util.Hotspot;
+import com.github.barteksc.pdfviewer.util.Note;
+import com.github.barteksc.pdfviewer.util.TextLine;
+import com.github.barteksc.pdfviewer.util.TextNote;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.wonday.pdf.events.TopChangeEvent;
 
-public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler {
+public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompleteListener,OnErrorListener,OnTapListener,OnDrawListener,OnPageScrollListener, LinkHandler, OnPageSwipeChangeListener, OnActionEnd {
     private int page = 1;               // start from 1
     private boolean horizontal = false;
     private float scale = 1;
     private float minScale = 1;
     private float maxScale = 3;
     private String path;
+    private String hotspotsString;
+    private String notesString;
+    private String textNotesString;
+    private boolean alreadyDraw;
+    private boolean scaleChange;
     private int spacing = 10;
     private String password = "";
     private boolean enableAntialiasing = true;
@@ -86,8 +102,13 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private int oldW = 0;
     private int oldH = 0;
 
+
+    private boolean alreadyLoaded = false;
+
     public PdfView(Context context, AttributeSet set){
         super(context, set);
+        this.alreadyDraw = false;
+        this.scaleChange = false;
     }
 
     @Override
@@ -107,7 +128,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
 
         if (dispatcher != null) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> dispatcher.dispatchEvent(tce), 10);
+            dispatcher.dispatchEvent(tce);
         }
 
 //        ReactContext reactContext = (ReactContext)this.getContext();
@@ -161,6 +182,10 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         if (dispatcher != null) {
             dispatcher.dispatchEvent(tce);
         }
+
+
+        this.alreadyLoaded = true;
+
         //        ReactContext reactContext = (ReactContext)this.getContext();
 //        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
 //            this.getId(),
@@ -202,21 +227,8 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     @Override
     public void onPageScrolled(int page, float positionOffset){
 
-        // maybe change by other instance, restore zoom setting
-        Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-        Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
-
-    }
-
-    @Override
-    public boolean onTap(MotionEvent e){
-
-        // maybe change by other instance, restore zoom setting
-        //Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-        //Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
-
         WritableMap event = Arguments.createMap();
-        event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY());
+        event.putString("message", "pageScrolled|"+(this.getCurrentXOffset())+"|"+(this.getCurrentYOffset())+"|"+(positionOffset));
 
         ThemedReactContext context = (ThemedReactContext) getContext();
         EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
@@ -227,16 +239,48 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         if (dispatcher != null) {
             dispatcher.dispatchEvent(tce);
         }
-//        ReactContext reactContext = (ReactContext)this.getContext();
-//        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
-//            this.getId(),
-//            "topChange",
-//            event
-//         );
 
-        // process as tap
-         return true;
+        Constants.Pinch.MINIMUM_ZOOM = this.minScale;
+        Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
+    }
 
+
+    @Override
+    public void onPageScrolledEnd(float zoom) {
+        SizeF pageSize = getPageSize(0);
+        float width = pageSize.getWidth();
+        float height = pageSize.getHeight();
+
+        WritableMap event = Arguments.createMap();
+        event.putString("message", "pageScrolledEnd|"+(this.getCurrentXOffset())+"|"+(this.getCurrentYOffset())+"|"+width+"|"+height+"|"+zoom);
+
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+    }
+
+
+    @Override
+    public boolean onTap(MotionEvent e){
+        WritableMap event = Arguments.createMap();
+        event.putString("message", "pageSingleTap|"+page+"|"+e.getX()+"|"+e.getY()+"|"+getWidth()+"|"+getHeight());
+
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
+        }
+        return true;
     }
 
     @Override
@@ -280,62 +324,184 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             this.drawPdf();
     }
 
+
+    protected List<Note> constructNotes() {
+        List<Note> notes = new ArrayList<>();
+        if(this.notesString != null && !this.notesString.isEmpty()) {
+            JsonArray array = stringToArray(this.notesString);
+            for(JsonElement element : array) {
+                JsonObject object = element.getAsJsonObject();
+                Note note = new Note(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("color").getAsString());
+                notes.add(note);
+            }
+        }
+        return notes;
+    }
+
+
+    protected List<Hotspot> constructHotspots() {
+        List<Hotspot> hotspots = new ArrayList<>();
+        if(!this.hotspotsString.isEmpty()) {
+            JsonArray array = stringToArray(this.hotspotsString);
+            for(JsonElement element : array) {
+                JsonObject object = element.getAsJsonObject();
+                Hotspot hotspot = new Hotspot(Double.valueOf(object.get("xPos").getAsString()).doubleValue(), Double.valueOf(object.get("yPos").getAsString()).doubleValue(), object.get("type").getAsString());
+                hotspots.add(hotspot);
+            }
+        }
+        return hotspots;
+    }
+
+
+    protected List<TextNote> constructTextNotes() {
+        List<TextNote> textNotes = new ArrayList<>();
+        if(this.textNotesString != null && !this.textNotesString.isEmpty()) {
+            JsonArray array = stringToArray(this.textNotesString);
+            for(JsonElement element : array) {
+                JsonObject object = element.getAsJsonObject();
+                List<TextLine> lines = new ArrayList<>();
+                String text = "";
+                int count = 0;
+                for(JsonElement lineElement : object.getAsJsonArray("lines")) {
+                    JsonObject objectLine = lineElement.getAsJsonObject();
+                    if(count != 0) {
+                        text += '\n';
+                    }
+                    text += objectLine.get("text").getAsString();
+                    count++;
+                }
+                if(!text.equals("") && object.getAsJsonArray("lines").size() > 0) {
+                    JsonObject objectLine = object.getAsJsonArray("lines").get(0).getAsJsonObject();
+                    TextLine line = new TextLine(
+                            Double.valueOf(objectLine.get("fontSize").getAsString()).doubleValue(),
+                            objectLine.get("fontColor").getAsString(),
+                            Double.valueOf(objectLine.get("fontOpacity").getAsString()).floatValue(),
+                            text);
+                    lines.add(line);
+                }
+                TextNote note = new TextNote(
+                        Double.valueOf(object.get("xPos").getAsString()).doubleValue(),
+                        Double.valueOf(object.get("yPos").getAsString()).doubleValue(),
+                        Double.valueOf(object.get("width").getAsString()).doubleValue(),
+                        Double.valueOf(object.get("height").getAsString()).doubleValue(),
+                        object.get("backgroundColor").getAsString(),
+                        Double.valueOf(object.get("backgroundOpacity").getAsString()).floatValue(),
+                        object.get("borderColor").getAsString(),
+                        object.get("borderSize").getAsInt(),
+                        Double.valueOf(object.get("borderOpacity").getAsString()).floatValue(),
+                        lines);
+                textNotes.add(note);
+            }
+        }
+        return textNotes;
+    }
+
+
+    public void updateMovement(boolean enableMovement) {
+        this.enableMovement(enableMovement);
+    }
+
+
+    public void drawAll() {
+        if(this.alreadyLoaded) {
+            if(this.alreadyDraw) {
+                this.zoomWithAnimation(this.scale);
+            }
+        }
+    }
+
     public void drawPdf() {
         showLog(format("drawPdf path:%s %s", this.path, this.page));
-
-        if (this.path != null){
-
-            // set scale
-            this.setMinZoom(this.minScale);
-            this.setMaxZoom(this.maxScale);
-            this.setMidZoom((this.maxScale+this.minScale)/2);
-            Constants.Pinch.MINIMUM_ZOOM = this.minScale;
-            Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
-
-            Configurator configurator;
-
-            if (this.path.startsWith("content://")) {
-                ContentResolver contentResolver = getContext().getContentResolver();
-                InputStream inputStream = null;
-                Uri uri = Uri.parse(this.path);
-                try {
-                    inputStream = contentResolver.openInputStream(uri);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e.getMessage());
-                }
-                configurator = this.fromStream(inputStream);
-            } else {
-                configurator = this.fromUri(getURI(this.path));
+        if(this.alreadyDraw) {
+            if(this.scaleChange) {
+                this.zoomWithAnimation(this.scale);
+                this.scaleChange = false;
             }
-
-            configurator.defaultPage(this.page-1)
-                .swipeHorizontal(this.horizontal)
-                .onPageChange(this)
-                .onLoad(this)
-                .onError(this)
-                .onDraw(this)
-                .onPageScroll(this)
-                .spacing(this.spacing)
-                .password(this.password)
-                .enableAntialiasing(this.enableAntialiasing)
-                .pageFitPolicy(this.fitPolicy)
-                .pageSnap(this.pageSnap)
-                .autoSpacing(this.autoSpacing)
-                .pageFling(this.pageFling)
-                .enableSwipe(!this.singlePage && this.scrollEnabled)
-                .enableDoubletap(!this.singlePage && this.enableDoubleTapZoom)
-                .enableAnnotationRendering(this.enableAnnotationRendering)
-                .linkHandler(this);
-
-            if (this.singlePage) {
-                configurator.pages(this.page-1);
-                setTouchesEnabled(false);
-            } else {
-                configurator.onTap(this);
+            else {
+                List<Note> notes = constructNotes();
+                this.setNotes(notes);
+                List<TextNote> textNotes = constructTextNotes();
+                this.setTextNotes(textNotes);
+                List<Hotspot> hotspots = constructHotspots();
+                this.setHotspots(hotspots);
+                this.redraw();
             }
-
-            configurator.load();
         }
+        else {
+            if (this.path != null) {
+
+                // set scale
+                this.setMinZoom(this.minScale);
+                this.setMaxZoom(this.maxScale);
+                this.setMidZoom((this.maxScale + this.minScale) / 2);
+                Constants.Pinch.MINIMUM_ZOOM = this.minScale;
+                Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
+
+                Configurator configurator;
+
+                if (this.path.startsWith("content://")) {
+                    ContentResolver contentResolver = getContext().getContentResolver();
+                    InputStream inputStream = null;
+                    Uri uri = Uri.parse(this.path);
+                    try {
+                        inputStream = contentResolver.openInputStream(uri);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e.getMessage());
+                    }
+                    configurator = this.fromStream(inputStream);
+                } else {
+                    configurator = this.fromUri(getURI(this.path));
+                }
+
+                List<Hotspot> hotspots = constructHotspots();
+                List<Note> notes = constructNotes();
+                List<TextNote> textNotes = constructTextNotes();
+
+                configurator.defaultPage(this.page - 1)
+                        .swipeHorizontal(this.horizontal)
+                        .withHotspots(hotspots)
+                        .withNotes(notes)
+                        .withTextNotes(textNotes)
+                        .onActionEnd(this)
+                        .onPageChange(this)
+                        .onLoad(this)
+                        .onError(this)
+                        .onDraw(this)
+                        .onPageScroll(this)
+                        .onPageSwipeChange(this)
+                        .spacing(this.spacing)
+                        .password(this.password)
+                        .enableAntialiasing(this.enableAntialiasing)
+                        .pageFitPolicy(this.fitPolicy)
+                        .pageSnap(this.pageSnap)
+                        .autoSpacing(this.autoSpacing)
+                        .pageFling(this.pageFling)
+                        .enableSwipe(!this.singlePage && this.scrollEnabled)
+                        .enableDoubletap(!this.singlePage && this.enableDoubleTapZoom)
+                        .enableAnnotationRendering(this.enableAnnotationRendering)
+                        .linkHandler(this);
+
+                if (this.singlePage) {
+                    configurator.pages(this.page - 1);
+                    setTouchesEnabled(false);
+                } else {
+                    configurator.onTap(this);
+                }
+
+                configurator.load();
+
+                this.alreadyDraw = true;
+            }
+        }
+    }
+
+    public static JsonArray stringToArray(String string) {
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create();
+        return gson.fromJson(string, JsonArray.class);
     }
 
     public void setEnableDoubleTapZoom(boolean enableDoubleTapZoom) {
@@ -346,12 +512,35 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
         this.path = path;
     }
 
+    public void setHotspotsString(String hotspotsString) {
+        this.hotspotsString = hotspotsString;
+    }
+
+    public void setNotesString(String notesString) {
+        if(!notesString.equals(this.notesString )) {
+            this.notesString = notesString;
+        }
+    }
+
+    public void setTextNotesString(String textNotesString) {
+        if(!textNotesString.equals(this.textNotesString )) {
+            this.textNotesString = textNotesString;
+        }
+    }
+
+    public void setUpdate() {
+        this.moveEnds();
+    }
+
     // page start from 1
     public void setPage(int page) {
         this.page = page>1?page:1;
     }
 
     public void setScale(float scale) {
+        if(this.alreadyDraw) {
+            this.scaleChange = true;
+        }
         this.scale = scale;
     }
 
@@ -502,6 +691,50 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 View child = vg.getChildAt(i);
                 setTouchesEnabled(child, enabled);
             }
+        }
+    }
+
+
+    @Override
+    public void onPageSwipeChange(int offset) {
+        WritableMap event = Arguments.createMap();
+        if(Math.abs(offset) > 300*getResources().getDisplayMetrics().density) {
+            if(offset > 0) {
+                event.putString("message", "prevPage|");
+            }
+            else {
+                event.putString("message", "nextPage|");
+            }
+
+            ThemedReactContext context = (ThemedReactContext) getContext();
+            EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+            int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+            TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+            if (dispatcher != null) {
+                dispatcher.dispatchEvent(tce);
+            }
+        }
+    }
+
+
+    @Override
+    public void actionEnd() {
+        SizeF pageSize = getPageSize(0);
+        float width = pageSize.getWidth();
+        float height = pageSize.getHeight();
+
+        WritableMap event = Arguments.createMap();
+        event.putString("message", "actionEnd|"+getZoomScale()+"|"+(this.getCurrentXOffset())+"|"+(this.getCurrentYOffset())+"|"+(this.getPositionOffset())+"|"+width+"|"+height);
+        ThemedReactContext context = (ThemedReactContext) getContext();
+        EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
+        int surfaceId = UIManagerHelper.getSurfaceId(this);
+
+        TopChangeEvent tce = new TopChangeEvent(surfaceId, getId(), event);
+
+        if (dispatcher != null) {
+            dispatcher.dispatchEvent(tce);
         }
     }
 }
