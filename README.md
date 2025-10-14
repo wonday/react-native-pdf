@@ -168,6 +168,11 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
+v7.0.2
+1. Fixed: `Loaded page is null` error when `bookmarks` is 0 (#978)
+2. Feature: agp 7.3+ fully supported (#980)
+3. Fixed: Downgrade pdfiumandroid version to 1.0.32
+
 v7.0.1
 1. Fixed: not rendering on iOS
 2. Added: Android 16 KB Page Size support
