@@ -168,6 +168,9 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
+v7.0.3
+1. Fixed: RefObject types, and setPage not working in android (#985)
+
 v7.0.2
 1. Fixed: `Loaded page is null` error when `bookmarks` is 0 (#978)
 2. Feature: agp 7.3+ fully supported (#980)
