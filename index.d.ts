@@ -65,6 +65,10 @@ export interface PdfProps {
     onPressLink?: (url: string) => void,
 }
 
-declare const Pdf: React.ComponentType<PdfProps> & { setPage(pageNumber: number): void };
+export interface PdfRef {
+    setPage(pageNumber: number): void
+}
+
+declare const Pdf: React.ForwardRefExoticComponent<PdfProps & React.RefAttributes<PdfRef>>
 
 export default Pdf;

@@ -379,6 +379,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     // page start from 1
     public void setPage(int page) {
         this.page = Math.max(page, 1);
+        this.handlePage(this.page - 1);
     }
 
     public void setEnableRTL(boolean enableRTL) {
