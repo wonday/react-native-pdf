@@ -129,10 +129,12 @@ export default class Pdf extends Component {
 
         if ((nextSource.uri !== curSource.uri)) {
             // if has download task, then cancel it.
-            if (this.lastRNBFTask && this.lastRNBFTask.cancel) {
-                this.lastRNBFTask.cancel(err => {
-                    this._loadFromSource(this.props.source);
-                });
+            if (this.lastRNBFTask ) {
+                if (typeof this.lastRNBFTask.cancel === 'function') {
+                    this.lastRNBFTask.cancel(err => {
+                        this._loadFromSource(this.props.source);
+                    });
+                }
                 this.lastRNBFTask = null;
             } else {
                 this._loadFromSource(this.props.source);
@@ -148,8 +150,10 @@ export default class Pdf extends Component {
     componentWillUnmount() {
         this._mounted = false;
         if (this.lastRNBFTask) {
-            // this.lastRNBFTask.cancel(err => {
-            // });
+            if (typeof this.lastRNBFTask.cancel === 'function') {
+                this.lastRNBFTask.cancel(err => {
+                });
+            }
             this.lastRNBFTask = null;
         }
 
@@ -253,8 +257,10 @@ export default class Pdf extends Component {
     _downloadFile = async (source, cacheFile) => {
 
         if (this.lastRNBFTask) {
-            this.lastRNBFTask.cancel(err => {
-            });
+            if (typeof this.lastRNBFTask.cancel === 'function') {
+                this.lastRNBFTask.cancel(err => {
+                });
+            }
             this.lastRNBFTask = null;
         }
 
