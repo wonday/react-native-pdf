@@ -221,6 +221,10 @@ using namespace facebook::react;
     _initialed = YES;
 
     [self didSetProps:mProps];
+
+    if (self.layer.cornerRadius > 0) {
+      [self applyCornerRadius:_pdfView radius:self.layer.cornerRadius];
+    }
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args
@@ -532,11 +536,30 @@ using namespace facebook::react;
         }
 
         _pdfView.backgroundColor = [UIColor clearColor];
+        if (self.layer.cornerRadius > 0) {
+          [self applyCornerRadius:_pdfView radius:self.layer.cornerRadius];
+        }
+
         [_pdfView layoutDocumentView];
         [self setNeedsDisplay];
     }
 }
 
+- (void)applyCornerRadius:(UIView *)view radius:(CGFloat)radius {
+  view.layer.cornerRadius = self.layer.cornerRadius;
+  view.layer.masksToBounds = YES;
+
+  // Recursively apply the corner radius to the subviews, otherwise those will take precendence
+  if ([view isKindOfClass:[UIScrollView class]]) {
+    view.layer.cornerRadius = radius;
+    view.layer.masksToBounds = YES;
+    view.clipsToBounds = YES;
+  }
+
+  for (UIView *subview in view.subviews) {
+    [self applyCornerRadius:subview radius:radius];
+  }
+}
 
 - (void)reactSetFrame:(CGRect)frame
 {
@@ -550,6 +573,10 @@ using namespace facebook::react;
     _initialed = YES;
 
     [self didSetProps:mProps];
+
+    if (self.layer.cornerRadius > 0) {
+      [self applyCornerRadius:_pdfView radius:self.layer.cornerRadius];
+    }
 }
 
 
