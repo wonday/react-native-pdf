@@ -66,6 +66,7 @@ const float MIN_SCALE = 1.0f;
     RCTBridge *_bridge;
     PDFDocument *_pdfDocument;
     PDFView *_pdfView;
+    UIView *_pdfClipView;
     PDFOutline *root;
     float _fixScaleFactor;
     bool _initialed;
@@ -212,7 +213,8 @@ using namespace facebook::react;
 {
     // Fabric equivalent of `reactSetFrame` method
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
-    _pdfView.frame = CGRectMake(0, 0, layoutMetrics.frame.size.width, layoutMetrics.frame.size.height);
+    _pdfClipView.frame = CGRectMake(0, 0, layoutMetrics.frame.size.width, layoutMetrics.frame.size.height);
+    _pdfView.frame = _pdfClipView.bounds;
 
     NSMutableArray *mProps = [_changedProps mutableCopy];
     if (_initialed) {
@@ -223,7 +225,8 @@ using namespace facebook::react;
     [self didSetProps:mProps];
 
     if (self.layer.cornerRadius > 0) {
-      [self applyCornerRadius:_pdfView radius:self.layer.cornerRadius];
+      _pdfClipView.layer.cornerRadius = self.layer.cornerRadius;
+      _pdfClipView.layer.masksToBounds = YES;
     }
 }
 
@@ -281,8 +284,12 @@ using namespace facebook::react;
     _initialed = NO;
     _changedProps = NULL;
 
-    [self addSubview:_pdfView];
+    _pdfClipView = [[UIView alloc] initWithFrame:self.bounds];
+    _pdfClipView.backgroundColor = [UIColor clearColor];
+    _pdfClipView.clipsToBounds = YES;
 
+    [self addSubview:_pdfClipView];
+    [_pdfClipView addSubview:_pdfView];
 
     // register notification
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -536,35 +543,16 @@ using namespace facebook::react;
         }
 
         _pdfView.backgroundColor = [UIColor clearColor];
-        if (self.layer.cornerRadius > 0) {
-          [self applyCornerRadius:_pdfView radius:self.layer.cornerRadius];
-        }
-
         [_pdfView layoutDocumentView];
         [self setNeedsDisplay];
     }
 }
 
-- (void)applyCornerRadius:(UIView *)view radius:(CGFloat)radius {
-  view.layer.cornerRadius = self.layer.cornerRadius;
-  view.layer.masksToBounds = YES;
-
-  // Recursively apply the corner radius to the subviews, otherwise those will take precendence
-  if ([view isKindOfClass:[UIScrollView class]]) {
-    view.layer.cornerRadius = radius;
-    view.layer.masksToBounds = YES;
-    view.clipsToBounds = YES;
-  }
-
-  for (UIView *subview in view.subviews) {
-    [self applyCornerRadius:subview radius:radius];
-  }
-}
-
 - (void)reactSetFrame:(CGRect)frame
 {
     [super reactSetFrame:frame];
-    _pdfView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+    _pdfClipView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
+    _pdfView.frame = _pdfClipView.bounds;
 
     NSMutableArray *mProps = [_changedProps mutableCopy];
     if (_initialed) {
@@ -575,7 +563,8 @@ using namespace facebook::react;
     [self didSetProps:mProps];
 
     if (self.layer.cornerRadius > 0) {
-      [self applyCornerRadius:_pdfView radius:self.layer.cornerRadius];
+      _pdfClipView.layer.cornerRadius = self.layer.cornerRadius;
+      _pdfClipView.layer.masksToBounds = YES;
     }
 }
 
@@ -596,6 +585,7 @@ using namespace facebook::react;
 
     _pdfDocument = Nil;
     _pdfView = Nil;
+    _pdfClipView = Nil;
 
     //Remove notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"PDFViewDocumentChangedNotification" object:nil];
