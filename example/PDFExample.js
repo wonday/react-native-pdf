@@ -32,7 +32,8 @@ export default class PDFExample extends React.Component {
             scale: 1,
             numberOfPages: 0,
             horizontal: false,
-            width: WIN_WIDTH
+            width: WIN_WIDTH,
+            currentSelection: null
         };
         this.pdf = null;
     }
@@ -89,6 +90,14 @@ export default class PDFExample extends React.Component {
 
     switchHorizontal = () => {
         this.setState({horizontal: !this.state.horizontal, page: this.state.page});
+    };
+
+    handleTextSelectionChange = (event) => {
+        if (event.nativeEvent.type === 'selectionChanged') {
+            this.setState({ currentSelection: event.nativeEvent.text });
+        } else if (event.nativeEvent.type === 'selectionCleared') {
+            this.setState({ currentSelection: null });
+        }
     };
 
     render() {
@@ -155,6 +164,7 @@ export default class PDFExample extends React.Component {
                              });
                              console.log(`current page: ${page}`);
                          }}
+                         onTextSelectionChange={this.handleTextSelectionChange}
                          onError={(error) => {
                              console.log(error);
                          }}
