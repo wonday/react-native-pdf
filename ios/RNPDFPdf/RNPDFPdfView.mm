@@ -539,13 +539,15 @@ using namespace facebook::react;
 
             PDFPage *pdfPage = [_pdfDocument pageAtIndex:_page-1];
             if (pdfPage && _page == 1) {
-                // goToDestination() would be better. However, there is an
-                // error in the pointLeftTop computation that often results in
-                // scrolling to the middle of the page.
-                // Special case workaround to make starting at the first page
-                // align acceptably.
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [self->_pdfView goToRect:CGRectMake(0, NSUIntegerMax, 1, 1) onPage:pdfPage];
+                    [self->_pdfView goToFirstPage:nil];
+                    for (UIView *subview in self->_pdfView.subviews) {
+                        if ([subview isKindOfClass:[UIScrollView class]]) {
+                            UIScrollView *scrollView = (UIScrollView *)subview;
+                            [scrollView setContentOffset:CGPointMake(0, 0) animated:NO];
+                            break;
+                        }
+                    }
                 });
             } else if (pdfPage) {
                 CGRect pdfPageRect = [pdfPage boundsForBox:kPDFDisplayBoxCropBox];
