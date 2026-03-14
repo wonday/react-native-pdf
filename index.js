@@ -63,6 +63,8 @@ export default class Pdf extends Component {
         onPageSingleTap: PropTypes.func,
         onScaleChanged: PropTypes.func,
         onPressLink: PropTypes.func,
+        enableTextSelection: PropTypes.bool,
+        onTextSelectionChange: PropTypes.func,
 
         // Props that are not available in the earlier react native version, added to prevent crashed on android
         accessibilityLabel: PropTypes.string,
@@ -106,6 +108,9 @@ export default class Pdf extends Component {
         onScaleChanged: (scale) => {
         },
         onPressLink: (url) => {
+        },
+        enableTextSelection: true,
+        onTextSelectionChange: (event) => {
         },
     };
 
@@ -364,10 +369,29 @@ export default class Pdf extends Component {
     }
 
     _onChange = (event) => {
+        // Handle direct events for text selection/highlight
+        if (event.nativeEvent.type) {
+            this.props.onTextSelectionChange && this.props.onTextSelectionChange(event);
+            return;
+        }
 
         let message = event.nativeEvent.message.split('|');
         //__DEV__ && console.log("onChange: " + message);
         if (message.length > 0) {
+
+            // Handle text selection messages
+            if (message[0] === 'textSelected') {
+                this.props.onTextSelectionChange && this.props.onTextSelectionChange({
+                    nativeEvent: { type: 'selectionChanged', text: message.slice(1).join('|') }
+                });
+                return;
+            } else if (message[0] === 'textSelectionCleared') {
+                this.props.onTextSelectionChange && this.props.onTextSelectionChange({
+                    nativeEvent: { type: 'selectionCleared' }
+                });
+                return;
+            }
+
             if (message.length > 5) {
                 message[4] = message.splice(4).join('|');
             }

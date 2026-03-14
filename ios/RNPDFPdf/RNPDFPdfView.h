@@ -21,6 +21,8 @@
 #import <React/RCTViewComponentView.h>
 #endif
 
+#import <PDFKit/PDFKit.h>
+
 @class RCTEventDispatcher;
 
 NS_CLASS_AVAILABLE_IOS(11_0) @interface RNPDFPdfView :
@@ -52,6 +54,11 @@ UIView
 
 @property(nonatomic, copy) RCTBubblingEventBlock onChange;
 
+@property(nonatomic, strong) NSString *selectedText;
+@property(nonatomic) BOOL enableTextSelection;
+@property(nonatomic, strong) PDFSelection *currentPDFSelection;
+
+@property(nonatomic, copy) RCTBubblingEventBlock onTextSelectionChange;
 
 @end
 
