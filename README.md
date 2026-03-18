@@ -168,11 +168,11 @@ react-native run-ios
 ### ChangeLog
 <details>
   <summary>ChangeLog details</summary>
+
 v7.0.4
 1. Fixed: Android PDF crash: IllegalStateException: Already closed (#989) (#999)
 2. Fixed: scrollTop on initial render on iOS (#1001)
 3. Feature(ios): add text selection support via PDFKit (#1003)
-4. upgrade: AndroidPdfViewer to 5.0.0, pdfiumandroid to 2.0.0
 
 
 v7.0.3
