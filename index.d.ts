@@ -27,6 +27,17 @@ export type Source = {
     method?: string;
 };
 
+export type TextSelectionChangeEvent = {
+  nativeEvent:
+    | {
+        type: 'selectionCleared';
+      }
+    | {
+        type: 'selectionChanged';
+        text: string;
+      };
+};
+
 export interface PdfProps {
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>,
     progressContainerStyle?: ReactNative.StyleProp<ReactNative.ViewStyle>,
@@ -48,6 +59,10 @@ export interface PdfProps {
     enableAnnotationRendering?: boolean,
     enableDoubleTapZoom?: boolean;
     /**
+     * Only works on iOS. Defaults to `true`.
+     */
+    enableTextSelection?: boolean;
+    /**
      * Fit policy.  This will adjust the initial zoom of the PDF based on the initial size of the view and the scale factor.
      * 0 = fit width
      * 1 = fit height
@@ -63,6 +78,7 @@ export interface PdfProps {
     onPageSingleTap?: (page: number, x: number, y: number) => void,
     onScaleChanged?: (scale: number) => void,
     onPressLink?: (url: string) => void,
+    onTextSelectionChange?: (event: TextSelectionChangeEvent) => void,
 }
 
 export interface PdfRef {
