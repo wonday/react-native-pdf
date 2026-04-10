@@ -18,6 +18,11 @@ public class TopChangeEvent extends Event<TopChangeEvent> {
         return "topChange";
     }
 
+    @Override
+    public boolean canCoalesce() {
+        return false;
+    }
+
     @Nullable
     @Override
     protected WritableMap getEventData() {
