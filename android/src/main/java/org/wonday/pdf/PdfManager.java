@@ -29,7 +29,6 @@ import com.facebook.react.viewmanagers.RNPDFPdfViewManagerInterface;
 public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfViewManagerInterface<PdfView> {
     public static final String REACT_CLASS = "RNPDFPdfView";
     private Context context;
-    private PdfView pdfView;
     private final ViewManagerDelegate<PdfView> mDelegate;
 
     @Nullable
@@ -54,8 +53,7 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
 
     @Override
     public PdfView createViewInstance(ThemedReactContext context) {
-        this.pdfView = new PdfView(context,null);
-        return pdfView;
+        return new PdfView(context,null);
     }
 
     @Override
@@ -66,6 +64,11 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
     @ReactProp(name = "path")
     public void setPath(PdfView pdfView, String path) {
         pdfView.setPath(path);
+        if (path != null && !path.isEmpty()) {
+            // Fabric has been observed to skip the first draw on Android new architecture.
+            // Posting the render when the resolved file path arrives avoids the blank-view state.
+            pdfView.post(pdfView::drawPdf);
+        }
     }
 
     // page start from 1
@@ -106,12 +109,12 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
 
     @ReactProp(name = "enableRTL")
     public void setEnableRTL(PdfView view, boolean enableRTL) {
-        pdfView.setEnableRTL(enableRTL);
+        view.setEnableRTL(enableRTL);
     }
 
     @ReactProp(name = "scrollEnabled")
     public void setScrollEnabled(PdfView view, boolean scrollEnabled) {
-        pdfView.setScrollEnabled(scrollEnabled);
+        view.setScrollEnabled(scrollEnabled);
     }
 
     @ReactProp(name = "spacing")
@@ -158,7 +161,7 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
     // use `receiveCommand` method and call this one there
     @Override
     public void setNativePage(PdfView view, int page) {
-        pdfView.setPage(page);
+        view.setPage(page);
     }
 
     @Override
@@ -174,7 +177,9 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
     @Override
     public void onAfterUpdateTransaction(PdfView pdfView) {
         super.onAfterUpdateTransaction(pdfView);
-        pdfView.drawPdf();
+        if (pdfView != null) {
+            pdfView.post(pdfView::drawPdf);
+        }
     }
 
 }
