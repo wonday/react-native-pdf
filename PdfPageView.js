@@ -6,14 +6,16 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-
 'use strict';
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import {
+    Platform,
     requireNativeComponent,
 } from 'react-native';
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+
+import PdfPageViewNativeComponent from './fabric/RNPDFPdfPageViewNativeComponent';
 export default class PdfPageView extends PureComponent {
     _getStylePropsProps = () => {
         const {width, height} = this.props;
@@ -50,4 +52,6 @@ PdfPageView.defaultProps = {
     style: {}
 };
 
-let PdfPageViewCustom = requireNativeComponent('RNPDFPdfPageView', PdfPageView, {nativeOnly: {}});
+const PdfPageViewCustom = Platform.OS === 'ios'
+    ? PdfPageViewNativeComponent
+    : requireNativeComponent('RNPDFPdfPageView', PdfPageView, {nativeOnly: {}});
