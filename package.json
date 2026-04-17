@@ -51,6 +51,7 @@
         "index.js.flow",
         "PdfManager.js",
         "PdfPageView.js",
+        "fabric/RNPDFPdfPageViewNativeComponent.js",
         "PdfView.js",
         "PdfViewFlatList.js",
         "PinchZoomView.js",
@@ -66,7 +67,8 @@
         },
         "ios": {
             "componentProvider": {
-                "RNPDFPdfView": "RNPDFPdfView"
+                "RNPDFPdfView": "RNPDFPdfView",
+                "RNPDFPdfPageView": "RNPDFPdfPageView"
             }
         }
     }
