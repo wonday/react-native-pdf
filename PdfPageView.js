@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 
-import PdfPageViewNativeComponent from './fabric/RNPDFPdfPageViewNativeComponent';
 export default class PdfPageView extends PureComponent {
     _getStylePropsProps = () => {
         const {width, height} = this.props;
@@ -52,6 +51,9 @@ PdfPageView.defaultProps = {
     style: {}
 };
 
+// Keep the Fabric component require lazy and iOS-only. A top-level import would
+// register RNPDFPdfPageView on Android too, which collides with
+// requireNativeComponent('RNPDFPdfPageView', ...).
 const PdfPageViewCustom = Platform.OS === 'ios'
-    ? PdfPageViewNativeComponent
+    ? require('./fabric/RNPDFPdfPageViewNativeComponent').default
     : requireNativeComponent('RNPDFPdfPageView', PdfPageView, {nativeOnly: {}});
