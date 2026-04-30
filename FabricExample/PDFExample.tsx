@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   TouchableHighlight,
@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import Pdf from 'react-native-pdf';
+import Pdf, { type PdfRef } from 'react-native-pdf';
 import Orientation from 'react-native-orientation-locker';
 
 const WIN_WIDTH = Dimensions.get('window').width;
@@ -29,236 +29,258 @@ type OrientationType =
   | 'PORTRAIT'
   | string;
 
-interface PDFExampleState {
+interface PDFHeaderProps {
   page: number;
   scale: number;
   numberOfPages: number;
   horizontal: boolean;
-  showsHorizontalScrollIndicator: boolean;
   showsVerticalScrollIndicator: boolean;
-  width: number;
-  objectURL?: string;
-  blob?: Blob;
+  onPrePage: () => void;
+  onNextPage: () => void;
+  onZoomOut: () => void;
+  onZoomIn: () => void;
+  onSwitchHorizontal: () => void;
+  onToggleScrollbars: () => void;
 }
 
-export default class PDFExample extends React.Component<
-  Record<string, never>,
-  PDFExampleState
-> {
-  private pdf: any; // usare `Pdf | null` se le typings del pacchetto esportano il tipo
+const createWidthStyles = (width: number) =>
+  StyleSheet.create({
+    pdfContainer: {
+      flex: 1,
+      width,
+    },
+  });
 
-  constructor(props: Record<string, never>) {
-    super(props);
-    this.state = {
-      page: 1,
-      scale: 1,
-      numberOfPages: 0,
-      horizontal: false,
-      showsHorizontalScrollIndicator: true,
-      showsVerticalScrollIndicator: true,
-      width: WIN_WIDTH,
+const PDFHeader = ({
+  page,
+  scale,
+  numberOfPages,
+  horizontal,
+  showsVerticalScrollIndicator,
+  onPrePage,
+  onNextPage,
+  onZoomOut,
+  onZoomIn,
+  onSwitchHorizontal,
+  onToggleScrollbars,
+}: PDFHeaderProps) => (
+  <>
+    <View style={styles.row}>
+      <TouchableHighlight
+        disabled={page === 1}
+        style={page === 1 ? styles.btnDisable : styles.btn}
+        onPress={onPrePage}
+      >
+        <Text style={styles.btnText}>{'-'}</Text>
+      </TouchableHighlight>
+      <View style={styles.btnText}>
+        <Text style={styles.btnText}>Page</Text>
+      </View>
+      <TouchableHighlight
+        disabled={page === numberOfPages}
+        style={page === numberOfPages ? styles.btnDisable : styles.btn}
+        testID="NextPage"
+        onPress={onNextPage}
+      >
+        <Text style={styles.btnText}>{'+'}</Text>
+      </TouchableHighlight>
+      <TouchableHighlight
+        disabled={scale === 1}
+        style={scale === 1 ? styles.btnDisable : styles.btn}
+        onPress={onZoomOut}
+      >
+        <Text style={styles.btnText}>{'-'}</Text>
+      </TouchableHighlight>
+      <View style={styles.btnText}>
+        <Text style={styles.btnText}>Scale</Text>
+      </View>
+      <TouchableHighlight
+        disabled={scale >= 3}
+        style={scale >= 3 ? styles.btnDisable : styles.btn}
+        onPress={onZoomIn}
+      >
+        <Text style={styles.btnText}>{'+'}</Text>
+      </TouchableHighlight>
+    </View>
+    <View style={styles.row}>
+      <View style={styles.btnText}>
+        <Text style={styles.btnText}>{'Horizontal:'}</Text>
+      </View>
+      <TouchableHighlight style={styles.btn} onPress={onSwitchHorizontal}>
+        {!horizontal ? (
+          <Text style={styles.btnText}>{'false'}</Text>
+        ) : (
+          <Text style={styles.btnText}>{'true'}</Text>
+        )}
+      </TouchableHighlight>
+      <View style={styles.btnText}>
+        <Text style={styles.btnText}>{'Scrollbar'}</Text>
+      </View>
+      <TouchableHighlight style={styles.btn} onPress={onToggleScrollbars}>
+        {!showsVerticalScrollIndicator ? (
+          <Text style={styles.btnText}>{'hidden'}</Text>
+        ) : (
+          <Text style={styles.btnText}>{'shown'}</Text>
+        )}
+      </TouchableHighlight>
+    </View>
+  </>
+);
+
+const PDFExample = () => {
+  const pdfRef = useRef<PdfRef | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [scale, setScale] = useState(1);
+  const [numberOfPages, setNumberOfPages] = useState(0);
+  const [horizontal, setHorizontal] = useState(false);
+  const [showsHorizontalScrollIndicator, setShowsHorizontalScrollIndicator] =
+    useState(true);
+  const [showsVerticalScrollIndicator, setShowsVerticalScrollIndicator] =
+    useState(true);
+  const [width, setWidth] = useState(WIN_WIDTH);
+  const [, setObjectUrl] = useState<string>();
+  const [, setBlob] = useState<Blob>();
+
+  useEffect(() => {
+    const onOrientationDidChange = (orientation: OrientationType) => {
+      setWidth(WIN_HEIGHT > WIN_WIDTH ? WIN_HEIGHT : WIN_WIDTH);
+      setHorizontal(
+        orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT',
+      );
     };
-    this.pdf = null;
-  }
 
-  _onOrientationDidChange = (orientation: OrientationType): void => {
-    if (orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT') {
-      this.setState({
-        width: WIN_HEIGHT > WIN_WIDTH ? WIN_HEIGHT : WIN_WIDTH,
-        horizontal: true,
-      });
-    } else {
-      this.setState({
-        width: WIN_HEIGHT > WIN_WIDTH ? WIN_HEIGHT : WIN_WIDTH,
-        horizontal: false,
-      });
-    }
-  };
+    let isMounted = true;
 
-  componentDidMount(): void {
-    Orientation.addOrientationListener(this._onOrientationDidChange);
+    Orientation.addOrientationListener(onOrientationDidChange);
 
     (async () => {
       const url = 'https://www.africau.edu/images/default/sample.pdf';
-      // handling blobs larger than 64 KB on Android requires patching React Native (https://github.com/facebook/react-native/pull/31789)
+      // handling blobs larger than 64 KB on Android requires patching React Native
       const result = await fetch(url);
       const blob = await result.blob();
       const objectURL = URL.createObjectURL(blob);
-      this.setState({ ...this.state, objectURL, blob }); // keep blob in state so it doesn't get garbage-collected
+
+      if (!isMounted) {
+        URL.revokeObjectURL(objectURL);
+        return;
+      }
+
+      objectUrlRef.current = objectURL;
+      setBlob(blob); // keep blob in state so it doesn't get garbage-collected
+      setObjectUrl(objectURL);
     })();
-  }
 
-  componentWillUnmount(): void {
-    Orientation.removeOrientationListener(this._onOrientationDidChange);
-  }
+    return () => {
+      isMounted = false;
+      Orientation.removeOrientationListener(onOrientationDidChange);
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+      }
+    };
+  }, []);
 
-  prePage = (): void => {
-    const prePage = this.state.page > 1 ? this.state.page - 1 : 1;
-    this.pdf?.setPage(prePage);
-    console.log(`prePage: ${prePage}`);
+  const prePage = (): void => {
+    const previousPage = page > 1 ? page - 1 : 1;
+    pdfRef.current?.setPage(previousPage);
+    console.log(`prePage: ${previousPage}`);
   };
 
-  nextPage = (): void => {
-    const nextPage =
-      this.state.page + 1 > this.state.numberOfPages
-        ? this.state.numberOfPages
-        : this.state.page + 1;
-    this.pdf?.setPage(nextPage);
-    console.log(`nextPage: ${nextPage}`);
+  const nextPage = (): void => {
+    const next = page + 1 > numberOfPages ? numberOfPages : page + 1;
+    pdfRef.current?.setPage(next);
+    console.log(`nextPage: ${next}`);
   };
 
-  zoomOut = (): void => {
-    const scale = this.state.scale > 1 ? this.state.scale / 1.2 : 1;
-    this.setState({ scale });
-    console.log(`zoomOut scale: ${scale}`);
+  const zoomOut = (): void => {
+    const nextScale = scale > 1 ? scale / 1.2 : 1;
+    setScale(nextScale);
+    console.log(`zoomOut scale: ${nextScale}`);
   };
 
-  zoomIn = (): void => {
-    let scale = this.state.scale * 1.2;
-    scale = scale > 3 ? 3 : scale;
-    this.setState({ scale });
-    console.log(`zoomIn scale: ${scale}`);
+  const zoomIn = (): void => {
+    let nextScale = scale * 1.2;
+    nextScale = nextScale > 3 ? 3 : nextScale;
+    setScale(nextScale);
+    console.log(`zoomIn scale: ${nextScale}`);
   };
 
-  switchHorizontal = (): void => {
-    this.setState({ horizontal: !this.state.horizontal, page: this.state.page });
+  const switchHorizontal = (): void => {
+    setHorizontal(currentHorizontal => !currentHorizontal);
   };
 
-  switchShowsHorizontalScrollIndicator = (): void => {
-    this.setState({
-      showsHorizontalScrollIndicator: !this.state.showsHorizontalScrollIndicator,
-    });
+  const switchShowsHorizontalScrollIndicator = (): void => {
+    setShowsHorizontalScrollIndicator(currentValue => !currentValue);
   };
 
-  switchShowsVerticalScrollIndicator = (): void => {
-    this.setState({
-      showsVerticalScrollIndicator: !this.state.showsVerticalScrollIndicator,
-    });
+  const switchShowsVerticalScrollIndicator = (): void => {
+    setShowsVerticalScrollIndicator(currentValue => !currentValue);
   };
 
-  render(): React.ReactNode {
-    let source: { uri: string; cache?: boolean } =
-      Platform.OS === 'windows'
-        ? { uri: 'ms-appx:///test.pdf' }
-        : { uri: 'https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf', cache: true };
-    // let source = {uri: this.state.objectURL!};
+  const source: { uri: string; cache?: boolean } =
+    Platform.OS === 'windows'
+      ? { uri: 'ms-appx:///test.pdf' }
+      : {
+          uri: 'https://ontheline.trincoll.edu/images/bookdown/sample-local-pdf.pdf',
+          cache: true,
+        };
+  // const source = { uri: objectUrl! };
+  const widthStyles = createWidthStyles(width);
 
-    const Header = () => (
-        <>
-        <View style={{ flexDirection: 'row' }}>
-            <TouchableHighlight
-                disabled={this.state.page === 1}
-                style={this.state.page === 1 ? styles.btnDisable : styles.btn}
-                onPress={() => this.prePage()}
-            >
-                <Text style={styles.btnText}>{'-'}</Text>
-            </TouchableHighlight>
-            <View style={styles.btnText}>
-                <Text style={styles.btnText}>Page</Text>
-            </View>
-            <TouchableHighlight
-                disabled={this.state.page === this.state.numberOfPages}
-                style={
-                this.state.page === this.state.numberOfPages
-                    ? styles.btnDisable
-                    : styles.btn
-                }
-                testID="NextPage"
-                onPress={() => this.nextPage()}
-            >
-                <Text style={styles.btnText}>{'+'}</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-                disabled={this.state.scale === 1}
-                style={this.state.scale === 1 ? styles.btnDisable : styles.btn}
-                onPress={() => this.zoomOut()}
-            >
-                <Text style={styles.btnText}>{'-'}</Text>
-            </TouchableHighlight>
-            <View style={styles.btnText}>
-                <Text style={styles.btnText}>Scale</Text>
-            </View>
-            <TouchableHighlight
-                disabled={this.state.scale >= 3}
-                style={this.state.scale >= 3 ? styles.btnDisable : styles.btn}
-                onPress={() => this.zoomIn()}
-            >
-                <Text style={styles.btnText}>{'+'}</Text>
-            </TouchableHighlight>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-            <View style={styles.btnText}>
-                <Text style={styles.btnText}>{'Horizontal:'}</Text>
-            </View>
-            <TouchableHighlight style={styles.btn} onPress={() => this.switchHorizontal()}>
-                {!this.state.horizontal ? (
-                <Text style={styles.btnText}>{'false'}</Text>
-                ) : (
-                <Text style={styles.btnText}>{'true'}</Text>
-                )}
-            </TouchableHighlight>
-            <View style={styles.btnText}>
-                <Text style={styles.btnText}>{'Scrollbar'}</Text>
-            </View>
-            <TouchableHighlight
-                style={styles.btn}
-                onPress={() => {
-                this.switchShowsHorizontalScrollIndicator();
-                this.switchShowsVerticalScrollIndicator();
-                }}
-            >
-                {!this.state.showsVerticalScrollIndicator ? (
-                <Text style={styles.btnText}>{'hidden'}</Text>
-                ) : (
-                <Text style={styles.btnText}>{'shown'}</Text>
-                )}
-            </TouchableHighlight>
-        </View>
-        </>
-    );
+  return (
+    <SafeAreaView style={styles.container} edges={{ top: 'maximum' }}>
+      <PDFHeader
+        page={page}
+        scale={scale}
+        numberOfPages={numberOfPages}
+        horizontal={horizontal}
+        showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+        onPrePage={prePage}
+        onNextPage={nextPage}
+        onZoomOut={zoomOut}
+        onZoomIn={zoomIn}
+        onSwitchHorizontal={switchHorizontal}
+        onToggleScrollbars={() => {
+          switchShowsHorizontalScrollIndicator();
+          switchShowsVerticalScrollIndicator();
+        }}
+      />
+      <View style={widthStyles.pdfContainer}>
+        <Pdf
+          ref={pdfRef}
+          trustAllCerts={false}
+          source={source}
+          scale={scale}
+          horizontal={horizontal}
+          showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+          showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
+          onLoadComplete={(
+            loadedNumberOfPages: number,
+            filePath: string,
+            dims: { width: number; height: number },
+            tableContents: unknown,
+          ) => {
+            setNumberOfPages(loadedNumberOfPages);
+            console.log(`total page count: ${loadedNumberOfPages}`);
+            console.log(tableContents, dims, filePath);
+          }}
+          onPageChanged={(currentPage: number, loadedNumberOfPages: number) => {
+            setPage(currentPage);
+            console.log(
+              `current page: ${currentPage} / ${loadedNumberOfPages}`,
+            );
+          }}
+          onError={(error: unknown) => {
+            console.log(error);
+          }}
+          style={styles.pdf}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
 
-    return (
-      <SafeAreaView style={styles.container} edges={{top: 'maximum'}}>
-        <Header />
-        <View style={{ flex: 1, width: this.state.width }}>
-            <Pdf
-                ref={(pdf: any) => {
-                this.pdf = pdf;
-                }}
-                trustAllCerts={false}
-                source={source}
-                scale={this.state.scale}
-                horizontal={this.state.horizontal}
-                showsVerticalScrollIndicator={this.state.showsVerticalScrollIndicator}
-                showsHorizontalScrollIndicator={this.state.showsHorizontalScrollIndicator}
-                onLoadComplete={(
-                numberOfPages: number,
-                filePath: string,
-                dims: { width: number; height: number },
-                tableContents: unknown
-                ) => {
-                this.setState({
-                    numberOfPages: numberOfPages,
-                });
-                console.log(`total page count: ${numberOfPages}`);
-                console.log(tableContents, dims, filePath);
-                }}
-                onPageChanged={(page: number, numberOfPages: number) => {
-                this.setState({
-                    page: page,
-                });
-                console.log(`current page: ${page} / ${numberOfPages}`);
-                }}
-                onError={(error: unknown) => {
-                console.log(error);
-                }}
-                style={{ flex: 1 }}
-            />
-        </View>
-      </SafeAreaView>
-    );
-  }
-}
+export default PDFExample;
 
 const styles = StyleSheet.create({
   container: {
@@ -280,5 +302,11 @@ const styles = StyleSheet.create({
   btnText: {
     margin: 2,
     padding: 2,
+  },
+  pdf: {
+    flex: 1,
+  },
+  row: {
+    flexDirection: 'row',
   },
 });
