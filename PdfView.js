@@ -349,6 +349,36 @@ export default class PdfView extends Component {
 
     _getRef = (ref) => this._flatList = ref;
 
+    _scrollToContentOffset = (x, y) => {
+        if (!this._flatList) {
+            return;
+        }
+
+        // customFlatListWrapper may return a FlatList implementation other than
+        // PdfViewFlatList (for example react-native-gesture-handler's FlatList on
+        // Android). Prefer shared FlatList/ScrollView APIs so wrapper refs do not
+        // need to re-implement PdfViewFlatList.scrollToXY().
+        if (typeof this._flatList.scrollToXY === 'function') {
+            this._flatList.scrollToXY(x, y);
+            return;
+        }
+
+        const scrollRef = typeof this._flatList.getNativeScrollRef === 'function'
+            ? this._flatList.getNativeScrollRef()
+            : (typeof this._flatList.getScrollResponder === 'function'
+                ? this._flatList.getScrollResponder()
+                : undefined);
+        if (scrollRef && typeof scrollRef.scrollTo === 'function') {
+            scrollRef.scrollTo({x, y, animated: false});
+            return;
+        }
+
+        const offset = this.props.horizontal ? x : y;
+        if (typeof this._flatList.scrollToOffset === 'function') {
+            this._flatList.scrollToOffset({animated: false, offset});
+        }
+    };
+
     _getItemLayout = (data, index) => ({
         length: this.props.horizontal ? this._getPageWidth() : this._getPageHeight(),
         offset: ((this.props.horizontal ? this._getPageWidth() : this._getPageHeight()) + this.props.spacing * this.state.scale) * index,
@@ -362,7 +392,7 @@ export default class PdfView extends Component {
     _onListContentSizeChange = (contentWidth, contentHeight) => {
         if (this.state.contentOffset.x != this.state.newContentOffset.x
             || this.state.contentOffset.y != this.state.newContentOffset.y) {
-            this._flatList.scrollToXY(this.state.newContentOffset.x, this.state.newContentOffset.y);
+            this._scrollToContentOffset(this.state.newContentOffset.x, this.state.newContentOffset.y);
         }
     };
 

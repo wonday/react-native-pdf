@@ -24,7 +24,20 @@ export default class PdfViewFlatList extends FlatList {
      * This is deprecated due to ambiguity (y before x), and SHOULD NOT BE USED.
      */
     scrollToXY = (x, y) => {
-        this._listRef._scrollRef.scrollTo({x: x, y: y, animated: false});
+        const scrollRef = typeof this.getNativeScrollRef === 'function'
+            ? this.getNativeScrollRef()
+            : (typeof this.getScrollResponder === 'function'
+                ? this.getScrollResponder()
+                : undefined);
+        if (scrollRef && typeof scrollRef.scrollTo === 'function') {
+            scrollRef.scrollTo({x, y, animated: false});
+            return;
+        }
+
+        const offset = this.props.horizontal ? x : y;
+        if (typeof this.scrollToOffset === 'function') {
+            this.scrollToOffset({animated: false, offset});
+        }
     }
 
 }
