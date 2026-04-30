@@ -10,24 +10,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   TouchableHighlight,
-  Dimensions,
   View,
   Text,
   Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Pdf, { type PdfRef } from 'react-native-pdf';
-import Orientation from 'react-native-orientation-locker';
-
-const WIN_WIDTH = Dimensions.get('window').width;
-const WIN_HEIGHT = Dimensions.get('window').height;
-
-type OrientationType =
-  | 'LANDSCAPE-LEFT'
-  | 'LANDSCAPE-RIGHT'
-  | 'PORTRAIT'
-  | string;
 
 interface PDFHeaderProps {
   page: number;
@@ -138,21 +128,13 @@ const PDFExample = () => {
     useState(true);
   const [showsVerticalScrollIndicator, setShowsVerticalScrollIndicator] =
     useState(true);
-  const [width, setWidth] = useState(WIN_WIDTH);
+
   const [, setObjectUrl] = useState<string>();
   const [, setBlob] = useState<Blob>();
+  const { width } = useWindowDimensions();
 
   useEffect(() => {
-    const onOrientationDidChange = (orientation: OrientationType) => {
-      setWidth(WIN_HEIGHT > WIN_WIDTH ? WIN_HEIGHT : WIN_WIDTH);
-      setHorizontal(
-        orientation === 'LANDSCAPE-LEFT' || orientation === 'LANDSCAPE-RIGHT',
-      );
-    };
-
     let isMounted = true;
-
-    Orientation.addOrientationListener(onOrientationDidChange);
 
     (async () => {
       const url = 'https://www.africau.edu/images/default/sample.pdf';
@@ -173,7 +155,7 @@ const PDFExample = () => {
 
     return () => {
       isMounted = false;
-      Orientation.removeOrientationListener(onOrientationDidChange);
+
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
       }
