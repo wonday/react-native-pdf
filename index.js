@@ -163,7 +163,15 @@ export default class Pdf extends Component {
         }
 
         if (!this.props.cache) {
-            this._unlinkFile(this.state.path);
+            if (this.props.transformFile) {
+                // this.state.path is the .view file; unlink the original pre-transformed file.
+                // The .view file is cleaned up by _cleanupViewFile below.
+                if (this.lastPreTransformedPath) {
+                    this._unlinkFile(this.lastPreTransformedPath);
+                }
+            } else {
+                this._unlinkFile(this.state.path);
+            }
         }
 
         this._cleanupViewFile();
@@ -183,6 +191,7 @@ export default class Pdf extends Component {
         const base64 = await ReactNativeBlobUtil.fs.readFileWithTransform(preTransformedPath, 'base64');
         await ReactNativeBlobUtil.fs.writeFile(viewFile, base64, 'base64');
         this.lastViewFile = viewFile;
+        this.lastPreTransformedPath = preTransformedPath;
         return viewFile;
     };
 
