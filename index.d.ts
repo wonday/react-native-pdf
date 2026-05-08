@@ -71,6 +71,7 @@ export interface PdfProps {
     fitPolicy?: 0 | 1 | 2,
     trustAllCerts?: boolean,
     singlePage?: boolean,
+    transformFile?: boolean,
     onLoadProgress?: (percent: number,) => void,
     onLoadComplete?: (numberOfPages: number, path: string, size: {height: number, width: number}, tableContents?: TableContent[]) => void,
     onPageChanged?: (page: number, numberOfPages: number) => void,
