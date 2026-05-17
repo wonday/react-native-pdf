@@ -258,80 +258,79 @@ export default class Pdf extends Component {
     _downloadFile = async (source, cacheFile) => {
 
         if (this.lastRNBFTask) {
-            this.lastRNBFTask.cancel(err => {
-            });
+            try {
+                this.lastRNBFTask.cancel(err => {
+                });
+            } catch (e) {
+                // ignore — cancel can fail if the task already settled
+            }
             this.lastRNBFTask = null;
         }
 
         const tempCacheFile = cacheFile + '.tmp';
-        this._unlinkFile(tempCacheFile);
+        // Await the unlink: the previous fire-and-forget call let ReactNativeBlobUtil's
+        // open(path) race with the in-flight delete on Android 14 + New Architecture and
+        // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
+        await this._unlinkFile(tempCacheFile);
 
-        this.lastRNBFTask = ReactNativeBlobUtil.config({
-            // response data will be saved to this path if it has access right.
-            path: tempCacheFile,
-            trusty: this.props.trustAllCerts,
-        })
-            .fetch(
-                source.method ? source.method : 'GET',
-                source.uri,
-                source.headers ? source.headers : {},
-                source.body ? source.body : ""
-            )
-            // listen to download progress event
-            .progress((received, total) => {
-                this.props.onLoadProgress && this.props.onLoadProgress(received / total);
-                if (this._mounted) {
-                    this.setState({progress: received / total});
-                }
+        try {
+            this.lastRNBFTask = ReactNativeBlobUtil.config({
+                // response data will be saved to this path if it has access right.
+                path: tempCacheFile,
+                trusty: this.props.trustAllCerts,
             })
-            .catch(async (error) => {
-                this._onError(error);
-            });
+                .fetch(
+                    source.method ? source.method : 'GET',
+                    source.uri,
+                    source.headers ? source.headers : {},
+                    source.body ? source.body : ""
+                )
+                // listen to download progress event
+                .progress((received, total) => {
+                    this.props.onLoadProgress && this.props.onLoadProgress(received / total);
+                    if (this._mounted) {
+                        this.setState({progress: received / total});
+                    }
+                });
 
-        this.lastRNBFTask
-            .then(async (res) => {
+            const res = await this.lastRNBFTask;
+            this.lastRNBFTask = null;
 
-                this.lastRNBFTask = null;
+            if (res && res.respInfo && res.respInfo.headers && !res.respInfo.headers["Content-Encoding"] && !res.respInfo.headers["Transfer-Encoding"] && res.respInfo.headers["Content-Length"]) {
+                const expectedContentLength = res.respInfo.headers["Content-Length"];
+                let actualContentLength;
 
-                if (res && res.respInfo && res.respInfo.headers && !res.respInfo.headers["Content-Encoding"] && !res.respInfo.headers["Transfer-Encoding"] && res.respInfo.headers["Content-Length"]) {
-                    const expectedContentLength = res.respInfo.headers["Content-Length"];
-                    let actualContentLength;
+                try {
+                    const fileStats = await ReactNativeBlobUtil.fs.stat(res.path());
 
-                    try {
-                        const fileStats = await ReactNativeBlobUtil.fs.stat(res.path());
-
-                        if (!fileStats || !fileStats.size) {
-                            throw new Error("FileNotFound:" + source.uri);
-                        }
-
-                        actualContentLength = fileStats.size;
-                    } catch (error) {
-                        throw new Error("DownloadFailed:" + source.uri);
+                    if (!fileStats || !fileStats.size) {
+                        throw new Error("FileNotFound:" + source.uri);
                     }
 
-                    if (expectedContentLength != actualContentLength) {
-                        throw new Error("DownloadFailed:" + source.uri);
-                    }
+                    actualContentLength = fileStats.size;
+                } catch (error) {
+                    throw new Error("DownloadFailed:" + source.uri);
                 }
 
-                this._unlinkFile(cacheFile);
-                ReactNativeBlobUtil.fs
-                    .cp(tempCacheFile, cacheFile)
-                    .then(() => {
-                        if (this._mounted) {
-                            this.setState({path: cacheFile, isDownloaded: true, progress: 1});
-                        }
-                        this._unlinkFile(tempCacheFile);
-                    })
-                    .catch(async (error) => {
-                        throw error;
-                    });
-            })
-            .catch(async (error) => {
-                this._unlinkFile(tempCacheFile);
-                this._unlinkFile(cacheFile);
-                this._onError(error);
-            });
+                if (expectedContentLength != actualContentLength) {
+                    throw new Error("DownloadFailed:" + source.uri);
+                }
+            }
+
+            await this._unlinkFile(cacheFile);
+            // Await the copy: the previous fire-and-forget chain swallowed cp() rejections
+            // as `Uncaught (in promise)` instead of forwarding them through onError.
+            await ReactNativeBlobUtil.fs.cp(tempCacheFile, cacheFile);
+            if (this._mounted) {
+                this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+            }
+            await this._unlinkFile(tempCacheFile);
+        } catch (error) {
+            this.lastRNBFTask = null;
+            await this._unlinkFile(tempCacheFile);
+            await this._unlinkFile(cacheFile);
+            this._onError(error);
+        }
 
     };
 
