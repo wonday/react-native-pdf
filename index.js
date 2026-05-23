@@ -292,9 +292,14 @@ export default class Pdf extends Component {
             .then(async (res) => {
 
                 this.lastRNBFTask = null;
+                const responseInfo = res ? res.respInfo : undefined;
 
-                if (res && res.respInfo && res.respInfo.headers && !res.respInfo.headers["Content-Encoding"] && !res.respInfo.headers["Transfer-Encoding"] && res.respInfo.headers["Content-Length"]) {
-                    const expectedContentLength = res.respInfo.headers["Content-Length"];
+                if (responseInfo && typeof responseInfo.status === "number" && (responseInfo.status < 200 || responseInfo.status >= 300)) {
+                    throw this._createDownloadError(source.uri, responseInfo);
+                }
+
+                if (responseInfo && responseInfo.headers && !responseInfo.headers["Content-Encoding"] && !responseInfo.headers["Transfer-Encoding"] && responseInfo.headers["Content-Length"]) {
+                    const expectedContentLength = responseInfo.headers["Content-Length"];
                     let actualContentLength;
 
                     try {
@@ -306,11 +311,11 @@ export default class Pdf extends Component {
 
                         actualContentLength = fileStats.size;
                     } catch (error) {
-                        throw new Error("DownloadFailed:" + source.uri);
+                        throw this._createDownloadError(source.uri, responseInfo);
                     }
 
                     if (expectedContentLength != actualContentLength) {
-                        throw new Error("DownloadFailed:" + source.uri);
+                        throw this._createDownloadError(source.uri, responseInfo);
                     }
                 }
 
@@ -333,6 +338,14 @@ export default class Pdf extends Component {
                 this._onError(error);
             });
 
+    };
+
+    _createDownloadError = (uri, responseInfo) => {
+        const error = new Error("DownloadFailed:" + uri);
+        if (responseInfo) {
+            error.status = responseInfo.status;
+        }
+        return error;
     };
 
     _unlinkFile = async (file) => {
