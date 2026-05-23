@@ -273,28 +273,16 @@ export default class Pdf extends Component {
         // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
         await this._unlinkFile(tempCacheFile);
 
-        try {
-            this.lastRNBFTask = ReactNativeBlobUtil.config({
-                // response data will be saved to this path if it has access right.
-                path: tempCacheFile,
-                trusty: this.props.trustAllCerts,
-            })
-                .fetch(
-                    source.method ? source.method : 'GET',
-                    source.uri,
-                    source.headers ? source.headers : {},
-                    source.body ? source.body : ""
-                )
-                // listen to download progress event
-                .progress((received, total) => {
-                    this.props.onLoadProgress && this.props.onLoadProgress(received / total);
-                    if (this._mounted) {
-                        this.setState({progress: received / total});
-                    }
-                });
+                this.lastRNBFTask = null;
+                const responseInfo = res ? res.respInfo : undefined;
 
-            const res = await this.lastRNBFTask;
-            this.lastRNBFTask = null;
+                if (responseInfo && typeof responseInfo.status === "number" && (responseInfo.status < 200 || responseInfo.status >= 300)) {
+                    throw this._createDownloadError(source.uri, responseInfo);
+                }
+
+                if (responseInfo && responseInfo.headers && !responseInfo.headers["Content-Encoding"] && !responseInfo.headers["Transfer-Encoding"] && responseInfo.headers["Content-Length"]) {
+                    const expectedContentLength = responseInfo.headers["Content-Length"];
+                    let actualContentLength;
 
             if (res && res.respInfo && res.respInfo.headers && !res.respInfo.headers["Content-Encoding"] && !res.respInfo.headers["Transfer-Encoding"] && res.respInfo.headers["Content-Length"]) {
                 const expectedContentLength = res.respInfo.headers["Content-Length"];
@@ -303,13 +291,14 @@ export default class Pdf extends Component {
                 try {
                     const fileStats = await ReactNativeBlobUtil.fs.stat(res.path());
 
-                    if (!fileStats || !fileStats.size) {
-                        throw new Error("FileNotFound:" + source.uri);
+                        actualContentLength = fileStats.size;
+                    } catch (error) {
+                        throw this._createDownloadError(source.uri, responseInfo);
                     }
 
-                    actualContentLength = fileStats.size;
-                } catch (error) {
-                    throw new Error("DownloadFailed:" + source.uri);
+                    if (expectedContentLength != actualContentLength) {
+                        throw this._createDownloadError(source.uri, responseInfo);
+                    }
                 }
 
                 if (expectedContentLength != actualContentLength) {
@@ -332,6 +321,14 @@ export default class Pdf extends Component {
             this._onError(error);
         }
 
+    };
+
+    _createDownloadError = (uri, responseInfo) => {
+        const error = new Error("DownloadFailed:" + uri);
+        if (responseInfo) {
+            error.status = responseInfo.status;
+        }
+        return error;
     };
 
     _unlinkFile = async (file) => {
