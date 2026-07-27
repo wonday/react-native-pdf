@@ -268,46 +268,62 @@ export default class Pdf extends Component {
         }
 
         const tempCacheFile = cacheFile + '.tmp';
-        // Await the unlink: the previous fire-and-forget call let ReactNativeBlobUtil's
+        // Await the unlink: a fire-and-forget call here lets ReactNativeBlobUtil's
         // open(path) race with the in-flight delete on Android 14 + New Architecture and
         // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
         await this._unlinkFile(tempCacheFile);
 
-                this.lastRNBFTask = null;
-                const responseInfo = res ? res.respInfo : undefined;
+        try {
+            this.lastRNBFTask = ReactNativeBlobUtil.config({
+                // response data will be saved to this path if it has access right.
+                path: tempCacheFile,
+                trusty: this.props.trustAllCerts,
+            })
+                .fetch(
+                    source.method ? source.method : 'GET',
+                    source.uri,
+                    source.headers ? source.headers : {},
+                    source.body ? source.body : ""
+                )
+                // listen to download progress event
+                .progress((received, total) => {
+                    this.props.onLoadProgress && this.props.onLoadProgress(received / total);
+                    if (this._mounted) {
+                        this.setState({progress: received / total});
+                    }
+                });
 
-                if (responseInfo && typeof responseInfo.status === "number" && (responseInfo.status < 200 || responseInfo.status >= 300)) {
-                    throw this._createDownloadError(source.uri, responseInfo);
-                }
+            const res = await this.lastRNBFTask;
+            this.lastRNBFTask = null;
+            const responseInfo = res ? res.respInfo : undefined;
 
-                if (responseInfo && responseInfo.headers && !responseInfo.headers["Content-Encoding"] && !responseInfo.headers["Transfer-Encoding"] && responseInfo.headers["Content-Length"]) {
-                    const expectedContentLength = responseInfo.headers["Content-Length"];
-                    let actualContentLength;
+            if (responseInfo && typeof responseInfo.status === "number" && (responseInfo.status < 200 || responseInfo.status >= 300)) {
+                throw this._createDownloadError(source.uri, responseInfo);
+            }
 
-            if (res && res.respInfo && res.respInfo.headers && !res.respInfo.headers["Content-Encoding"] && !res.respInfo.headers["Transfer-Encoding"] && res.respInfo.headers["Content-Length"]) {
-                const expectedContentLength = res.respInfo.headers["Content-Length"];
+            if (responseInfo && responseInfo.headers && !responseInfo.headers["Content-Encoding"] && !responseInfo.headers["Transfer-Encoding"] && responseInfo.headers["Content-Length"]) {
+                const expectedContentLength = responseInfo.headers["Content-Length"];
                 let actualContentLength;
 
                 try {
                     const fileStats = await ReactNativeBlobUtil.fs.stat(res.path());
 
-                        actualContentLength = fileStats.size;
-                    } catch (error) {
+                    if (!fileStats || !fileStats.size) {
                         throw this._createDownloadError(source.uri, responseInfo);
                     }
 
-                    if (expectedContentLength != actualContentLength) {
-                        throw this._createDownloadError(source.uri, responseInfo);
-                    }
+                    actualContentLength = fileStats.size;
+                } catch (error) {
+                    throw this._createDownloadError(source.uri, responseInfo);
                 }
 
                 if (expectedContentLength != actualContentLength) {
-                    throw new Error("DownloadFailed:" + source.uri);
+                    throw this._createDownloadError(source.uri, responseInfo);
                 }
             }
 
             await this._unlinkFile(cacheFile);
-            // Await the copy: the previous fire-and-forget chain swallowed cp() rejections
+            // Await the copy: a fire-and-forget chain here swallows cp() rejections
             // as `Uncaught (in promise)` instead of forwarding them through onError.
             await ReactNativeBlobUtil.fs.cp(tempCacheFile, cacheFile);
             if (this._mounted) {
