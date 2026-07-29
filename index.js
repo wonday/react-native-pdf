@@ -7,23 +7,23 @@
  */
 
 'use strict';
-import React, {Component} from 'react';
+import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import {
-    View,
+    Image,
     Platform,
     StyleSheet,
-    Image,
     Text,
+    View,
     requireNativeComponent
 } from 'react-native';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 import PdfViewNativeComponent, {
     Commands as PdfViewCommands,
-  } from './fabric/RNPDFPdfNativeComponent';
-import ReactNativeBlobUtil from 'react-native-blob-util'
-import {ViewPropTypes} from 'deprecated-react-native-prop-types';
-const SHA1 = require('crypto-js/sha1');
+} from './fabric/RNPDFPdfNativeComponent';
 import PdfView from './PdfView';
+const SHA1 = require('crypto-js/sha1');
 
 export default class Pdf extends Component {
 
@@ -272,7 +272,7 @@ export default class Pdf extends Component {
         // open(path) race with the in-flight delete on Android 14 + New Architecture and
         // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
         await this._unlinkFile(tempCacheFile);
-
+        try{
                 this.lastRNBFTask = null;
                 const responseInfo = res ? res.respInfo : undefined;
 

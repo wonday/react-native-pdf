@@ -26,11 +26,6 @@ import android.view.MotionEvent;
 import android.graphics.Canvas;
 import android.graphics.pdf.PdfRenderer;
 
-import io.legere.pdfiumandroid.util.Config;
-import io.legere.pdfiumandroid.util.ConfigKt;
-import io.legere.pdfiumandroid.util.AlreadyClosedBehavior;
-import io.legere.pdfiumandroid.DefaultLogger;
-
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
 import com.github.barteksc.pdfviewer.PDFView;
@@ -94,9 +89,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private int oldW = 0;
     private int oldH = 0;
 
+    // When a PDF has disconnected /Pages sub-trees (malformed merge), PDFium can open
+    // only the pages reachable from the catalog root and throws "Unable to open page"
+    // for any beyond that boundary.  We detect this on first error, cap the page count
+    // to the last successfully opened page, and reload silently so the user sees the
+    // valid portion of the document instead of a blank error screen.
+    private int accessiblePageCount = -1;  // -1 = unknown / no restriction
+    private boolean retriedWithPageLimit = false;
+
     public PdfView(Context context, AttributeSet set){
         super(context, set);
-        ConfigKt.setPdfiumConfig(new Config(new DefaultLogger(), AlreadyClosedBehavior.IGNORE));
     }
 
     @Override
@@ -183,11 +185,35 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     @Override
     public void onError(Throwable t){
+        // Graceful recovery for PDFs with disconnected /Pages sub-trees (malformed merges).
+        // PDFium reports "Unable to open page, pageIndex=N" when it can't reach a page
+        // through the catalog.  On the first such error we parse N, cap the accessible
+        // page count, and reload – showing whatever the PDF does contain.
+        String msg = t.getMessage() != null ? t.getMessage() : "";
+        if (!retriedWithPageLimit && msg.contains("Unable to open page")) {
+            java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("pageIndex=(\\d+)")
+                .matcher(msg);
+            if (m.find()) {
+                int failedAt = Integer.parseInt(m.group(1));
+                if (failedAt > 0) {
+                    showLog("PDF has inaccessible pages from index " + failedAt +
+                            "; reloading with first " + failedAt + " pages only.");
+                    accessiblePageCount = failedAt;
+                    retriedWithPageLimit = true;
+                    // Reset to first page if current page is beyond accessible range
+                    if (this.page > failedAt) this.page = 1;
+                    new Handler(Looper.getMainLooper()).post(this::drawPdf);
+                    return;
+                }
+            }
+        }
+
         WritableMap event = Arguments.createMap();
-        if (t.getMessage().contains("Password required or incorrect password")) {
+        if (msg.contains("Password required or incorrect password")) {
             event.putString("message", "error|Password required or incorrect password.");
         } else {
-            event.putString("message", "error|"+t.getMessage());
+            event.putString("message", "error|"+msg);
         }
 
         ThemedReactContext context = (ThemedReactContext) getContext();
@@ -347,6 +373,14 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
                 .linkHandler(this)
             ;
 
+            // If we previously hit an "Unable to open page" error, restrict rendering
+            // to only the pages PDFium can actually reach through the catalog root.
+            if (accessiblePageCount > 0 && !enableRTL && !singlePage) {
+                int[] validPages = new int[accessiblePageCount];
+                for (int i = 0; i < accessiblePageCount; i++) validPages[i] = i;
+                configurator.pages(validPages);
+            }
+
             if (enableRTL) {
                 try {
                     int pageCount = getPdfPageCount(new File(this.path));
@@ -379,6 +413,11 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     }
 
     public void setPath(String path) {
+        // Reset page-limit recovery state when a new PDF is loaded.
+        if (path != null && !path.equals(this.path)) {
+            this.accessiblePageCount = -1;
+            this.retriedWithPageLimit = false;
+        }
         this.path = path;
     }
 

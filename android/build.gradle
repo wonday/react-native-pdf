@@ -19,13 +19,9 @@ repositories {
     maven {
         // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
         url "$projectDir/../node_modules/react-native/android"
-        content {
-            // Use Jitpack only for AndroidPdfViewer; the rest is hosted at mavenCentral.
-            includeGroup "com.github.zacharee"
-        }
     }
-    maven { url 'https://jitpack.io' }
     google()
+    maven { url 'https://jitpack.io' }
 }
 
 apply plugin: 'com.android.library'
@@ -104,7 +100,7 @@ android {
     compileSdkVersion safeExtGet('compileSdkVersion', 31)
 
     defaultConfig {
-        minSdkVersion safeExtGet('minSdkVersion', 21)
+        minSdkVersion safeExtGet('minSdkVersion', 24)
         targetSdkVersion safeExtGet('targetSdkVersion', 31)
         buildConfigField("boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString())
     }
@@ -141,8 +137,28 @@ dependencies {
     }
     // NOTE: The original repo at com.github.barteksc is abandoned by the maintainer; there will be no more updates coming from that repo.
     // The repo from zacharee is based on PdfiumAndroidKt, a much newer fork of PdfiumAndroid, with better maintenance and updated native libraries.
-    implementation 'com.github.zacharee:AndroidPdfViewer:4.0.1'
-    // Depend on PdfiumAndroidKt directly so this can be updated independently of AndroidPdfViewer as updates are provided.
-    implementation 'io.legere:pdfiumandroid:1.0.32'
+    // AndroidPdfViewer 5.0.0 is not yet published to a registry accessible from Walmart's network;
+    // the AAR was built from source (tag 5.0.0) and bundled locally under android/libs/.
+    implementation files('libs/AndroidPdfViewer-5.0.0.aar')
+    // Transitive deps of AndroidPdfViewer 5.0.0 (not pulled automatically from a local .aar file)
+    implementation 'androidx.core:core-ktx:1.18.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
+    // runtimeOnly: PdfView.java has no direct pdfiumandroid imports; keeping it off the
+    // Kotlin compile classpath avoids a Kotlin 2.2.x compiler crash on Kotlin 2.3.x metadata.
+    // Exclude kotlin-stdlib transitively: Gradle's consistent-resolution propagates the
+    // highest runtime kotlin-stdlib version as a strict constraint onto the compile
+    // classpath. With kotlin-stdlib excluded from pdfiumandroid's runtime graph, Gradle
+    // resolves stdlib from the app's own deps (2.1.x), which the 2.2.x compiler handles.
+    // pdfiumandroid will use whatever kotlin-stdlib the app provides at runtime (2.1.x+).
+    runtimeOnly('io.legere:pdfiumandroid:2.0.1') {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+    }
+    // pdfiumandroid-api is needed at compile time: PDFView.getTableOfContents() returns
+    // List<Bookmark> and LinkTapEvent.getLink() returns Link — both from this artifact.
+    // Exclude kotlin-stdlib to keep the compile classpath on 2.2.x and avoid the
+    // FirIncompatibleClassTypeChecker NPE in the Kotlin 2.2.x compiler.
+    implementation('io.legere:pdfiumandroid-api:2.0.1') {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+    }
     implementation 'com.google.code.gson:gson:2.13.2'
 }
