@@ -21,14 +21,22 @@ import PdfViewNativeComponent, {
     Commands as PdfViewCommands,
   } from './fabric/RNPDFPdfNativeComponent';
 import ReactNativeBlobUtil from 'react-native-blob-util'
-import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 const SHA1 = require('crypto-js/sha1');
-import PdfView from './PdfView';
+
+let PdfView;
+
+const getPdfView = () => {
+    if (!PdfView) {
+        const module = require('./PdfView');
+        PdfView = module.default || module;
+    }
+
+    return PdfView;
+};
 
 export default class Pdf extends Component {
 
     static propTypes = {
-        ...ViewPropTypes,
         source: PropTypes.oneOfType([
             PropTypes.shape({
                 uri: PropTypes.string,
@@ -454,17 +462,17 @@ export default class Pdf extends Component {
                                                     path={this.state.path}
                                                     onChange={this._onChange}
                                                 />
-                                            ):(<PdfView
-                                                {...this.props}
-                                                style={[{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style]}
-                                                path={this.state.path}
-                                                onLoadComplete={this.props.onLoadComplete}
-                                                onPageChanged={this.props.onPageChanged}
-                                                onError={this._onError}
-                                                onPageSingleTap={this.props.onPageSingleTap}
-                                                onScaleChanged={this.props.onScaleChanged}
-                                                onPressLink={this.props.onPressLink}
-                                            />)
+                                            ):(React.createElement(getPdfView(), {
+                                                ...this.props,
+                                                style: [{backgroundColor: '#EEE',overflow: 'hidden'}, this.props.style],
+                                                path: this.state.path,
+                                                onLoadComplete: this.props.onLoadComplete,
+                                                onPageChanged: this.props.onPageChanged,
+                                                onError: this._onError,
+                                                onPageSingleTap: this.props.onPageSingleTap,
+                                                onScaleChanged: this.props.onScaleChanged,
+                                                onPressLink: this.props.onPressLink,
+                                            }))
                                     )
                                 )}
                     </View>);
