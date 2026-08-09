@@ -910,6 +910,8 @@ using namespace facebook::react;
     longPressRecognizer.allowableMovement=100;
     // Important: The duration must be long enough to allow taps but not longer than the period in which view opens the magnifying glass
     longPressRecognizer.minimumPressDuration=0.3;
+    // Without a delegate this recognizer excludes PDFKit's own long press, which is what starts a text selection
+    longPressRecognizer.delegate = self;
 
     [self addGestureRecognizer:longPressRecognizer];
     _longPressRecognizer = longPressRecognizer;
