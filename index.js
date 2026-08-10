@@ -7,7 +7,6 @@
  */
 
 'use strict';
-import { ViewPropTypes } from 'deprecated-react-native-prop-types';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import {
@@ -22,7 +21,6 @@ import ReactNativeBlobUtil from 'react-native-blob-util';
 import PdfViewNativeComponent, {
     Commands as PdfViewCommands,
 } from './fabric/RNPDFPdfNativeComponent';
-import PdfView from './PdfView';
 const SHA1 = require('crypto-js/sha1');
 
 export default class Pdf extends Component {
@@ -272,9 +270,6 @@ export default class Pdf extends Component {
         // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
         await this._unlinkFile(tempCacheFile);
         try{
-                this.lastRNBFTask = null;
-                const responseInfo = res ? res.respInfo : undefined;
-
             const res = await this.lastRNBFTask;
             this.lastRNBFTask = null;
             const responseInfo = res ? res.respInfo : undefined;
