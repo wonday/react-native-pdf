@@ -25,12 +25,14 @@ interface PDFHeaderProps {
   numberOfPages: number;
   horizontal: boolean;
   showsVerticalScrollIndicator: boolean;
+  directionalLockEnabled: boolean;
   onPrePage: () => void;
   onNextPage: () => void;
   onZoomOut: () => void;
   onZoomIn: () => void;
   onSwitchHorizontal: () => void;
   onToggleScrollbars: () => void;
+  onToggleDirectionalLock: () => void;
 }
 
 const createWidthStyles = (width: number) =>
@@ -47,12 +49,14 @@ const PDFHeader = ({
   numberOfPages,
   horizontal,
   showsVerticalScrollIndicator,
+  directionalLockEnabled,
   onPrePage,
   onNextPage,
   onZoomOut,
   onZoomIn,
   onSwitchHorizontal,
   onToggleScrollbars,
+  onToggleDirectionalLock,
 }: PDFHeaderProps) => (
   <>
     <View style={styles.row}>
@@ -114,6 +118,20 @@ const PDFHeader = ({
         )}
       </TouchableHighlight>
     </View>
+    <View style={styles.row}>
+      <View style={styles.btnText}>
+        <Text style={styles.btnText}>{'Directional lock:'}</Text>
+      </View>
+      <TouchableHighlight
+        style={styles.btn}
+        testID="DirectionalLock"
+        onPress={onToggleDirectionalLock}
+      >
+        <Text style={styles.btnText}>
+          {directionalLockEnabled ? 'true' : 'false'}
+        </Text>
+      </TouchableHighlight>
+    </View>
   </>
 );
 
@@ -128,6 +146,7 @@ const PDFExample = () => {
     useState(true);
   const [showsVerticalScrollIndicator, setShowsVerticalScrollIndicator] =
     useState(true);
+  const [directionalLockEnabled, setDirectionalLockEnabled] = useState(false);
 
   const [, setObjectUrl] = useState<string>();
   const [, setBlob] = useState<Blob>();
@@ -217,6 +236,7 @@ const PDFExample = () => {
         numberOfPages={numberOfPages}
         horizontal={horizontal}
         showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+        directionalLockEnabled={directionalLockEnabled}
         onPrePage={prePage}
         onNextPage={nextPage}
         onZoomOut={zoomOut}
@@ -226,6 +246,9 @@ const PDFExample = () => {
           switchShowsHorizontalScrollIndicator();
           switchShowsVerticalScrollIndicator();
         }}
+        onToggleDirectionalLock={() => {
+          setDirectionalLockEnabled(currentValue => !currentValue);
+        }}
       />
       <View style={widthStyles.pdfContainer}>
         <Pdf
@@ -234,6 +257,7 @@ const PDFExample = () => {
           source={source}
           scale={scale}
           horizontal={horizontal}
+          directionalLockEnabled={directionalLockEnabled}
           showsVerticalScrollIndicator={showsVerticalScrollIndicator}
           showsHorizontalScrollIndicator={showsHorizontalScrollIndicator}
           onLoadComplete={(

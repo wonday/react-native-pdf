@@ -47,6 +47,9 @@ public class RNPDFPdfViewManagerDelegate<T extends View, U extends BaseViewManag
       case "showsVerticalScrollIndicator":
         mViewManager.setShowsVerticalScrollIndicator(view, value == null ? false : (boolean) value);
         break;
+      case "directionalLockEnabled":
+        mViewManager.setDirectionalLockEnabled(view, value == null ? false : (boolean) value);
+        break;
       case "scrollEnabled":
         mViewManager.setScrollEnabled(view, value == null ? false : (boolean) value);
         break;
