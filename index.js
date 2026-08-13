@@ -7,32 +7,21 @@
  */
 
 'use strict';
-import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import {
-    View,
+    Image,
     Platform,
     StyleSheet,
-    Image,
     Text,
+    View,
     requireNativeComponent
 } from 'react-native';
+import ReactNativeBlobUtil from 'react-native-blob-util';
 import PdfViewNativeComponent, {
     Commands as PdfViewCommands,
-  } from './fabric/RNPDFPdfNativeComponent';
-import ReactNativeBlobUtil from 'react-native-blob-util'
+} from './fabric/RNPDFPdfNativeComponent';
 const SHA1 = require('crypto-js/sha1');
-
-let PdfView;
-
-const getPdfView = () => {
-    if (!PdfView) {
-        const module = require('./PdfView');
-        PdfView = module.default || module;
-    }
-
-    return PdfView;
-};
 
 export default class Pdf extends Component {
 
@@ -280,27 +269,7 @@ export default class Pdf extends Component {
         // open(path) race with the in-flight delete on Android 14 + New Architecture and
         // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
         await this._unlinkFile(tempCacheFile);
-
-        try {
-            this.lastRNBFTask = ReactNativeBlobUtil.config({
-                // response data will be saved to this path if it has access right.
-                path: tempCacheFile,
-                trusty: this.props.trustAllCerts,
-            })
-                .fetch(
-                    source.method ? source.method : 'GET',
-                    source.uri,
-                    source.headers ? source.headers : {},
-                    source.body ? source.body : ""
-                )
-                // listen to download progress event
-                .progress((received, total) => {
-                    this.props.onLoadProgress && this.props.onLoadProgress(received / total);
-                    if (this._mounted) {
-                        this.setState({progress: received / total});
-                    }
-                });
-
+        try{
             const res = await this.lastRNBFTask;
             this.lastRNBFTask = null;
             const responseInfo = res ? res.respInfo : undefined;
