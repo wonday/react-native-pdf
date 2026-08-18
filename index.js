@@ -65,6 +65,7 @@ export default class Pdf extends Component {
         fitPolicy: PropTypes.number,
         trustAllCerts: PropTypes.bool,
         singlePage: PropTypes.bool,
+        transformFile: PropTypes.bool,
         onLoadComplete: PropTypes.func,
         onPageChanged: PropTypes.func,
         onError: PropTypes.func,
@@ -103,6 +104,7 @@ export default class Pdf extends Component {
         trustAllCerts: true,
         usePDFKit: true,
         singlePage: false,
+        transformFile: false,
         onLoadProgress: (percent) => {
         },
         onLoadComplete: (numberOfPages, path) => {
@@ -132,7 +134,7 @@ export default class Pdf extends Component {
         };
 
         this.lastRNBFTask = null;
-
+        this.lastViewFile = null;
     }
 
     componentDidUpdate(prevProps) {
@@ -144,10 +146,12 @@ export default class Pdf extends Component {
             // if has download task, then cancel it.
             if (this.lastRNBFTask && this.lastRNBFTask.cancel) {
                 this.lastRNBFTask.cancel(err => {
+                    this._cleanupViewFile();
                     this._loadFromSource(this.props.source);
                 });
                 this.lastRNBFTask = null;
             } else {
+                this._cleanupViewFile();
                 this._loadFromSource(this.props.source);
             }
         }
@@ -166,7 +170,38 @@ export default class Pdf extends Component {
             this.lastRNBFTask = null;
         }
 
+        if (!this.props.cache) {
+            if (this.props.transformFile) {
+                // this.state.path is the .view file; unlink the original pre-transformed file.
+                // The .view file is cleaned up by _cleanupViewFile below.
+                if (this.lastPreTransformedPath) {
+                    this._unlinkFile(this.lastPreTransformedPath);
+                }
+            } else {
+                this._unlinkFile(this.state.path);
+            }
+        }
+
+        this._cleanupViewFile();
+
     }
+
+    _cleanupViewFile = () => {
+        if (this.lastViewFile) {
+            this._unlinkFile(this.lastViewFile);
+            this.lastViewFile = null;
+        }
+    };
+
+    _transformToViewFile = async (preTransformedPath) => {
+        const viewFile = preTransformedPath + '.view';
+        this._unlinkFile(viewFile);
+        const base64 = await ReactNativeBlobUtil.fs.readFileWithTransform(preTransformedPath, 'base64');
+        await ReactNativeBlobUtil.fs.writeFile(viewFile, base64, 'base64');
+        this.lastViewFile = viewFile;
+        this.lastPreTransformedPath = preTransformedPath;
+        return viewFile;
+    };
 
     _loadFromSource = (newSource) => {
 
@@ -183,10 +218,17 @@ export default class Pdf extends Component {
         if (source.cache) {
             ReactNativeBlobUtil.fs
                 .stat(cacheFile)
-                .then(stats => {
+                .then(async stats => {
                     if (!Boolean(source.expiration) || (source.expiration * 1000 + stats.lastModified) > (new Date().getTime())) {
-                        if (this._mounted) {
-                            this.setState({path: cacheFile, isDownloaded: true});
+                        try {
+                            const finalPath = this.props.transformFile
+                                ? await this._transformToViewFile(cacheFile)
+                                : cacheFile;
+                            if (this._mounted) {
+                                this.setState({path: finalPath, isDownloaded: true});
+                            }
+                        } catch (e) {
+                            this._onError(e);
                         }
                     } else {
                         // cache expirated then reload it
@@ -247,10 +289,25 @@ export default class Pdf extends Component {
                         });
                 } else {
                     if (this._mounted) {
-                       this.setState({
-                            path: decodeURIComponent(uri.replace(/file:\/\//i, '')),
-                            isDownloaded: true,
-                        });
+                      const localPath = decodeURIComponent(uri.replace(/file:\/\//i, ''));
+                      if (this.props.transformFile) {
+                          try {
+                              const viewFile = await this._transformToViewFile(localPath);
+                              if (this._mounted) {
+                                  this.setState({
+                                      path: viewFile,
+                                      isDownloaded: true,
+                                  });
+                              }
+                          } catch (e) {
+                              this._onError(e);
+                          }
+                      } else {
+                          this.setState({
+                              path: localPath,
+                              isDownloaded: true,
+                          });
+                      }
                     }
                 }
             } else {
@@ -286,6 +343,7 @@ export default class Pdf extends Component {
                 // response data will be saved to this path if it has access right.
                 path: tempCacheFile,
                 trusty: this.props.trustAllCerts,
+                transformFile: !!this.props.transformFile,
             })
                 .fetch(
                     source.method ? source.method : 'GET',
@@ -309,7 +367,7 @@ export default class Pdf extends Component {
                 throw this._createDownloadError(source.uri, responseInfo);
             }
 
-            if (responseInfo && responseInfo.headers && !responseInfo.headers["Content-Encoding"] && !responseInfo.headers["Transfer-Encoding"] && responseInfo.headers["Content-Length"]) {
+            if (!this.props.transformFile && responseInfo && responseInfo.headers && !responseInfo.headers["Content-Encoding"] && !responseInfo.headers["Transfer-Encoding"] && responseInfo.headers["Content-Length"]) {
                 const expectedContentLength = responseInfo.headers["Content-Length"];
                 let actualContentLength;
 
@@ -334,8 +392,11 @@ export default class Pdf extends Component {
             // Await the copy: a fire-and-forget chain here swallows cp() rejections
             // as `Uncaught (in promise)` instead of forwarding them through onError.
             await ReactNativeBlobUtil.fs.cp(tempCacheFile, cacheFile);
+            const finalPath = this.props.transformFile
+                ? await this._transformToViewFile(cacheFile)
+                : cacheFile;
             if (this._mounted) {
-                this.setState({path: cacheFile, isDownloaded: true, progress: 1});
+                this.setState({path: finalPath, isDownloaded: true, progress: 1});
             }
             await this._unlinkFile(tempCacheFile);
         } catch (error) {
@@ -385,7 +446,7 @@ export default class Pdf extends Component {
                 page: pageNumber
             });
           }
-        
+
     }
 
     _onChange = (event) => {

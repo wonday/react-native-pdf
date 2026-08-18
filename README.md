@@ -339,6 +339,25 @@ const styles = StyleSheet.create({
 
 ```
 
+#### Enabling transformFile
+
+If the pdf file needs to be transformed before it is displayed (e.g. when the stored or downloaded file is encrypted), set the `transformFile` prop to `true`. The transformation itself is performed by `react-native-blob-util`, so you must set a file transformer on that library first — see [setting a file transformer](https://github.com/RonRadtke/react-native-blob-util/#setting-a-file-transformer) in the `react-native-blob-util` documentation.
+
+```js
+<Pdf
+    source={source}
+    transformFile={true}
+    onLoadComplete={(numberOfPages,filePath) => {
+        console.log(`Number of pages: ${numberOfPages}`);
+    }}
+    onError={(error) => {
+        console.log(error);
+    }}
+    style={styles.pdf}/>
+```
+
+Note: when `transformFile` is enabled, the transformed file is written to a separate `.view` file, so the original file on disk stays in its transformed (e.g. encrypted) form.
+
 
 ### Configuration
 
@@ -367,6 +386,7 @@ const styles = StyleSheet.create({
 | enableDoubleTapZoom            |                             bool                              |           true           | Enable double tap to zoom gesture                                                                                                                                             | ✔   | ✔       | ✖                           | 6.8.0                    |
 | trustAllCerts                  |                             bool                              |           true           | Allow connections to servers with self-signed certification                                                                                                                   | ✔   | ✔       | ✖                           | 6.0.?                    |
 | singlePage                     |                             bool                              |          false           | Only show first page, useful for thumbnail views                                                                                                                              | ✔   | ✔       | ✔                           | 6.2.1                    |
+| transformFile                  |                             bool                              |          false           | Transform the pdf file with the file transformer set on `react-native-blob-util` before displaying it (e.g. to display an encrypted pdf). Requires a file transformer, see [setting a file transformer](https://github.com/RonRadtke/react-native-blob-util/#setting-a-file-transformer) | ✔   | ✔       | ✖                           | 7.0.6                    |
 | onLoadProgress                 |                       function(percent)                       |           null           | callback when loading, return loading progress (0-1)                                                                                                                          | ✔   | ✔       | ✖                           | <3.0                     |
 | onLoadComplete                 | function(numberOfPages, path, {width, height}, tableContents) |           null           | callback when pdf load completed, return total page count, pdf local/cache path, {width,height} and table of contents                                                         | ✔   | ✔       | ✔ but without tableContents | <3.0                     |
 | onPageChanged                  |                 function(page,numberOfPages)                  |           null           | callback when page changed ,return current page and total page count                                                                                                          | ✔   | ✔       | ✔                           | <3.0                     |
