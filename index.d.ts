@@ -27,6 +27,10 @@ export type Source = {
     method?: string;
 };
 
+export type PdfError = Error & {
+    status?: number;
+};
+
 export type TextSelectionChangeEvent = {
   nativeEvent:
     | {
@@ -75,7 +79,7 @@ export interface PdfProps {
     onLoadProgress?: (percent: number,) => void,
     onLoadComplete?: (numberOfPages: number, path: string, size: {height: number, width: number}, tableContents?: TableContent[]) => void,
     onPageChanged?: (page: number, numberOfPages: number) => void,
-    onError?: (error: object) => void,
+    onError?: (error: PdfError) => void,
     onPageSingleTap?: (page: number, x: number, y: number) => void,
     onScaleChanged?: (scale: number) => void,
     onPressLink?: (url: string) => void,
