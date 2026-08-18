@@ -170,6 +170,10 @@ using namespace facebook::react;
         _showsVerticalScrollIndicator = newProps.showsVerticalScrollIndicator;
         [updatedPropNames addObject:@"showsVerticalScrollIndicator"];
     }
+    if (_directionalLockEnabled != newProps.directionalLockEnabled) {
+        _directionalLockEnabled = newProps.directionalLockEnabled;
+        [updatedPropNames addObject:@"directionalLockEnabled"];
+    }
 
     if (_scrollEnabled != newProps.scrollEnabled) {
         _scrollEnabled = newProps.scrollEnabled;
@@ -263,6 +267,7 @@ using namespace facebook::react;
     _singlePage = NO;
     _showsHorizontalScrollIndicator = YES;
     _showsVerticalScrollIndicator = YES;
+    _directionalLockEnabled = NO;
     _scrollEnabled = YES;
     _enableTextSelection = YES;
     _selectedText = nil;
@@ -513,8 +518,8 @@ using namespace facebook::react;
             }
         }
 
-        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"showsHorizontalScrollIndicator"] || [changedProps containsObject:@"showsVerticalScrollIndicator"])) {
-            [self setScrollIndicators:self horizontal:_showsHorizontalScrollIndicator vertical:_showsVerticalScrollIndicator depth:0];
+        if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"enablePaging"] || [changedProps containsObject:@"showsHorizontalScrollIndicator"] || [changedProps containsObject:@"showsVerticalScrollIndicator"] || [changedProps containsObject:@"directionalLockEnabled"])) {
+            [self configureScrollViews:self horizontal:_showsHorizontalScrollIndicator vertical:_showsVerticalScrollIndicator directionalLockEnabled:_directionalLockEnabled depth:0];
         }
 
         if (_pdfDocument && ([changedProps containsObject:@"path"] || [changedProps containsObject:@"scrollEnabled"])) {
@@ -935,7 +940,7 @@ using namespace facebook::react;
     return !_singlePage;
 }
 
-- (void)setScrollIndicators:(UIView *)view horizontal:(BOOL)horizontal vertical:(BOOL)vertical depth:(int)depth {
+- (void)configureScrollViews:(UIView *)view horizontal:(BOOL)horizontal vertical:(BOOL)vertical directionalLockEnabled:(BOOL)directionalLockEnabled depth:(int)depth {
     // max depth, prevent infinite loop
     if (depth > 10) {
         return;
@@ -943,12 +948,13 @@ using namespace facebook::react;
     
     if ([view isKindOfClass:[UIScrollView class]]) {
         UIScrollView *scrollView = (UIScrollView *)view;
+        scrollView.directionalLockEnabled = directionalLockEnabled;
         scrollView.showsHorizontalScrollIndicator = horizontal;
         scrollView.showsVerticalScrollIndicator = vertical;
     }
     
     for (UIView *subview in view.subviews) {
-        [self setScrollIndicators:subview horizontal:horizontal vertical:vertical depth:depth + 1];
+        [self configureScrollViews:subview horizontal:horizontal vertical:vertical directionalLockEnabled:directionalLockEnabled depth:depth + 1];
     }
 }
 

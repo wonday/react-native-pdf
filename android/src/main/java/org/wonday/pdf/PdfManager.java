@@ -107,6 +107,11 @@ public class PdfManager extends SimpleViewManager<PdfView> implements RNPDFPdfVi
         // NOOP on Android
     }
 
+    @Override
+    public void setDirectionalLockEnabled(PdfView view, boolean value) {
+        // NOOP on Android
+    }
+
     @ReactProp(name = "enableRTL")
     public void setEnableRTL(PdfView view, boolean enableRTL) {
         view.setEnableRTL(enableRTL);

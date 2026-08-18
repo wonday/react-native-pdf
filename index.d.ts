@@ -53,6 +53,7 @@ export interface PdfProps {
     horizontal?: boolean,
     showsHorizontalScrollIndicator?: boolean,
     showsVerticalScrollIndicator?: boolean,
+    directionalLockEnabled?: boolean,
     scrollEnabled?: boolean,
     spacing?: number,
     password?: string,
