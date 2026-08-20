@@ -434,6 +434,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     public void setScale(float scale) {
         this.scale = scale;
+        if (!this.isRecycled()) {
+            this.zoomTo(this.scale);
+        }
     }
 
     public void setMinScale(float minScale) {
