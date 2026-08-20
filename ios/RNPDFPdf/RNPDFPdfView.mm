@@ -106,8 +106,9 @@ using namespace facebook::react;
 {
     const auto &newProps = *std::static_pointer_cast<const RNPDFPdfViewProps>(props);
     NSMutableArray<NSString *> *updatedPropNames = [NSMutableArray new];
-    if (_path != RCTNSStringFromStringNilIfEmpty(newProps.path)) {
-        _path = RCTNSStringFromStringNilIfEmpty(newProps.path);
+    NSString *newPath = RCTNSStringFromStringNilIfEmpty(newProps.path);
+    if (_path != newPath && ![_path isEqualToString:newPath]) {
+        _path = newPath;
         [updatedPropNames addObject:@"path"];
     }
     if (_page != newProps.page) {
@@ -379,8 +380,8 @@ using namespace facebook::react;
             } else {
             
                 // decode file path
-                _path = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)_path, CFSTR(""));
-                NSURL *fileURL = [NSURL fileURLWithPath:_path];
+                NSString *decodedPath = (__bridge_transfer NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)_path, CFSTR(""));
+                NSURL *fileURL = [NSURL fileURLWithPath:decodedPath];
                 _pdfDocument = [[PDFDocument alloc] initWithURL:fileURL];
             }
 
