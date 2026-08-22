@@ -255,6 +255,7 @@ export default class Pdf extends Component {
                 const isNetwork = !!(uri && uri.match(/^https?:\/\//));
                 const isAsset = !!(uri && uri.match(/^bundle-assets:\/\//));
                 const isBase64 = !!(uri && uri.match(/^data:application\/pdf;base64/));
+                const isContentUri = !!(uri && uri.match(/^content:\/\//i));
 
                 const filename = source.cacheFileName || SHA1(uri) + '.pdf';
                 const cacheFile = ReactNativeBlobUtil.fs.dirs.CacheDir + '/' + filename;
@@ -291,7 +292,11 @@ export default class Pdf extends Component {
                         });
                 } else {
                     if (this._mounted) {
-                      const localPath = decodeURIComponent(uri.replace(/file:\/\//i, ''));
+                      // Android grants scoped access to the exact content URI. Decoding
+                      // it changes the permission key (for example, %3A becomes :).
+                      const localPath = isContentUri
+                          ? uri
+                          : decodeURIComponent(uri.replace(/file:\/\//i, ''));
                       if (this.props.transformFile) {
                           try {
                               const viewFile = await this._transformToViewFile(localPath);
