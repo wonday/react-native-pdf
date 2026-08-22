@@ -235,7 +235,7 @@ using namespace facebook::react;
 
 - (void)setNativePage:(NSInteger)page
 {
-    _page = page;
+    _page = static_cast<int>(page);
     [self didSetProps:[NSArray arrayWithObject:@"page"]];
 }
 
@@ -762,7 +762,7 @@ using namespace facebook::react;
  *  Tap
  *  zoom reset or zoom in
  *
- *  @param recognizer
+ *  @param recognizer The double-tap gesture recognizer.
  */
 - (void)handleDoubleTap:(UITapGestureRecognizer *)recognizer
 {
@@ -835,7 +835,7 @@ using namespace facebook::react;
  *  Single Tap
  *  stop zoom
  *
- *  @param recognizer
+ *  @param sender The single-tap gesture recognizer.
  */
 - (void)handleSingleTap:(UITapGestureRecognizer *)sender
 {
@@ -859,7 +859,7 @@ using namespace facebook::react;
  *  Pinch
  *
  *
- *  @param recognizer
+ *  @param sender The pinch gesture recognizer.
  */
 -(void)handlePinch:(UIPinchGestureRecognizer *)sender{
     [self onScaleChanged:Nil];
