@@ -59,6 +59,7 @@ import static java.lang.String.format;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import com.google.gson.Gson;
 
@@ -98,6 +99,9 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private float restoreZoom = 1;
     private float restoreXOffset = 0;
     private float restoreYOffset = 0;
+
+    // Configuration of the last document load started by drawPdf(), see loadConfig().
+    private String lastLoadConfig = null;
 
     // used to store the parameters for `super.onSizeChanged`
     private int oldW = 0;
@@ -344,6 +348,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
         if (this.path != null){
 
+            // drawPdf() runs several times per mount (setPath, onAfterUpdateTransaction,
+            // onAttachedToWindow) and on every prop transaction. Each reload cancels the
+            // in-flight DecodingAsyncTask, which never closes the native document it may
+            // already have opened, so skip reloads that would not change anything.
+            String loadConfig = this.loadConfig();
+            if (!this.isRecycled() && loadConfig.equals(this.lastLoadConfig)) {
+                return;
+            }
+            this.lastLoadConfig = loadConfig;
+
             // set scale
             this.setMinZoom(this.minScale);
             this.setMaxZoom(this.maxScale);
@@ -412,6 +426,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
             configurator.load();
         }
+    }
+
+    // Every prop drawPdf() passes to the Configurator. page is left out: it tracks the
+    // displayed page and setPage() applies it to the live view.
+    private String loadConfig() {
+        return Arrays.asList(this.path, this.horizontal, this.spacing, this.password,
+                this.enableAntialiasing, this.fitPolicy, this.pageSnap, this.autoSpacing,
+                this.pageFling, this.singlePage, this.scrollEnabled, this.enableDoubleTapZoom,
+                this.enableAnnotationRendering, this.enableRTL, this.minScale,
+                this.maxScale).toString();
     }
 
     public void setEnableDoubleTapZoom(boolean enableDoubleTapZoom) {
