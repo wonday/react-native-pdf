@@ -86,9 +86,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
     private boolean scrollEnabled = true;
     private boolean enableRTL = false;
 
-    private float originalWidth = 0;
-    private float lastPageWidth = 0;
-    private float lastPageHeight = 0;
+    private float lastZoom = 0;
 
     // Viewport snapshot taken in onDetachedFromWindow so the reload triggered by
     // onAttachedToWindow can restore zoom and scroll offset (restorePath doubles
@@ -275,17 +273,16 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 
     @Override
     public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage){
-        if (originalWidth == 0) {
-            originalWidth = pageWidth;
-        }
-
-        if (lastPageWidth>0 && lastPageHeight>0 && (pageWidth!=lastPageWidth || pageHeight!=lastPageHeight)) {
+        // Report the viewer's zoom instead of the page width relative to the first drawn page width.
+        // The page width also changes when the view is resized (e.g. on rotation), which isn't a zoom change.
+        float zoom = getZoom();
+        if (lastZoom>0 && zoom!=lastZoom) {
             // maybe change by other instance, restore zoom setting
             Constants.Pinch.MINIMUM_ZOOM = this.minScale;
             Constants.Pinch.MAXIMUM_ZOOM = this.maxScale;
 
             WritableMap event = Arguments.createMap();
-            event.putString("message", "scaleChanged|"+(pageWidth/originalWidth));
+            event.putString("message", "scaleChanged|"+zoom);
             ThemedReactContext context = (ThemedReactContext) getContext();
             EventDispatcher dispatcher = UIManagerHelper.getEventDispatcherForReactTag(context, getId());
             int surfaceId = UIManagerHelper.getSurfaceId(this);
@@ -303,8 +300,7 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
 //             );
         }
 
-        lastPageWidth = pageWidth;
-        lastPageHeight = pageHeight;
+        lastZoom = zoom;
     }
 
     @Override
