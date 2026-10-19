@@ -49,13 +49,18 @@
         "index.d.ts",
         "index.js",
         "index.js.flow",
+        "PdfRenderer.js",
         "PdfManager.js",
         "PdfPageView.js",
         "PdfView.js",
         "PdfViewFlatList.js",
         "PinchZoomView.js",
         "react-native-pdf.podspec",
-        "fabric/"
+        "fabric/",
+        "local.js",
+        "local.d.ts",
+        "local.js.flow",
+        "PdfRenderer.js.flow"
     ],
     "codegenConfig": {
         "name": "rnpdf",
@@ -68,6 +73,11 @@
             "componentProvider": {
                 "RNPDFPdfView": "RNPDFPdfView"
             }
+        }
+    },
+    "peerDependenciesMeta": {
+        "react-native-blob-util": {
+            "optional": true
         }
     }
 }

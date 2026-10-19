@@ -13,8 +13,9 @@ A react native PDF view component (cross-platform support)
 * jump to a specific page in the pdf
 
 ### Supported versions
-We use [`react-native-blob-util`](https://github.com/RonRadtke/react-native-blob-util) to handle file system access in this package,
-So you should install react-native-pdf and react-native-blob-util
+The default entry point uses [`react-native-blob-util`](https://github.com/RonRadtke/react-native-blob-util)
+for file loading, caching and transformations. Install both packages when using `import Pdf from 'react-native-pdf'`.
+Applications that prepare their own local files can instead use `react-native-pdf/local` without Blob Util (see below).
 
 > The table below shows the supported versions of React Native and react-native-blob-util for different versions of `react-native-pdf`.
 
@@ -37,6 +38,26 @@ yarn add react-native-pdf react-native-blob-util
 ```
 
 Then follow the instructions for your platform to link react-native-pdf into your project:
+
+### Local files without Blob Util
+
+Install just `react-native-pdf` if your application prepares its own PDFs:
+
+```tsx
+import Pdf from 'react-native-pdf/local';
+
+<Pdf source={{ uri: localFileUri }} style={{ flex: 1 }} onError={console.error} />
+```
+
+Pass an existing `file:///` URI (for example, an Expo FileSystem `File.uri`) or an
+absolute path. File URIs are percent-decoded; raw paths are not. Download remote
+URLs and copy assets or Android `content://` documents to a local file first.
+The caller owns the file and must keep it available while the viewer uses it.
+
+The local entry point retains the renderer, callbacks and `setPage()` method, but
+performs no downloading, caching, transformation or deletion. It does not require
+Expo or Blob Util. Native installation is still required; Expo Go is not supported.
+The default `react-native-pdf` import still requires Blob Util and is unchanged.
 
 ### iOS installation
 <details>

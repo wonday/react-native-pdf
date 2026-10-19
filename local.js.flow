@@ -1,0 +1,15 @@
+// @flow strict
+import {Component} from 'react';
+import type {PdfViewProps} from './PdfRenderer';
+
+export type {TableContent} from './PdfRenderer';
+
+export type LocalPdfSource = {|uri: string|};
+export type LocalPdfProps = {
+    ...$Diff<PdfViewProps, {onLoadProgress?: mixed}>,
+    source: LocalPdfSource,
+};
+
+declare export default class LocalPdf extends Component<LocalPdfProps> {
+    setPage: (pageNumber: number) => void;
+}
