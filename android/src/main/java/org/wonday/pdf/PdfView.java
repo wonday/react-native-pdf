@@ -34,6 +34,7 @@ import io.legere.pdfiumandroid.DefaultLogger;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerHelper;
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.RenderingDrain;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnErrorListener;
@@ -327,6 +328,15 @@ public class PdfView extends PDFView implements OnPageChangeListener,OnLoadCompl
             this.restoreYOffset = this.getCurrentYOffset();
         }
         super.onDetachedFromWindow();
+    }
+
+    // The base recycle() closes the document on the UI thread while the "PDF renderer"
+    // thread may still be drawing a page from it, which crashes the app. Every recycle
+    // (reload, detach, load error) goes through here, so wait for that page first.
+    @Override
+    public void recycle() {
+        RenderingDrain.drain(this);
+        super.recycle();
     }
 
     private int getPdfPageCount(File pdfFile) throws IOException {
