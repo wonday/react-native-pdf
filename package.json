@@ -55,6 +55,8 @@
         "PdfViewFlatList.js",
         "PinchZoomView.js",
         "react-native-pdf.podspec",
+        "Package.swift",
+        "react-native-spm-prefix.h",
         "fabric/"
     ],
     "codegenConfig": {
@@ -69,5 +71,8 @@
                 "RNPDFPdfView": "RNPDFPdfView"
             }
         }
+    },
+    "swiftpmConfig": {
+        "name": "react-native-pdf"
     }
 }
