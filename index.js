@@ -137,6 +137,8 @@ export default class Pdf extends Component {
 
         this.lastRNBFTask = null;
         this.lastViewFile = null;
+        // Goes up whenever a download starts or is canceled, so a download can tell it was replaced
+        this._downloadId = 0;
     }
 
     componentDidUpdate(prevProps) {
@@ -145,17 +147,12 @@ export default class Pdf extends Component {
         const curSource = Image.resolveAssetSource(prevProps.source);
 
         if ((nextSource.uri !== curSource.uri)) {
-            // if has download task, then cancel it.
-            if (this.lastRNBFTask && this.lastRNBFTask.cancel) {
-                this.lastRNBFTask.cancel(err => {
-                    this._cleanupViewFile();
-                    this._loadFromSource(this.props.source);
-                });
-                this.lastRNBFTask = null;
-            } else {
-                this._cleanupViewFile();
-                this._loadFromSource(this.props.source);
-            }
+            // Cancel the download of the previous source and load the new one right away. The canceled download
+            // ignores its result, so there's no need to wait for the cancel callback, which react-native-blob-util
+            // doesn't call when the request has already finished.
+            this._cancelDownload();
+            this._cleanupViewFile();
+            this._loadFromSource(this.props.source);
         }
     }
 
@@ -217,10 +214,16 @@ export default class Pdf extends Component {
         const filename = source.cacheFileName || SHA1(uri) + '.pdf';
         const cacheFile = ReactNativeBlobUtil.fs.dirs.CacheDir + '/' + filename;
 
+        // The cache check is async, so the source can change before it ends. Only the latest source may load.
+        const isCurrentSource = () => (Image.resolveAssetSource(this.props.source) || {}).uri === source.uri;
+
         if (source.cache) {
             ReactNativeBlobUtil.fs
                 .stat(cacheFile)
                 .then(async stats => {
+                    if (!isCurrentSource()) {
+                        return;
+                    }
                     if (!Boolean(source.expiration) || (source.expiration * 1000 + stats.lastModified) > (new Date().getTime())) {
                         try {
                             const finalPath = this.props.transformFile
@@ -238,6 +241,9 @@ export default class Pdf extends Component {
                     }
                 })
                 .catch(() => {
+                    if (!isCurrentSource()) {
+                        return;
+                    }
                     this._prepareFile(source);
                 })
 
@@ -322,23 +328,38 @@ export default class Pdf extends Component {
 
     };
 
-    _downloadFile = async (source, cacheFile) => {
-
-        if (this.lastRNBFTask) {
+    _cancelDownload = () => {
+        // A download that is still running belongs to a source that is no longer wanted
+        this._downloadId += 1;
+        const task = this.lastRNBFTask;
+        this.lastRNBFTask = null;
+        if (task && typeof task.cancel === 'function') {
             try {
-                this.lastRNBFTask.cancel(err => {
+                task.cancel(err => {
                 });
             } catch (e) {
                 // ignore — cancel can fail if the task already settled
             }
-            this.lastRNBFTask = null;
         }
+    };
+
+    _downloadFile = async (source, cacheFile) => {
+
+        // Only one download runs at a time
+        this._cancelDownload();
+        const downloadId = this._downloadId;
+        // False once this download was canceled or a newer one started. Its result is then ignored: canceling
+        // rejects the task, which isn't an error to report, and a replaced download must not show its file.
+        const isCurrentDownload = () => this._downloadId === downloadId;
 
         const tempCacheFile = cacheFile + '.tmp';
         // Await the unlink: a fire-and-forget call here lets ReactNativeBlobUtil's
         // open(path) race with the in-flight delete on Android 14 + New Architecture and
         // surface as `ENOENT (No such file or directory)` on the temp file. See #1018.
         await this._unlinkFile(tempCacheFile);
+        if (!isCurrentDownload()) {
+            return;
+        }
 
         try {
             this.lastRNBFTask = ReactNativeBlobUtil.config({
@@ -362,6 +383,9 @@ export default class Pdf extends Component {
                 });
 
             const res = await this.lastRNBFTask;
+            if (!isCurrentDownload()) {
+                return;
+            }
             this.lastRNBFTask = null;
             const responseInfo = res ? res.respInfo : undefined;
 
@@ -394,6 +418,9 @@ export default class Pdf extends Component {
             // Await the copy: a fire-and-forget chain here swallows cp() rejections
             // as `Uncaught (in promise)` instead of forwarding them through onError.
             await ReactNativeBlobUtil.fs.cp(tempCacheFile, cacheFile);
+            if (!isCurrentDownload()) {
+                return;
+            }
             const finalPath = this.props.transformFile
                 ? await this._transformToViewFile(cacheFile)
                 : cacheFile;
@@ -402,6 +429,9 @@ export default class Pdf extends Component {
             }
             await this._unlinkFile(tempCacheFile);
         } catch (error) {
+            if (!isCurrentDownload()) {
+                return;
+            }
             this.lastRNBFTask = null;
             await this._unlinkFile(tempCacheFile);
             await this._unlinkFile(cacheFile);
